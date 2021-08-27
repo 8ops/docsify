@@ -1,8 +1,7 @@
 
-* [Home](/)
 
-  * [Guide](guide.md)
-* [zh-cn](zh-cn/)
+* [首页](/)
 
-  * [Guide](zh-cn/guide.md)
+- [Kubernetes](kubernetes/)
+  - [init](kubernetes/01-cluster-init.md)
 

@@ -7,20 +7,29 @@
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app">...</div>
   <script>
 
   window.$docsify = {
     loadSidebar: true,
+    disqus: "8ops",
+    search: 'auto', 
     alias: {
       '/.*/_sidebar.md': '/_sidebar.md'
     },
-    subMaxLevel: 5
+    subMaxLevel: 2
   }
   </script>
   <!-- Docsify v4 -->
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+
+  <!--inject-config-->
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/disqus.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
+
 </body>
 </html>
