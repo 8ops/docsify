@@ -3,5 +3,5 @@
 * [首页](/)
 
 - [Kubernetes](kubernetes/)
-  - [init](kubernetes/01-cluster-init.md)
+  - [初始化集群](kubernetes/01-cluster-init.md)
 

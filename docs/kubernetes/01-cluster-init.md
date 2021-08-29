@@ -1,4 +1,4 @@
-# Kubernetes Cluster 快速搭建
+# Kubernetes Cluster 快速搭建
 
 *跟着我的笔记一步一步操作成功搭建 kubernetes cluster吧*
 
