@@ -1,9 +1,5 @@
 
 
-✌
-
-
-
 <!-- 背景图片 -->
 
 ![](images/coverpage.png)

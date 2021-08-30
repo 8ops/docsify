@@ -4,7 +4,7 @@ Kubernetes Cluster 安装好后我们需要一个面板来可视化管理，此�
 
 github[[1\]](https://github.com/kubernetes/dashboard)
 
-![dashboard](../images/screen/03-11.png)
+![dashboard](../images/kubernetes/screen/03-11.png)
 
 
 
@@ -21,7 +21,7 @@ github[[1\]](https://github.com/kubernetes/dashboard)
 kubectl apply -f https://m.8ops.top/attachment/kubernetes/kube-dashboard.yaml
 ```
 
-![dashboard](../images/screen/03-09.png)
+![dashboard](../images/kubernetes/screen/03-09.png)
 
 
 
@@ -48,7 +48,7 @@ kubectl describe secrets \
 1. 授予管理员权限用于通过dashboard管理cluster
 2. 获取网页版登录token
 
-![token](../images/screen/03-10.png)
+![token](../images/kubernetes/screen/03-10.png)
 
 
 
@@ -56,11 +56,11 @@ kubectl describe secrets \
 
 `https://10.101.11.240:30001/`
 
-![Dashboard](../images/screen/03-12.png)
+![Dashboard](../images/kubernetes/screen/03-12.png)
 
 创建完成后在**Chrome**浏览器打开提示非安全站点，由于证书是私有的浏览器无法识别，可以通过在页面上盲敲命令**thisisunsafe**成功打开网页。
 
-![Dashboard](../images/screen/03-13.png)
+![Dashboard](../images/kubernetes/screen/03-13.png)
 
 拷贝之前的token，通过Token的登录选项即可。
 
@@ -133,6 +133,5 @@ rules:
 
 
 
-------
 
 

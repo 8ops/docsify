@@ -1,27 +1,29 @@
 # Kubernetes Cluster 快速搭建
 
+
+
 *跟着我的笔记一步一步操作成功搭建 kubernetes cluster吧*
 
 > 目录
 
-- 一、背景描述
+一、背景描述
 
-- - 1.1 机器准备
-  - 1.2 软件版本
-  - 1.3 部署架构
-  - 1.4 环境说明
+- 1.1 机器准备
+- 1.2 软件版本
+- 1.3 部署架构
+- 1.4 环境说明
 
-- 二、前期准备
+二、前期准备
 
-- - 2.1 一键优化
+- 2.1 一键优化
 
-- 三、实施部署
+三、实施部署
 
-- - 3.1 容器运行时
-  - 3.2 初始kubeadm环境
-  - 3.3 初始cluster环境
-  - 3.4 join节点
-  - 3.5 验收集群
+- 3.1 容器运行时
+- 3.2 初始kubeadm环境
+- 3.3 初始cluster环境
+- 3.4 join节点
+- 3.5 验收集群
 
 
 
@@ -33,7 +35,7 @@
 
 采用**kubeadm**方式安装[[1\]](https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/)
 
-![kubeadm](../images/kubeadm-stacked-color-100.png)
+![kubeadm](../images/kubernetes/kubeadm-stacked.png)
 
 ### 1.1 机器准备
 
@@ -75,11 +77,11 @@
 
 ### 1.3 部署架构
 
-![部署拓扑](../images/Kubernetes-upgrade-04-topo.png)
+![部署拓扑](../images/kubernetes/topo.png)
 
 
 
-![部署组件](../images/Kubernetes-upgrade-03-addon.png)
+![部署组件](../images/kubernetes/addon.png)
 
 
 
@@ -230,7 +232,7 @@ kubeadm config images list --config kubeadm-init.yaml -v 5
 kubeadm config images pull --config kubeadm-init.yaml -v 5
 ```
 
-![操作镜像](../images/screen/01-08.png)
+![操作镜像](../images/kubernetes/screen/01-08.png)
 
 > 初始化集群
 
@@ -238,7 +240,7 @@ kubeadm config images pull --config kubeadm-init.yaml -v 5
 kubeadm init --config kubeadm-init.yaml --upload-certs -v 5
 ```
 
-![初始化集群](../images/screen/01-09.png)
+![初始化集群](../images/kubernetes/screen/01-09.png)
 
 > 配置缺省时kubeconfig文件
 
@@ -252,7 +254,7 @@ mkdir -p ~/.kube && ln -s /etc/kubernetes/admin.conf ~/.kube/config
 kubectl get no
 ```
 
-![查看节点](../images/screen/01-12.png)
+![查看节点](../images/kubernetes/screen/01-12.png)
 
 ### 3.4 Join 节点
 
@@ -286,7 +288,7 @@ kubeadm token create 3gn6g3.53pxqq890sjxuzjh --print-join-command -v 5
 kubeadm token list
 ```
 
-![查看 token list](../images/screen/01-11.png)
+![查看 token list](../images/kubernetes/screen/01-11.png)
 
 > join control-plane,master
 
@@ -313,7 +315,7 @@ kubeadm join 10.101.10.11:6443 --token abcdef.0123456789abcdef \
 kubectl cluster-info
 ```
 
-![cluster-info](../images/screen/01-14.png)
+![cluster-info](../images/kubernetes/screen/01-14.png)
 
 OR
 
@@ -321,7 +323,7 @@ OR
 kubectl get cs
 ```
 
-![cs](../images/screen/01-15.png)
+![cs](../images/kubernetes/screen/01-15.png)
 
 controller-manager和scheduler未健康就位，修复此问题
 
@@ -332,7 +334,7 @@ sed -i '/--port/d' /etc/kubernetes/manifests/kube-scheduler.yaml
 
 即时自动生效
 
-![cs](../images/screen/01-16.png)
+![cs](../images/kubernetes/screen/01-16.png)
 
 > 部署flannel
 
@@ -346,7 +348,7 @@ kubectl apply -f https://m.8ops.top/attachment/kubernetes/kube-flannel.yaml
 kubectl get all -A
 ```
 
-![all](../images/screen/01-18.png)
+![all](../images/kubernetes/screen/01-18.png)
 
 coredns未就位，修复此问题
 
@@ -378,13 +380,8 @@ kubectl -n kube-system delete pod/coredns-55866688ff-hwp4m pod/coredns-55866688f
 kubectl get no
 ```
 
-![Success](../images/screen/01-17.png)
+![Success](../images/kubernetes/screen/01-17.png)
 
 至此 kubernetes cluster 搭建完成了。
-
-
-
-------
-
 
 

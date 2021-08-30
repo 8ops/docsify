@@ -52,7 +52,7 @@ kubectl apply -f https://m.8ops.top/attachment/kubernetes/kube-ingress-controlle
 kubectl -n kube-server delete ValidatingWebhookConfiguration/ingress-nginx-admission job.batch/ingress-nginx-admission-create job.batch/ingress-nginx-admission-patch service/ingress-nginx-controller-admission
 ```
 
-![启动控制器](screen/04-09.png)
+![启动控制器](../images/kubernetes/screen/04-09.png)
 
 
 
@@ -91,7 +91,7 @@ kubectl apply -f https://m.8ops.top/attachment/kubernetes/ingress-controller/04-
 kubectl apply -f https://m.8ops.top/attachment/kubernetes/ingress-controller/05-ing-internal.yaml
 ```
 
-![快速应用](screen/04-10.png)
+![快速应用](../images/kubernetes/screen/04-10.png)
 
 
 
@@ -108,14 +108,13 @@ curl -i -k -H Host:external.8ops.top https://10.101.11.146/
 curl -i -H Host:internal.8ops.top http://10.101.11.154/
 ```
 
-![access nginx](screen/04-13.png)
+![access nginx](../images/kubernetes/screen/04-13.png)
 
-![access external](screen/04-14.png)
+![access external](../images/kubernetes/screen/04-14.png)
 
-![access internal](screen/04-15.png)
+![access internal](../images/kubernetes/screen/04-15.png)
 
 
 
-------
 
 
