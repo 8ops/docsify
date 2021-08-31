@@ -9,14 +9,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 
   <!-- 主题样式 -->
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css">
-  <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/buble.css"> -->
-  <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/dark.css"> -->
-  <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/pure.css"> -->
-  <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/dolphin.css"> -->
+  <link rel="stylesheet" href="/assets/themes/vue.css">
+  <!-- <link rel="stylesheet" href="/assets/themes/buble.css"> -->
+  <!-- <link rel="stylesheet" href="/assets/themes/dark.css"> -->
+  <!-- <link rel="stylesheet" href="/assets/themes/pure.css"> -->
+  <!-- <link rel="stylesheet" href="/assets/themes/dolphin.css"> -->
 
   <!-- 暗黑主题插件样式 -->
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/dist/style.min.css" title="docsify-darklight-theme" type="text/css" />
+  <link rel="stylesheet" href="/assets/themes/style.min.css" title="docsify-darklight-theme" type="text/css" />
 
 </head>
 
@@ -28,7 +28,7 @@
   </nav>
   <div id="app">Loading...</div>
   <!-- 在github上编辑插件 -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-edit-on-github"></script>
+  <script src="/assets/docsify/docsify-edit.js"></script>
   <script>
     window.$docsify = {
       basePath: '/', // 资源相对路径
@@ -104,7 +104,7 @@
           sidebarSublink: '#b4b4b4',
           codeTypeColor: '#ffffff',
           coverBackground: 'linear-gradient(to left bottom, hsl(118, 100%, 85%) 0%,hsl(181, 100%, 85%) 100%)',
-          toogleImage: 'url(https://cdn.jsdelivr.net/npm/docsify-darklight-theme/icons/sun.svg)'
+          toogleImage: 'url(/assets/icons/sun.svg)'
         },
         light: {
           accent: '#42b983',
@@ -119,7 +119,7 @@
           sidebarSublink: '#b4b4b4',
           codeTypeColor: '#091a28',
           coverBackground: 'linear-gradient(to left bottom, hsl(118, 100%, 85%) 0%,hsl(181, 100%, 85%) 100%)',
-          toogleImage: 'url(https://cdn.jsdelivr.net/npm/docsify-darklight-theme/icons/moon.svg)'
+          toogleImage: 'url(/assets/icons/moon.svg)'
         }
       },
       share: {
@@ -134,39 +134,39 @@
   </script>
 
   <!-- docsify min -->
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+  <script src="/assets/docsify/docsify.min.js"></script>
   <!-- search -->
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <script src="/assets/docsify/search.min.js"></script>
   <!-- counte -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-count/dist/countable.min.js"></script>
+  <script src="/assets/docsify/countable.min.js"></script>
   <!-- copy code -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+  <script src="/assets/docsify/docsify-copy-code.min.js"></script>
   <!-- image zoom -->
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+  <script src="/assets/docsify/zoom-image.min.js"></script>
   <!--  pagination  -->
-  <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
+  <script src="/assets/docsify/docsify-pagination.min.js"></script>
   <!-- darklight -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-darklight-theme/dist/index.min.js"></script>
+  <script src="/assets/docsify/docsify-darklight-theme.js"></script>
   <!-- sidebar -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
+  <script src="/assets/docsify/docsify-sidebar-collapse.min.js"></script>
 
   <!-- docsify-tabs (latest v1.x.x) -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-tabs"></script>
+  <script src="/assets/docsify/docsify-tabs.js"></script>
 
-  <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-sql.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-go.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-markdown.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-nginx.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-php.min.js"></script>
+  <script src="/assets/docsify/prism-bash.min.js"></script>
+  <script src="/assets/docsify/prism-sql.min.js"></script>
+  <script src="/assets/docsify/prism-go.min.js"></script>
+  <script src="/assets/docsify/prism-java.min.js"></script>
+  <script src="/assets/docsify/prism-markdown.min.js"></script>
+  <script src="/assets/docsify/prism-nginx.min.js"></script>
+  <script src="/assets/docsify/prism-php.min.js"></script>
 
   <!-- share -->
-  <script src="//unpkg.com/docsify-share/build/index.min.js"></script>
+  <script src="/assets/docsify/docsify-share.js"></script>
 
   <!-- common -->
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/emoji.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/external-script.min.js"></script>
+  <script src="/assets/docsify/emoji.min.js"></script>
+  <script src="/assets/docsify/external-script.min.js"></script>
 </body>
 
 </html>
