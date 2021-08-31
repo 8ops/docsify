@@ -23,7 +23,7 @@
 <body>
   <nav>
     <a href="#/">首页</a>
-    <a href="#/linux/">Linux</a>
+    <a href="#/common/">日常实践</a>
     <a href="#/kubernetes/">Kubernetes</a>
   </nav>
   <div id="app">Loading...</div>
@@ -32,21 +32,27 @@
   <script>
     window.$docsify = {
       basePath: '/', // 资源相对路径
-      // name: '首页', // 文档标题，会显示在侧边栏顶部
+      logo: '/images/logo.png',
+      name: '运维虾', // 文档标题，会显示在侧边栏顶部
       nameLink: '/', // 点击文档标题后的跳转地址
-      repo: '8ops/books', // 有repo属性则右上角会展示github图标，点击可进入
+      repo: 'https://github.com/8ops/books', // 有repo属性则右上角会展示github图标，点击可进入
+      subMaxLevel: 2, 
       loadSidebar: true, // 加载侧边栏
+      loadNavbar: true, //true-需要每个目录下有_navbar.md文件，false-可以全局共用index.html中设定，可以当快速链接使用
+      coverpage: true, // 展示封面
       alias: {
-        '/.*/_sidebar.md': '/_sidebar.md' //复用全局菜单
+        '/_sidebar.md': '/SUMMARY.md',
+        '/_navbar.md': '/SUMMARY.md', 
+        '/.*/_sidebar.md': '/SUMMARY.md', //复用全局菜单
+        '/.*/_navbar.md': '/SUMMARY.md', //复用全局导航
+        '/.*/_coverpage.md': '/_coverpage.md'
       },
-  	  subMaxLevel: 2, 
-  	  loadNavbar: false, //true-需要每个目录下有_navbar.md文件，false-可以全局共用index.html中设定，可以当快速链接使用
       externalLinkTarget: '_blank', // 外部链接的打开方式，默认_blank
       cornerExternalLinkTarget: '_blank', // 右上角链接的打开方式。默认为 _blank
-      routerMode: 'hash', // 路由方式 默认hash
-      coverpage: true, // 展示封面
+      // routerMode: 'history', // 路由方式 默认hash
       notFoundPage: true, // 在找不到指定页面时加载_404.md
       auto2top: true, // 切换页面后是否自动跳转到页面顶部
+      topMargin: 90,
       search: { // 搜索插件配置
         paths: 'auto',
         placeholder: '🔍 Type to search',
@@ -62,13 +68,13 @@
         language: 'chinese'
       },
       pagination: { // 分页插件配置
-        previousText: 'PREVIOUS',
-        nextText: 'NEXT',
+        previousText: '上一章节',
+        nextText: '下一章节',
         crossChapter: true,
       },
       plugins: [
         EditOnGithubPlugin.create(
-          'https://github.com/8ops/books/edit/main/docs/',
+          'https://github.com/8ops/books/edit/master/docs/',
           null,
           function ( file ) {
             if ( file.indexOf( 'en' ) === -1 ) {
@@ -98,7 +104,7 @@
           sidebarSublink: '#b4b4b4',
           codeTypeColor: '#ffffff',
           coverBackground: 'linear-gradient(to left bottom, hsl(118, 100%, 85%) 0%,hsl(181, 100%, 85%) 100%)',
-          toogleImage: 'url(https://cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/icons/sun.svg)'
+          toogleImage: 'url(https://cdn.jsdelivr.net/npm/docsify-darklight-theme/icons/sun.svg)'
         },
         light: {
           accent: '#42b983',
@@ -113,7 +119,7 @@
           sidebarSublink: '#b4b4b4',
           codeTypeColor: '#091a28',
           coverBackground: 'linear-gradient(to left bottom, hsl(118, 100%, 85%) 0%,hsl(181, 100%, 85%) 100%)',
-          toogleImage: 'url(https://cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/icons/moon.svg)'
+          toogleImage: 'url(https://cdn.jsdelivr.net/npm/docsify-darklight-theme/icons/moon.svg)'
         }
       },
       share: {

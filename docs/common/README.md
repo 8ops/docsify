@@ -6,7 +6,7 @@
 
 > 链接
 
-[初始集群](kubernetes/01-cluster-init.md)
+[系统结构](common/01-system-structure.md)
 
 
 

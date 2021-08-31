@@ -1,8 +1,6 @@
-- [首页](/)
-
-- [Linux](linux/)
-  - [系统结构](linux/01-system-structure.md)
-  - [常用命令](linux/02-command-usage.md)
+- [日常实践](common/ "Common operation")
+  - [系统结构](common/01-system-structure.md)
+  - [常用命令](common/02-command-usage.md)
 
 - [Kubernetes](kubernetes/)
   - [初始集群](kubernetes/01-cluster-init.md)
