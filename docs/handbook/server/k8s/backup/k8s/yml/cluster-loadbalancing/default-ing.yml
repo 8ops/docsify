@@ -1,0 +1,9 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test-ingress
+spec:
+  backend:
+    # This will just loopback to the default backend of GLBC
+    serviceName: default-http-backend
+    servicePort: 80

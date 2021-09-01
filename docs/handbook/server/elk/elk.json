@@ -1,0 +1,327 @@
+[
+  {
+    "_id": "dashboard_nginx_api",
+    "_type": "dashboard",
+    "_source": {
+      "title": "dashboard_nginx_api",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"col\":5,\"id\":\"vis_api_pie_ua\",\"row\":8,\"size_x\":8,\"size_y\":4,\"type\":\"visualization\"},{\"col\":1,\"id\":\"vis_api_pie_host\",\"row\":8,\"size_x\":4,\"size_y\":4,\"type\":\"visualization\"},{\"col\":1,\"id\":\"vis_api_topN\",\"row\":12,\"size_x\":12,\"size_y\":5,\"type\":\"visualization\"},{\"col\":5,\"id\":\"vis_api_bar_TOP50_uid_spilt_by_city\",\"row\":3,\"size_x\":8,\"size_y\":5,\"type\":\"visualization\"},{\"col\":1,\"id\":\"vis_api_pie_order_by_city\",\"row\":3,\"size_x\":4,\"size_y\":5,\"type\":\"visualization\"},{\"col\":1,\"id\":\"vis_api_metrics\",\"row\":1,\"size_x\":12,\"size_y\":2,\"type\":\"visualization\"}]",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"meta\":{\"index\":\"logstash-*\",\"key\":\"yj_request_uri.raw\",\"value\":\"/members/v1/members/checkvips\",\"disabled\":true,\"negate\":false},\"query\":{\"match\":{\"yj_request_uri.raw\":{\"query\":\"/members/v1/members/checkvips\",\"type\":\"phrase\"}}}},{\"meta\":{\"index\":\"logstash-*\",\"key\":\"yj_request_uri.raw\",\"value\":\"/payment/order/create\",\"disabled\":true,\"negate\":false},\"query\":{\"match\":{\"yj_request_uri.raw\":{\"query\":\"/payment/order/create\",\"type\":\"phrase\"}}}},{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}]}"
+      }
+    }
+  },
+  {
+    "_id": "dashboard_nginx_dao",
+    "_type": "dashboard",
+    "_source": {
+      "title": "dashboard_nginx_dao",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"col\":1,\"id\":\"vis_dao_pie_hosts\",\"row\":6,\"size_x\":4,\"size_y\":3,\"type\":\"visualization\"},{\"col\":5,\"id\":\"vis_dao_bar_request_time\",\"row\":6,\"size_x\":4,\"size_y\":3,\"type\":\"visualization\"},{\"col\":1,\"id\":\"vis_dao_line_request_url_avg_top_10\",\"row\":12,\"size_x\":12,\"size_y\":3,\"type\":\"visualization\"},{\"col\":1,\"id\":\"vis_dao_bar_request_time_split_by_upstream\",\"row\":15,\"size_x\":12,\"size_y\":4,\"type\":\"visualization\"},{\"col\":1,\"id\":\"vis_dao_pie_request_time_with_status_split_by_host\",\"row\":3,\"size_x\":12,\"size_y\":3,\"type\":\"visualization\"},{\"col\":1,\"id\":\"vis_dao_metrics\",\"row\":1,\"size_x\":12,\"size_y\":2,\"type\":\"visualization\"},{\"col\":9,\"id\":\"vis_dao_bar_status_code\",\"row\":6,\"size_x\":4,\"size_y\":3,\"type\":\"visualization\"},{\"id\":\"vis_dao_line_request_url_max_top_10\",\"type\":\"visualization\",\"size_x\":12,\"size_y\":3,\"col\":1,\"row\":9}]",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"meta\":{\"disabled\":true,\"index\":\"logstash-*\",\"key\":\"yj_host\",\"negate\":false,\"value\":\"webgame.dao.youja.cn\"},\"query\":{\"match\":{\"yj_host\":{\"query\":\"webgame.dao.youja.cn\",\"type\":\"phrase\"}}}},{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}]}"
+      }
+    }
+  },
+  {
+    "_id": "search_nginx_api",
+    "_type": "search",
+    "_source": {
+      "title": "search_nginx_api",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "host",
+        "yj_bytes_sent",
+        "yj_host",
+        "yj_remote_addr",
+        "yj_request_method",
+        "yj_request_time",
+        "yj_request_uri",
+        "yj_response_status",
+        "yj_server_port",
+        "yj_ua",
+        "yj_upstream_addr",
+        "yj_upstream_response_time",
+        "yj_upstream_status",
+        "geoip.city_name",
+        "geoip.ip",
+        "yj_http_referer",
+        "yj_uid",
+        "yj_vtype",
+        "geoip.latitude",
+        "geoip.longitude"
+      ],
+      "sort": [
+        "@timestamp",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logstash-*\",\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"fragment_size\":2147483647},\"filter\":[],\"query\":{\"query_string\":{\"query\":\"type:nginx_api_rpc_access_log\",\"analyze_wildcard\":true}}}"
+      }
+    }
+  },
+  {
+    "_id": "search_nginx_dao",
+    "_type": "search",
+    "_source": {
+      "title": "search_nginx_dao",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "host",
+        "yj_bytes_sent",
+        "yj_host",
+        "yj_remote_addr",
+        "yj_request_method",
+        "yj_request_time",
+        "yj_request_uri",
+        "yj_response_status",
+        "yj_server_port",
+        "yj_ua",
+        "yj_upstream_addr",
+        "yj_upstream_response_time",
+        "yj_upstream_status"
+      ],
+      "sort": [
+        "@timestamp",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logstash-*\",\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"fragment_size\":2147483647},\"filter\":[],\"query\":{\"query_string\":{\"query\":\"type:nginx_dao_rpc_access_log\",\"analyze_wildcard\":true}}}"
+      }
+    }
+  },
+  {
+    "_id": "vis_dao_bar_status_code",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_dao_bar_status_code",
+      "visState": "{\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"yj_host\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"3\",\"type\":\"range\",\"schema\":\"group\",\"params\":{\"field\":\"yj_response_status\",\"ranges\":[{\"from\":100,\"to\":199},{\"from\":200,\"to\":299},{\"from\":300,\"to\":399},{\"from\":400,\"to\":499},{\"from\":500,\"to\":1000}]}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_dao",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_dao_pie_hosts",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_dao_pie_hosts",
+      "visState": "{\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"yj_host\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_dao",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_dao_line_request_url_avg_top_10",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_dao_line_request_url_avg_top_10",
+      "visState": "{\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"showCircles\":true,\"smoothLines\":false,\"interpolate\":\"linear\",\"scale\":\"linear\",\"drawLinesBetweenPoints\":true,\"radiusRatio\":9,\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"yj_request_time\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"s\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"yj_request_uri.raw\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_dao",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_dao_bar_request_time",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_dao_bar_request_time",
+      "visState": "{\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"yj_host\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"3\",\"type\":\"range\",\"schema\":\"group\",\"params\":{\"field\":\"yj_request_time\",\"ranges\":[{\"from\":0.001,\"to\":0.01},{\"from\":0.011,\"to\":0.05},{\"from\":0.051,\"to\":0.1},{\"from\":0.101,\"to\":0.5},{\"from\":0.501}]}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_dao",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_dao_bar_request_time_split_by_upstream",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_dao_bar_request_time_split_by_upstream",
+      "visState": "{\"type\":\"histogram\",\"params\":{\"addLegend\":true,\"addTimeMarker\":false,\"addTooltip\":true,\"defaultYExtents\":false,\"mode\":\"stacked\",\"scale\":\"linear\",\"setYExtents\":false,\"shareYAxis\":true,\"times\":[],\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"yj_upstream_addr.raw\",\"size\":50,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"3\",\"type\":\"range\",\"schema\":\"group\",\"params\":{\"field\":\"yj_request_time\",\"ranges\":[{\"from\":0.001,\"to\":0.01},{\"from\":0.011,\"to\":0.02},{\"from\":0.021,\"to\":0.05},{\"from\":0.051,\"to\":0.1},{\"from\":0.101}]}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_dao",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_dao_pie_request_time_with_status_split_by_host",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_dao_pie_request_time_with_status_split_by_host",
+      "visState": "{\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"split\",\"params\":{\"field\":\"yj_host\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\",\"row\":false}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"yj_response_status\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"4\",\"type\":\"range\",\"schema\":\"segment\",\"params\":{\"field\":\"yj_request_time\",\"ranges\":[{\"from\":0.001,\"to\":0.01},{\"from\":0.011,\"to\":0.02},{\"from\":0.021,\"to\":0.05},{\"from\":0.051,\"to\":0.1},{\"from\":0.101}]}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_dao",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_api_geo_by_uid",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_api_geo_by_uid",
+      "visState": "{\"type\":\"tile_map\",\"params\":{\"mapType\":\"Scaled Circle Markers\",\"isDesaturated\":true,\"heatMaxZoom\":16,\"heatMinOpacity\":0.1,\"heatRadius\":25,\"heatBlur\":15,\"heatNormalizeData\":true,\"addTooltip\":true},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"geohash_grid\",\"schema\":\"segment\",\"params\":{\"field\":\"geoip.location\",\"autoPrecision\":true,\"precision\":2}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_api",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_api_topN",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_api_topN",
+      "visState": "{\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"yj_request_uri.raw\",\"size\":30,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_api",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_api_pie_ua",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_api_pie_ua",
+      "visState": "{\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false,\"spyPerPage\":10},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"yj_ua.raw\",\"size\":100,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_api",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_api_pie_host",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_api_pie_host",
+      "visState": "{\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"yj_host.raw\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_api",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_dao_count_metric",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_dao_count_metric",
+      "visState": "{\"type\":\"metric\",\"params\":{\"fontSize\":60},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_dao",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_api_bar_TOP50_uid_spilt_by_city",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_api_bar_TOP50_uid_spilt_by_city",
+      "visState": "{\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"yj_uid.raw\",\"size\":50,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"geoip.city_name\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_api",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_api_pie_order_by_city",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_api_pie_order_by_city",
+      "visState": "{\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"geoip.city_name\",\"size\":50,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_api",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_api_metrics",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_api_metrics",
+      "visState": "{\"type\":\"metric\",\"params\":{\"fontSize\":60},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"cardinality\",\"schema\":\"metric\",\"params\":{\"field\":\"yj_uid.raw\"}},{\"id\":\"3\",\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"yj_request_time\"}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_api",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_dao_metrics",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_dao_metrics",
+      "visState": "{\"type\":\"metric\",\"params\":{\"fontSize\":\"25\"},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"3\",\"type\":\"cardinality\",\"schema\":\"metric\",\"params\":{\"field\":\"yj_request_uri.raw\"}},{\"id\":\"5\",\"type\":\"min\",\"schema\":\"metric\",\"params\":{\"field\":\"yj_bytes_sent\"}},{\"id\":\"6\",\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"yj_bytes_sent\"}},{\"id\":\"7\",\"type\":\"max\",\"schema\":\"metric\",\"params\":{\"field\":\"yj_bytes_sent\"}},{\"id\":\"8\",\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"yj_request_time\"}},{\"id\":\"9\",\"type\":\"max\",\"schema\":\"metric\",\"params\":{\"field\":\"yj_request_time\"}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_dao",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "vis_dao_line_request_url_max_top_10",
+    "_type": "visualization",
+    "_source": {
+      "title": "vis_dao_line_request_url_max_top_10",
+      "visState": "{\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"showCircles\":true,\"smoothLines\":false,\"interpolate\":\"linear\",\"scale\":\"linear\",\"drawLinesBetweenPoints\":true,\"radiusRatio\":9,\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"max\",\"schema\":\"metric\",\"params\":{\"field\":\"yj_request_time\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"s\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"yj_request_uri.raw\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "description": "",
+      "savedSearchId": "search_nginx_dao",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  }
+]

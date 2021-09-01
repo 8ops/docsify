@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tomcat-po
+  labels:
+    app: tomcat
+spec:
+  containers:
+  - name: tomcat-po
+    image: r.8ops.cc/base/tomcat
+    imagePullPolicy: IfNotPresent
+    ports:
+    - containerPort: 18080
+  imagePullSecrets:
+  - name: registrykey

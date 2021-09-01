@@ -1,0 +1,10 @@
+
+- hosts: hl
+  remote_user: www
+  tasks:
+    - name: whoami
+      shell: 'whoami > whoami.rst'
+
+  handlers:
+      - name: clear copy
+        shell: 'mv whoami.rst /tmp/ '

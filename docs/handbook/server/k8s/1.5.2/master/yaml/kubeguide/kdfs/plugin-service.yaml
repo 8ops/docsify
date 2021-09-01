@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kdfs-plugin
+  namespace: kdfs
+  labels:
+    k8s-app: kdfs-plugin
+    kubernetes.io/cluster-service: "true"
+spec:
+  selector:
+    k8s-app: kdfs-plugin
+  type: NodePort
+  ports:
+  - port: 9272
+    nodePort: 9272

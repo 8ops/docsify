@@ -1,0 +1,120 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: kube-dns-v11
+  namespace: kube-system
+  labels:
+    k8s-app: kube-dns
+    version: v11
+    kubernetes.io/cluster-service: "true"
+spec:
+  replicas: 1
+  selector:
+    k8s-app: kube-dns
+    version: v11
+  template:
+    metadata:
+      labels:
+        k8s-app: kube-dns 
+        version: v11
+        kubernetes.io/cluster-service: "true"
+    spec:
+      dnsPolicy: Default
+      volumes:
+      - name: etcd-storage
+        emptyDir: {}
+      imagePullSecrets:
+      - name: registrykey
+      containers:
+      - name: etcd
+        image: r.8ops.cc/kubernetes/etcd-amd64:2.2.1
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 100m
+            memory: 50Mi
+          requests:
+            cpu: 100m
+            memory: 50Mi
+        command:
+        - /usr/local/bin/etcd
+        - -data-dir
+        - /tmp/data
+        - -listen-client-urls
+        - http://127.0.0.1:2379,http://127.0.0.1:4001
+        - -advertise-client-urls
+        - http://127.0.0.1:2379,http://127.0.0.1:4001
+        - -initial-cluster-token
+        - skydns-etcd
+        volumeMounts:
+        - name: etcd-storage
+          mountPath: /tmp/data
+      - name: kube2sky
+        image: r.8ops.cc/kubernetes/kube2sky-amd64:1.15
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 100m
+            memory: 50Mi
+          requests:
+            cpu: 100m
+            memory: 50Mi
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 60
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 8081
+            scheme: HTTP
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        command:
+        - /kube2sky
+        - --kube-master-url=http://10.10.10.36:8080
+        - --domain=cluster.local
+      - name: skydns
+        image: r.8ops.cc/kubernetes/skydns:2015-10-13-8c72f8c
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 100m
+            memory: 50Mi
+          requests:
+            cpu: 100m
+            memory: 50Mi
+        command:
+        - /skydns
+        - -machines=http://127.0.0.1:4001
+        - -addr=0.0.0.0:53
+        - -ns-rotate=false
+        - -domain=cluster.local
+        ports:
+        - containerPort: 53
+          name: dns-udp
+          protocol: UDP
+        - containerPort: 53
+          name: dns-tcp
+          protocol: TCP
+      - name: healthz
+        image: r.8ops.cc/kubernetes/exechealthz-amd64:1.0
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 10m
+            memory: 20Mi
+          requests:
+            cpu: 10m
+            memory: 20Mi
+        args:
+        - -cmd=nslookup kubernetes.default.svc.cluster.local 127.0.0.1 > /dev/null
+        - -port=8080
+        ports:
+        - containerPort: 8080
+          protocol: TCP

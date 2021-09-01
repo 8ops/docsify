@@ -1,0 +1,27 @@
+[client]
+default-character-set = utf8
+
+[mysqld]
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+user=mysql
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+
+default-character-set = utf8
+
+# replication
+server-id = 100
+log-bin = mysql-bin
+master-host = 10.0.10.41
+master-user = rsync
+master-password = jesse
+master-port = 3306
+expire_logs_days = 5
+
+replicate-ignore-db = mysql
+replicate-ignore-db = information_schema
+
+[mysqld_safe]
+log-error=/var/log/mysqld.log
+pid-file=/var/run/mysqld/mysqld.pid

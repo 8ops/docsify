@@ -1,0 +1,6 @@
+
+# env hosts by rabbitmq
+10.10.10.61   xen_vm_websocket_61
+10.10.10.66   xen_vm_rabbitmq_66
+10.10.10.81   xen_vm_rabbitmq_81
+

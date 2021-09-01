@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: ingress-rc
+  labels:
+    app: ingress
+spec:
+  replicas: 1
+  selector:
+    name: ingress-po
+  template:
+    metadata:
+      labels:
+        name: ingress-po
+        app: ingress
+    spec:
+      containers:
+      - name: echoserver
+        image: r.8ops.cc/kubeguide/echoserver:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+#          hostPort: 8080
+      imagePullSecrets:
+      - name: registrykey
+---
+kind: Service
+metadata:
+  name: echoheaders-x
+  labels:
+    app: ingress
+spec:
+  selector:
+    name: ingress
+  ports:
+  - name: echoheaders-x-port
+    port: 80
+    targetPort: 8080
+#    nodePort: 30002
+---
+kind: Service
+metadata:
+  name: echoheaders-y
+  labels:
+    app: ingress
+spec:
+  selector:
+    name: ingress
+  ports:
+  - name: echoheaders-y-port
+    port: 80
+    targetPort: 8080
+#    nodePort: 30002
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-ing
+  labels:
+    app: ingress
+spec:
+  rules:
+  - host: a.8ops.cc
+    http:
+      paths:
+      - path: /foo
+        backend:
+          serviceName: echoheaders-x
+          servicePort: 80
+  - host: b.8ops.cc
+    http:
+      paths:
+      - path: /bar
+        backend:
+          serviceName: echoheaders-y
+          servicePort: 80
+      - path: /foo
+        backend:
+          serviceName: echoheaders-x
+          servicePort: 80

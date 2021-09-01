@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tf-test
+  labels:
+    k8s-app: tf-test
+    kubernetes.io/cluster-service: "true"
+spec:
+  selector:
+    k8s-app: tf-test
+  type: NodePort
+  ports:
+  - port: 8888
+    nodePort: 8888

@@ -1,0 +1,39 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kdfs-knode
+  namespace: kdfs
+  labels:
+    k8s-app: kdfs-knode
+    kubernetes.io/cluster-service: "true"
+spec:
+  selector:
+    matchLabels:
+      k8s-app: kdfs-knode
+  template:
+    metadata:
+      labels:
+        k8s-app: kdfs-knode
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ''
+        scheduler.alpha.kubernetes.io/tolerations: '[{"key":"CriticalAddonsOnly", "operator":"Exists"}]'
+    spec:
+      containers:
+      - name: kdfs-knode
+        image: registry.kingdee.com/knode-test:1.0.1
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1000Mi
+          requests:
+            cpu: 1000m
+            memory: 1000Mi
+        ports:
+        - containerPort: 9270
+        livenessProbe:
+          tcpSocket:
+            port: 9270
+          initialDelaySeconds: 30
+          timeoutSeconds: 30
+      imagePullSecrets:
+      - name: regsecret

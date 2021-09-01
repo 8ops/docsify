@@ -2,7 +2,7 @@
 
 <!-- 背景图片 -->
 
-![](images/coverpage.png)
+![](./images/coverpage.png)
 
 
 <!-- 背景色 -->

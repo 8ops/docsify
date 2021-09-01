@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: ingress-rc
+  labels:
+    app: ingress
+spec:
+  replicas: 1
+  selector:
+    name: ingress-po
+  template:
+    metadata:
+      labels:
+        name: ingress-po
+        app: ingress
+    spec:
+      containers:
+      - name: echoserver
+        image: r.8ops.cc/kubeguide/echoserver:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          hostPort: 8080
+      imagePullSecrets:
+      - name: registrykey

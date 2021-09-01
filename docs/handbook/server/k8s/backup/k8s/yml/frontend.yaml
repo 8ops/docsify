@@ -1,0 +1,123 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: redis-master
+  labels:
+    name: redis-master
+    app: guestbook
+spec:
+  replicas: 1
+  selector:
+    name: redis-master
+  template:
+    metadata:
+      labels:
+        name: redis-master
+    spec:
+      containers:
+      - name: master
+        image: r.k8s.8ops.cc/kubeguide/redis-master
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 6379
+      imagePullSecrets:
+      - name: registrykey
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-master
+  labels:
+    name: redis-master
+    app: guestbook
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    name: redis-master
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: redis-slave
+  labels:
+    name: redis-slave
+    app: guestbook
+spec:
+  replicas: 2
+  selector:
+    name: redis-slave
+  template:
+    metadata:
+      labels:
+        name: redis-slave
+    spec:
+      containers:
+      - name: slave
+        image: r.k8s.8ops.cc/kubeguide/guestbook-redis-slave
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: GET_HOSTS_FROM
+          value: env
+        ports:
+        - containerPort: 6379
+      imagePullSecrets:
+      - name: registrykey
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-slave
+  labels:
+    name: redis-slave
+    app: guestbook
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    name: redis-slave
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: frontend
+  labels:
+    name: frontend
+    app: guestbook
+spec:
+  replicas: 3
+  selector:
+    name: frontend
+  template:
+    metadata:
+      labels:
+        name: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: r.k8s.8ops.cc/kubeguide/guestbook-php-frontend
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: GET_HOSTS_FROM
+          value: env
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: registrykey
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    name: frontend
+    app: guestbook
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    nodePort: 8400
+  selector:
+    name: frontend

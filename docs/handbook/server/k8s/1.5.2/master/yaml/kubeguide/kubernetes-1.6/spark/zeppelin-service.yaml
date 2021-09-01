@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: zeppelin
+  namespace: spark-system
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 8080
+      nodePort: 30081
+  selector:
+    component: zeppelin
+  #type: LoadBalancer

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ceph-pv
+  namespace: kube-system
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  rbd:
+    monitors:
+      - 192.168.206.232:6789
+      - 192.168.206.195:6789
+      - 192.168.206.196:6789
+    pool: rbd
+    image: test-image
+    user: admin
+    secretRef:
+      name: ceph-secret
+    fsType: xfs
+    readOnly: false
+  persistentVolumeReclaimPolicy: Recycle

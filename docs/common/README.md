@@ -1,68 +1,7 @@
 # Linux Home  <!-- {docsify-ignore-all} --> 
 
-
-
-## 测试效果 <!-- {docsify-ignore} -->
-
-> 链接
-
-[系统结构](common/01-system-structure.md)
-
-
-
-> Tab
-
-<!-- tabs:start -->
-
-#### **A**
-
-a
-
-#### **B**
-
-b
-
-#### **C**
-
-c
-
-#### **D**
-
-d
-
-<!-- tabs:end -->
-
-
-
->提示
-
-?> 普通**提示**
-
-!> 重要**提示**
-
-
-
-> 任务列表
-
-- [ ] A
-
-- [x] B
-  - [ ] C
-
-
-
-> 点击展开
-
-<details>
-  <summary>点击展开有惊喜</summary>
-   lucky day
-</details>
-
-
-
-> include
-
-[filename](../kubernetes/README.md ':include')
-
-
+- [特技](common/00-impact.md)
+- [随记](common/00-miscellany.md)
+- [系统操作](common/01-system-structure.md)
+- [常用命令](common/02-command-usage.md)
 

@@ -1,0 +1,25 @@
+[Unit]
+Description=Docker Application Container Engine
+Documentation=http://docs.docker.io
+
+[Service]
+Environment="PATH=/data/k8s/bin:/bin:/sbin:/usr/bin:/usr/sbin"
+EnvironmentFile=-/run/flannel/docker
+ExecStart=/data/k8s/bin/dockerd \
+  --log-level=error \
+  --insecure-registry r.k8s.8ops.cc \
+  --insecure-registry r.8ops.cc \
+  --graph=/data/docker \
+  --storage-driver=overlay \
+  $DOCKER_NETWORK_OPTIONS
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+Delegate=yes
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

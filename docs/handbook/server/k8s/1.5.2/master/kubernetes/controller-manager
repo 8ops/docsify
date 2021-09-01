@@ -1,0 +1,7 @@
+###
+# The following values are used to configure the kubernetes controller-manager
+
+# defaults from config and apiserver should be adequate
+
+# Add your own!
+KUBE_CONTROLLER_MANAGER_ARGS=" --master=http://10.10.10.36:8080 --logtostderr=false --log-dir=/var/log/kubernetes --v=2"
