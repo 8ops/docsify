@@ -1,24 +1,23 @@
-# curl测时
+# CURL测时
 
-> 常用命令
+## 简单使用
+
+> 更多详情
 
 ```bash
-#1 verbose
 curl -v "https://m.8ops.top/" 
-
-#2 time
-time curl -i "https://m.8ops.top/" 
-
-#3 output
-curl -s \
-  -o /dev/null \
-  -w "\n\nhttp_code: %{http_code}s\nhttp_connect: %{http_connect}s\ncontent_type: %{content_type}s\ntime_namelookup: %{time_namelookup}s\ntime_redirect: %{time_redirect}s\ntime_pretransfer: %{time_pretransfer}s\ntime_connect: %{time_connect}s\ntime_starttransfer: %{time_starttransfer}s\ntime_total: %{time_total}s\nspeed_download: %{speed_download}KB/s\n" \
-  "https://m.8ops.top/" 
+curl -vv "https://m.8ops.top/" 
+curl -vvv "https://m.8ops.top/" 
+curl -vvvv "https://m.8ops.top/" 
 ```
 
+> 终端耗时
 
+```bash
+time curl -i "https://m.8ops.top/" 
+```
 
-简易使用
+> 快速使用
 
 ```bash
 curl -s \
@@ -27,11 +26,22 @@ curl -s \
   "https://m.8ops.top"
 ```
 
-
-
-> 　-w, --write-out 
+> 丰富使用
 
 ```bash
+curl -s \
+  -o /dev/null \
+  -w "\n\nhttp_code: %{http_code}s\nhttp_connect: %{http_connect}s\ncontent_type: %{content_type}s\ntime_namelookup: %{time_namelookup}s\ntime_redirect: %{time_redirect}s\ntime_pretransfer: %{time_pretransfer}s\ntime_connect: %{time_connect}s\ntime_starttransfer: %{time_starttransfer}s\ntime_total: %{time_total}s\nspeed_download: %{speed_download}KB/s\n" \
+  "https://m.8ops.top/" 
+```
+
+
+
+## 命令详解
+
+```
+-w, --write-out 
+
 以下变量会按CURL认为合适的格式输出，输出变量需要按照%{variable_name}的格式，如果需要输出%，double一下即可，即%%，同时，\n是换行，\r是回车，\t是TAB。 
 
 url_effective The URL that was fetched last. This is most meaningful if you've told curl to follow location: headers. 

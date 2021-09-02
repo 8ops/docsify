@@ -531,3 +531,4 @@ dns-forward-max=1000
 conf-dir=/etc/dnsmasq.d
 #servers-file=<file>
 ```
+

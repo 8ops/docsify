@@ -1,6 +1,6 @@
-# imagemagick
+# 图片处理
 
-通过命令处理图片
+`imagemagick`通过命令处理图片
 
 ## convert
 
