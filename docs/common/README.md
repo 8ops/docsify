@@ -15,4 +15,5 @@
 - [图片处理](common/09-imagemagick.md)
 - [证书管理](common/10-openssl.md)
 - [网络操作](common/11-network.md)
+- [HTML小技巧](common/12-html.md)
 
