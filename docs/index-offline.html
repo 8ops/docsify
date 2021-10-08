@@ -36,18 +36,6 @@ var _hmt = _hmt || [];
     <a href="#/kubernetes/">Kubernetes</a>
   </nav>
   <div id="app">Loading...</div>
-  <div id="footer">
-    <center>
-    <a href="https://www.8ops.top/" target="_blank" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;" ><p style="text-align:center;float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">运维吧 </p></a>
-    <br />
-    <a href="http://beian.miit.gov.cn/" target="_blank" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;" ><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;"> 沪ICP备18030892号 </p> </a>
-    <br />
-    <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011502016733" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="./images/wa.png" style="float:left;"/><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">沪公网安备 31011502016733号</p></a>
-    <br />
-    <a target="_blank" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral&invite=HJikJr9NZ" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="./images/upyun.png" style="float:left;height:25px;"/><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">提供CDN加速/云存储服务</p></a>
-    <br/>
-    </center>
-  </div>
   <!-- 在github上编辑插件 -->
   <script src="./assets/docsify/docsify-edit.js"></script>
   <script>
@@ -150,7 +138,24 @@ var _hmt = _hmt || [];
         twitter: true,
         whatsapp: true,
         telegram: true,
-      }
+      },
+      plugins: [
+        function(hook) {
+          var footer = [
+            '<hr/>',
+            '<footer><center>',
+            '<a href="https://www.8ops.top/" target="_blank" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;" ><p style="text-align:center;float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">运维吧 </p></a><br />',
+            '<a href="http://beian.miit.gov.cn/" target="_blank" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;" ><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;"> 沪ICP备18030892号</p></a><br />',
+            '<a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011502016733" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="./images/wa.png" style="float:left;"/><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">沪公网安备 31011502016733号</p></a><br />',
+            '<a target="_blank" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral&invite=HJikJr9NZ" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="./images/upyun.png" style="float:left;height:25px;"/><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">提供CDN加速/云存储服务</p></a><br/>',
+            '</footer></center>'
+          ].join('');
+
+          hook.afterEach(function(html) {
+            return html + footer;
+          });
+        }
+      ]
     }
   </script>
 
