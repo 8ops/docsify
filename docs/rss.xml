@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+  <channel>
+  <title><![CDATA[运维虾的在线文档]]></title>
+  <category><![CDATA[运维日常实践,devops,aiops,dataops,kubernetes,linux,os,nginx,prometheus,运维,系统,内核,监控,开发,数据,智能,随记]]></category>
+  <description><![CDATA[运维虾的在线文档囊括运维日常实践、Kubernetes、运维开发、数据处理、人工智能、生活随记]]></description>
+  <link><![CDATA[https://www.8ops.top/]]></link>
+  <language>en</language>
+  <pubDate>2021-10-09 14:30:00</pubDate>
+  <lastBuildDate>2021-10-09 14:30:00</lastBuildDate>
+  <generator>YBlog RSS Generator</generator>
+  <ttl>5</ttl>
+  <item>
+    <title><![CDATA[日常实践]]></title>
+    <description><![CDATA[运维日常实践涵盖shell、操作系统、内核]]></description>
+    <link><![CDATA[https://www.8ops.top/#/daily/]]></link>
+    <author><![CDATA[运维虾]]></author>
+    <pubDate><![CDATA[2021-10-09 14:30:00]]></pubDate>
+    <category><![CDATA[日常实践]]></category>
+  </item>
+  <item>
+    <title><![CDATA[运维进阶]]></title>
+    <description><![CDATA[devops、dataops、aiops]]></description>
+    <link><![CDATA[https://www.8ops.top/#/ops/]]></link>
+    <author><![CDATA[运维虾]]></author>
+    <pubDate><![CDATA[2021-10-09 14:30:00]]></pubDate>
+    <category><![CDATA[运维进阶]]></category>
+  </item>
+  <item>
+    <title><![CDATA[kubernetes]]></title>
+    <description><![CDATA[kubernetes cluster及周边应用]]></description>
+    <link><![CDATA[https://www.8ops.top/#/kubernetes/]]></link>
+    <author><![CDATA[运维虾]]></author>
+    <pubDate><![CDATA[2021-10-09 14:30:00]]></pubDate>
+    <category><![CDATA[kubernetes]]></category>
+  </item>
+  <item>
+    <title><![CDATA[运维开发]]></title>
+    <description><![CDATA[运维开发涵盖shell、python、golang]]></description>
+    <link><![CDATA[https://www.8ops.top/#/dev/]]></link>
+    <author><![CDATA[运维虾]]></author>
+    <pubDate><![CDATA[2021-10-09 14:30:00]]></pubDate>
+    <category><![CDATA[运维开发]]></category>
+  </item>
+  <item>
+    <title><![CDATA[数据处理]]></title>
+    <description><![CDATA[数据处理涵盖mysql、neo4j、tidb、mdd、cassandra、oltp、olap]]></description>
+    <link><![CDATA[https://www.8ops.top/#/data/]]></link>
+    <author><![CDATA[运维虾]]></author>
+    <pubDate><![CDATA[2021-10-09 14:30:00]]></pubDate>
+    <category><![CDATA[数据处理]]></category>
+  </item>
+  <item>
+    <title><![CDATA[生活随记]]></title>
+    <description><![CDATA[生活随记技术之外所有感兴趣的事情]]></description>
+    <link><![CDATA[https://www.8ops.top/#/note/]]></link>
+    <author><![CDATA[运维虾]]></author>
+    <pubDate><![CDATA[2021-10-09 14:30:00]]></pubDate>
+    <category><![CDATA[生活随记]]></category>
+  </item>
+  </channel>
+</rss>
