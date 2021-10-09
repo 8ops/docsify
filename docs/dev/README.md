@@ -8,4 +8,4 @@
 
 > 文章清单
 
-- [golang](dev/01-golang.md)
+- [golang](./dev/01-golang.md)

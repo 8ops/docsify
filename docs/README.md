@@ -10,6 +10,8 @@
 
 
 
+## 分站列表
+
 | 分站          | 地址                                            |
 | ------------- | ----------------------------------------------- |
 | 笔记<1>       | <https://books.8ops.top/>                       |
@@ -21,7 +23,18 @@
 
 
 
-## 优惠购买 
+## 切换效果
+
+| 效果 | 国内                                            | 国外                                                  |
+| ---- | ----------------------------------------------- | ----------------------------------------------------- |
+| 简洁 | [🔗](https://books.8ops.top/index-simple.html)   | [🖇️](https://8ops.github.io/books/index-simple.html)   |
+| 标准 | [🔗](https://books.8ops.top/index-standant.html) | [🖇️](https://8ops.github.io/books/index-standant.html) |
+| 丰富 | [🔗](https://books.8ops.top/index-plus.html)     | [🖇️](https://8ops.github.io/books/index-plus.html)     |
+| 离线 | [🔗](https://books.8ops.top/index-offline.html)  | [🖇️](https://8ops.github.io/books/index-offline.html)  |
+
+
+
+## 推荐优惠
 
 <!-- tabs:start -->
 
