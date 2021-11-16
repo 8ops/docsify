@@ -131,9 +131,9 @@ curl -s https://m.8ops.top/attachment/kubernetes/01-init.sh | bash
 > 使用containerd做为容器运行时
 
 ```bash
-apt install -y containerd.io=1.4.9-1 
+apt install -y containerd=1.5.5-0ubuntu3~20.04.1
 
-apt-mark hold containerd.io
+apt-mark hold containerd
 apt-mark showhold
 ```
 
@@ -161,7 +161,7 @@ curl -s https://m.8ops.top/attachment/kubernetes/containerd-config-usage.toml \
 > 安装kubeadm必要软件包
 
 ```bash
-apt install -y kubelet=1.21.3-00 kubeadm=1.21.3-00 kubectl=1.21.3-00
+apt install -y kubelet=1.22.2-00 kubeadm=1.22.2-00 kubectl=1.22.2-00
 
 apt-mark hold kubelet kubeadm kubectl
 apt-mark showhold
@@ -383,5 +383,4 @@ kubectl get no
 ![Success](../images/kubernetes/screen/01-17.png)
 
 至此 kubernetes cluster 搭建完成了。
-
 

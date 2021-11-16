@@ -66,7 +66,7 @@ apt remove -y --purge --allow-change-held-packages kubelet || /bin/true
 apt remove -y --purge --allow-change-held-packages kubeadm  || /bin/true
 apt remove -y --purge --allow-change-held-packages kubectl  || /bin/true
 apt remove -y --purge --allow-change-held-packages kubernetes-cni || /bin/true
-apt remove -y --purge --allow-change-held-packages containerd.io  || /bin/true
+apt remove -y --purge --allow-change-held-packages containerd  || /bin/true
 apt remove -y --purge --allow-change-held-packages docker-ce  || /bin/true
 apt remove -y --purge --allow-change-held-packages cri-o  || /bin/true
 apt remove -y --purge --allow-change-held-packages cri-o-runc || /bin/true
