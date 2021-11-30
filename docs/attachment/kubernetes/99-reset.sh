@@ -1,33 +1,3 @@
-# Kubernetes Cluster 重置环境
-
-*已经封装一键脚本，下载直接执行*
-
-## 一、快速应用
-
-清除内容包括
-
-- kubeadm reset
-- release ip link
-- release iptables
-- stop service
-- remove package
-- release directory
-
-
-
-```bash
-curl -s https://books.8ops.top/attachment/kubernetes/99-reset.sh | bash
-```
-
-
-
-![kubernetes cluster reset](../images/kubernetes/screen/02-reset.png)
-
-
-
-## 二、逻辑解析
-
-```Bash
 #!/bin/bash
 
 # set -ex
@@ -95,5 +65,3 @@ rm -rf /opt/containerd /etc/containerd /run/containerd /var/lib/containerd
 rm -rf /var/lib/containerd
 rm -rf ~/.kube /etc/kubernetes
 rm -rf ~/.cache/helm
-```
-

@@ -55,15 +55,15 @@
 
 截止目前的最新匹配版本
 
-| 软件名称                                                     | 版本     |
-| ------------------------------------------------------------ | -------- |
-| kubeadm                                                      | v1.21.3  |
-| kubelet                                                      | v1.21.3  |
-| kubernetes                                                   | v1.21.3  |
-| etcd                                                         | 3.4.13-0 |
-| flannel                                                      | v0.14.0  |
-| coredns                                                      | 1.8.4    |
-| containerd.io | 1.4.9-1  |
+| 软件名称   | 版本                   |
+| ---------- | ---------------------- |
+| kubeadm    | v1.21.3                |
+| kubelet    | v1.21.3                |
+| kubernetes | v1.21.3                |
+| etcd       | 3.4.13-0               |
+| flannel    | v0.14.0                |
+| coredns    | 1.8.4                  |
+| containerd | 1.5.5-0ubuntu3~20.04.1 |
 
 - kubeadm[[2\]](https://github.com/kubernetes/kubeadm)
 - kubernetes[[3\]](https://github.com/kubernetes/kubernetes)
@@ -111,7 +111,7 @@
 - kubectl命令bash补全
 
 ```text
-curl -s https://m.8ops.top/attachment/kubernetes/01-init.sh | bash
+curl -s https://books.8ops.top/attachment/kubernetes/01-init.sh | bash
 ```
 
 
@@ -142,13 +142,20 @@ apt-mark showhold
 > 默认配置
 
 ```bash
-containerd config default
-```
+# 替换ctr运行时
+mkdir -p /etc/containerd
+containerd config default > /etc/containerd/config.toml
 
+sed -i 's#sandbox_image.*$#sandbox_image = "registry.wuxingdev.cn/google_containers/pause:3.5"#' /etc/containerd/config.toml  
+grep sandbox_image /etc/containerd/config.toml  
 
+# 支持私有Harbor ssl CA
+apt install -y ca-certificates
+cp CERTIFICATE.crt /usr/local/share/ca-certificates
+update-ca-certificates
 
-```bash
-curl -s https://m.8ops.top/attachment/kubernetes/containerd-config-usage.toml \
+# deprecated
+curl -s https://books.8ops.top/attachment/kubernetes/containerd-config-usage.toml \
   -o /etc/containerd/config.toml
 ```
 
@@ -170,11 +177,13 @@ apt-mark showhold
 > 完善crictl执行配置
 
 ```bash
+# deprecated
 cat > /etc/systemd/system/kubelet.service.d/0-containerd.conf <<EOF
 [Service]
 Environment="KUBELET_EXTRA_ARGS=--container-runtime=remote --runtime-request-timeout=15m --container-runtime-endpoint=unix:///run/containerd/containerd.sock"
 EOF
 
+# 用于运行crictl
 cat > /etc/crictl.yaml <<EOF
 runtime-endpoint: unix:///run/containerd/containerd.sock
 image-endpoint: unix:///run/containerd/containerd.sock
@@ -184,21 +193,15 @@ EOF
 
 systemctl restart containerd
 crictl images
-```
 
-不配置指定时会默认依次按顺序使用：docker->containerd->cri-o
-
-```bash
+# 不配置指定时会默认依次按顺序使用：docker->containerd->cri-o，缺省优先使用docker
 WARN[0000] image connect using default endpoints: [unix:///var/run/dockershim.sock unix:///run/containerd/containerd.sock unix:///run/crio/crio.sock]
-```
 
-若docker没有则报错，如下
-
-```bash
+# 若容器运行时没有则报错，如下
 FATA[0010] failed to connect: failed to connect: context deadline exceeded
 ```
 
-###  
+
 
 ### 3.3 初始化集群
 
@@ -213,11 +216,11 @@ kubeadm config print init-defaults
 
 
 ```bash
-curl -s https://m.8ops.top/attachment/kubernetes/kubeadmin-init-usage.yaml \
+curl -s https://books.8ops.top/attachment/kubernetes/kubeadmin-init-usage.yaml \
   -o kubeadm-init.yaml
 
 #OR
-#curl -s https://m.8ops.top/attachment/kubernetes/kubeadmin-init-usage-v2.yaml \
+#curl -s https://books.8ops.top/attachment/kubernetes/kubeadmin-init-usage-v2.yaml \
 #  -o kubeadm-init.yaml
 ```
 
@@ -273,11 +276,19 @@ kubectl get no
 ```bash
 # 上传 cert
 kubeadm init phase upload-certs --upload-certs
+
+#或者获取已经上传的certs
+openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | \
+   openssl rsa -pubin -outform der 2>/dev/null | \
+   openssl dgst -sha256 -hex | sed 's/^.* //'
+
 # 生成 token
 kubeadm token generate
+
 # 打印 join control-plane,master
 kubeadm token create n1em3c.bc2bvyp7rrka399e --print-join-command -v 5 \
   --certificate-key 8b0c2a63ff252e88f0a87a82e9b4ff6059984b2ed3c7bc60523ceb001ebcfb64
+
 # 打印 join node
 kubeadm token create 3gn6g3.53pxqq890sjxuzjh --print-join-command -v 5
 ```
@@ -293,7 +304,7 @@ kubeadm token list
 > join control-plane,master
 
 ```bash
-kubeadm join 10.101.10.11:6443 --token abcdef.0123456789abcdef \
+kubeadm join 10.101.11.240:6443 --token abcdef.0123456789abcdef \
  --discovery-token-ca-cert-hash sha256:ae1d593bbadecf245c30f4c1cfe9250faa0aaa9e4c27b7f34bcb10142d0dd0c8 \
  --control-plane --certificate-key 811e33703005a1df116201ae6469d86746274c3579e62b7c924cc4c13a804bca -v 5in the cluster.
 ```
@@ -301,7 +312,7 @@ kubeadm join 10.101.10.11:6443 --token abcdef.0123456789abcdef \
 > join node
 
 ```bash
-kubeadm join 10.101.10.11:6443 --token abcdef.0123456789abcdef \
+kubeadm join 10.101.11.240:6443 --token abcdef.0123456789abcdef \
   --discovery-token-ca-cert-hash sha256:ae1d593bbadecf245c30f4c1cfe9250faa0aaa9e4c27b7f34bcb10142d0dd0c8
 ```
 
@@ -339,7 +350,7 @@ sed -i '/--port/d' /etc/kubernetes/manifests/kube-scheduler.yaml
 > 部署flannel
 
 ```bash
-kubectl apply -f https://m.8ops.top/attachment/kubernetes/kube-flannel.yaml
+kubectl apply -f https://books.8ops.top/attachment/kubernetes/kube-flannel.yaml
 ```
 
 > 查看应用

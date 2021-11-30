@@ -15,6 +15,7 @@
   - [重置集群](kubernetes/02-cluster-reset.md)
   - [组件-Dashboard](kubernetes/03-addon-dashboard.md)
   - [组件-Ingress](kubernetes/04-addon-ingress-nginx.md)
+  - [Helm使用](kubernetes/05-helm-usage.md)
 - [运维开发](dev/)
   - [golang](dev/01-golang.md)
 - [数据处理](data/)
