@@ -86,7 +86,7 @@ rm -rf /opt/containerd /etc/containerd /run/containerd /var/lib/containerd
 rm -rf /etc/crio/ /etc/crictl.yaml
 rm -rf /opt/cni /etc/cni /var/lib/cni /run/flannel
 rm -rf ~/.kube /etc/kubernetes
-rm -rf ~/.cache/helm
+rm -rf ~/.cache/helm ~/.config/helm
 
 
 printf '\n\n ---- Completed ---- \n\n'
