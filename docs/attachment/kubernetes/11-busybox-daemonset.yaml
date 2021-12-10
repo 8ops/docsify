@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    k8s-app: busybox
+  name: busybox
+  namespace: default
+spec:
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      name: busybox
+  template:
+    metadata:
+      labels:
+        name: busybox
+    spec:
+      containers:
+      - args:
+        - /bin/sh
+        - -c
+        - while true;do sleep 60;date;done
+        # must be 1.28.0
+        image: hub.8ops.top/third/busybox:1.28.0
+        name: busybox
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate

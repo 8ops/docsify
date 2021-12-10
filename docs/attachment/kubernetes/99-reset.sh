@@ -2,66 +2,92 @@
 
 # set -ex
 
-# kubernetes cluster reset
+# 1, reset kubernetes cluster 
+printf '\n\n1, reset kubernetes cluster\n'
 command -v kubeadm && kubeadm reset --force --cri-socket /run/containerd/containerd.sock
 # kubeadm reset --force --cri-socket /var/run/dockershim.sock
 
-# release network
-ip link delete flannel.1
-ip link delete cni0
-ip link delete kube-ipvs0
+# 2, release network
+printf '\n\n2, release network\n'
+ip link set dev flannel.1 down || /bin/true
+ip link set dev cni0 down || /bin/true
+ip link set dev kube-ipvs0 down || /bin/true
+ip link delete flannel.1 || /bin/true
+ip link delete cni0 || /bin/true
+ip link delete kube-ipvs0 || /bin/true
 
-# release fireward
-iptables -F && ipvsadm -C && iptables -X
+# show network device
+printf '\n\n ---- show network device ---- \n'
+# ip link show
+ip address show
+printf '  \n ----------------------------- \n\n'
+
+# 3, release fireward
+printf '\n\n3, release fireward\n'
+iptables -F && iptables -X && ipvsadm -C
 iptables -t nat -F && iptables -t nat -X
 iptables -t mangle -F && iptables -t mangle -X
 
+# show iptables
+printf '\n\n ---- show iptables ---- \n'
+iptables -t filter -vnxL
+iptables -t filter -vnxL
+ipvsadm -ln
+printf '  \n ----------------------- \n\n'
+
 # crictl images | awk 'NR>1{printf("crictl rmi %s\n",$3)}' |sh
 
-# stop services
+# 4, stop services
+printf '\n\n4, stop services\n'
 systemctl stop kubelet
 systemctl stop docker
 systemctl stop containerd
 
+# 6, remove packages
+printf '\n\n6, remove packages\n'
+
 # unhold packages
+printf '\n\n5, unhold packages\n'
 apt-mark unhold kubeadm
 apt-mark unhold kubectl
 apt-mark unhold kubelet
 apt-mark unhold docker
 apt-mark unhold containerd
 
-# showhold
+# apt-mark showhold
+printf '\n\n ---- apt-mark showhold ---- \n'
 apt-mark showhold
+printf '  \n --------------------------- \n\n'
 
 # remove held packages
-apt remove -y --purge --allow-change-held-packages kubelet || /bin/true
 apt remove -y --purge --allow-change-held-packages kubeadm  || /bin/true
+apt remove -y --purge --allow-change-held-packages kubelet || /bin/true
 apt remove -y --purge --allow-change-held-packages kubectl  || /bin/true
 apt remove -y --purge --allow-change-held-packages kubernetes-cni || /bin/true
 apt remove -y --purge --allow-change-held-packages containerd  || /bin/true
-apt remove -y --purge --allow-change-held-packages docker-ce  || /bin/true
+apt remove -y --purge --allow-change-held-packages containerd.io  || /bin/true # deprecated
+apt remove -y --purge --allow-change-held-packages docker-ce  || /bin/true.    # deprecated
 apt remove -y --purge --allow-change-held-packages cri-o  || /bin/true
 apt remove -y --purge --allow-change-held-packages cri-o-runc || /bin/true
-
-# show release detail
-dpkg -l | awk '$2~/kube|cni|cri|containerd|docker/'
 
 # release auto-remove
 apt auto-remove -y
 
-# release dirs and files
-rm -rf /etc/systemd/system/kubelet.service.d
-rm -rf /var/lib/kubelet
-rm -rf /var/lib/docker
-rm -rf /etc/docker
-rm -rf /run/docker
-rm -rf /run/flannel
-rm -rf /run/containerd
-rm -f /run/docker.sock /run/dockershim.sock
-rm -rf /etc/crio/
-rm -f /etc/crictl.yaml
-rm -rf /opt/cni /etc/cni /var/lib/cni
+# show release packages detail
+printf '\n\n ---- show release packages detail ---- \n'
+dpkg -l | awk '$2~/kube|cni|cri|containerd|docker/'
+printf '  \n -------------------------------------- \n\n'
+
+# 7, release directory or files
+printf '\n\n7, release directory or files\n'
+rm -rf /etc/systemd/system/kubelet.service.d /var/lib/kubelet
+rm -rf /var/lib/docker /etc/docker /run/docker /run/docker.sock /run/dockershim.sock
 rm -rf /opt/containerd /etc/containerd /run/containerd /var/lib/containerd
-rm -rf /var/lib/containerd
+rm -rf /etc/crio/ /etc/crictl.yaml
+rm -rf /opt/cni /etc/cni /var/lib/cni /run/flannel
 rm -rf ~/.kube /etc/kubernetes
 rm -rf ~/.cache/helm
+
+
+printf '\n\n ---- Completed ---- \n\n'
+exit 0

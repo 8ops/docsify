@@ -97,4 +97,5 @@ op_source
 op_package
 op_kubectl
 
+printf '\n\n ---- Completed ---- \n'
 exit 0

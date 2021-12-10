@@ -20,7 +20,7 @@
 set -e
 
 src=registry.cn-hangzhou.aliyuncs.com
-dst=registry.wuxingdev.cn
+dst=hub.8ops.top
 
 ver=$1
 [ -z $ver ] && exit 1

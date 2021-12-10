@@ -33,7 +33,7 @@
 
 ## 一、背景描述
 
-采用**kubeadm**方式安装[[1\]](https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/)
+采用**kubeadm**方式安装[[1]](https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/)
 
 ![kubeadm](../images/kubernetes/kubeadm-stacked.png)
 
@@ -53,35 +53,42 @@
 
 ### 1.2 软件版本
 
-截止目前的最新匹配版本
+示例匹配版本
 
-| 软件名称   | 版本                   |
-| ---------- | ---------------------- |
-| kubeadm    | v1.21.3                |
-| kubelet    | v1.21.3                |
-| kubernetes | v1.21.3                |
-| etcd       | 3.4.13-0               |
-| flannel    | v0.14.0                |
-| coredns    | 1.8.4                  |
-| containerd | 1.5.5-0ubuntu3~20.04.1 |
+| 软件名称   | 选中版本               | 当前最新 |
+| ---------- | ---------------------- | -------- |
+| kubeadm    | v1.22.2                | v1.23.0  |
+| kubelet    | v1.22.2                | v1.23.0  |
+| kubernetes | v1.22.2                | v1.23.0  |
+| etcd       | 3.4.13-0               | v3.5.1   |
+| flannel    | v0.15.0                | v0.15.1  |
+| coredns    | 1.8.4                  | 1.8.6    |
+| containerd | 1.5.5-0ubuntu3~20.04.1 | 1.5.8    |
 
-- kubeadm[[2\]](https://github.com/kubernetes/kubeadm)
-- kubernetes[[3\]](https://github.com/kubernetes/kubernetes)
-- cni[[4\]](https://github.com/containernetworking/cni)
-- containerd[[5\]](https://github.com/containerd/containerd)
-- flannel[[6\]](https://github.com/flannel-io/flannel)
-- coredns[[7\]](https://github.com/coredns/coredns)
-- dashboard[[8\]](https://github.com/kubernetes/dashboard)
+- kubeadm  [[2]](https://github.com/kubernetes/kubeadm)
+- kubernetes  [[3]](https://github.com/kubernetes/kubernetes)
+- [etcd](https://etcd.io/)  [[4]](https://github.com/etcd-io/etcd) 
+- cni  [[5]](https://github.com/containernetworking/cni)
+- containerd  [[6]](https://github.com/containerd/containerd)
+- flannel  [[7]](https://github.com/flannel-io/flannel)
+- coredns  [[8]](https://github.com/coredns/coredns)
+- dashboard  [[9]](https://github.com/kubernetes/dashboard)
 
 
 
 ### 1.3 部署架构
 
+> 部署拓扑
+
 ![部署拓扑](../images/kubernetes/topo.png)
 
 
 
-![部署组件](../images/kubernetes/addon.png)
+
+
+> 部署套件
+
+![部署套件](../images/kubernetes/addon.png)
 
 
 
@@ -92,37 +99,33 @@
 
 
 
-------
-
 ## 二、前期准备
 
 进行必要的操作让每个节点符合kubernetes安装的要求
+
+
 
 ### 2.1 一键优化
 
 优化内容包括
 
-- 优化文件打开数
-- 关闭swap
-- 启动必要模块
-- 优化内核
-- 优化软件源
-- 安装必要软件
-- kubectl命令bash补全
+1. 优化文件打开数
+2. 关闭swap
+3. 启动必要模块
+4. 优化内核
+5. 优化软件源
+6. 安装必要软件
+7. kubectl的bash补全
 
-```text
+```bash
 curl -s https://books.8ops.top/attachment/kubernetes/01-init.sh | bash
 ```
 
 
 
-
-
-------
-
-
-
 ## 三、实施部署
+
+
 
 ### 3.1 容器运行时
 
@@ -137,7 +140,9 @@ apt-mark hold containerd
 apt-mark showhold
 ```
 
-更多容器运行时[[9\]](https://kubernetes.io/zh/docs/setup/production-environment/container-runtimes/)
+更多容器运行时[[10]](https://kubernetes.io/zh/docs/setup/production-environment/container-runtimes/)
+
+
 
 > 默认配置
 
@@ -146,33 +151,77 @@ apt-mark showhold
 mkdir -p /etc/containerd
 containerd config default > /etc/containerd/config.toml
 
-sed -i 's#sandbox_image.*$#sandbox_image = "registry.wuxingdev.cn/google_containers/pause:3.5"#' /etc/containerd/config.toml  
-grep sandbox_image /etc/containerd/config.toml  
+sed -i 's#sandbox_image.*$#sandbox_image = "hub.8ops.top/google_containers/pause:3.5"#' /etc/containerd/config.toml  
+sed -i 's#SystemdCgroup = false#SystemdCgroup = true#' /etc/containerd/config.toml 
+grep -P 'sandbox_image|SystemdCgroup' /etc/containerd/config.toml  
+systemctl restart containerd
+systemctl status containerd
 
-# 支持私有Harbor ssl CA
+# 支持私有Harbor，当使用私有CA签名时需要系统受信根CA或者采用非安全模式见编辑config.toml
 apt install -y ca-certificates
 cp CERTIFICATE.crt /usr/local/share/ca-certificates
 update-ca-certificates
 
-# deprecated
-curl -s https://books.8ops.top/attachment/kubernetes/containerd-config-usage.toml \
-  -o /etc/containerd/config.toml
+## deprecated 直接替换
+# curl -s https://books.8ops.top/attachment/kubernetes/config-usage.toml \
+#  -o /etc/containerd/config.toml
+```
+
+> vim /etc/containerd/config.toml
+
+```toml
+……
+
+[plugins]
+	……
+  [plugins."io.containerd.grpc.v1.cri"]
+ 		……
+ 		# sandbox_image
+    sandbox_image = "hub.8ops.top/google_containers/pause:3.5"
+		……
+      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+            # systemd
+            SystemdCgroup = true
+		……
+    # insecure
+    [plugins."io.containerd.grpc.v1.cri".registry]
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."hub.8ops.top"]
+          endpoint = ["https://hub.8ops.top"]
+      [plugins."io.containerd.grpc.v1.cri".registry.configs]
+        [plugins."io.containerd.grpc.v1.cri".registry.configs."hub.8ops.top".tls]
+          insecure_skip_verify = true    
 ```
 
 
 
 ### 3.2 初始kubeadm环境
 
+> 配置文件
+
+- [InitConfiguration](https://pkg.go.dev/k8s.io/kubernetes/cmd/kubeadm/app/apis/kubeadm/v1beta2?utm_source=godoc#InitConfiguration)
+
+- [ClusterConfiguration](https://pkg.go.dev/k8s.io/kubernetes/cmd/kubeadm/app/apis/kubeadm/v1beta2?utm_source=godoc#ClusterConfiguration)
+- [KubeProxyConfiguration](https://pkg.go.dev/k8s.io/kube-proxy/config/v1alpha1?utm_source=godoc#KubeProxyConfiguration)
+- [KubeletConfiguration](https://pkg.go.dev/k8s.io/kubelet/config/v1beta1?utm_source=godoc#KubeletConfiguration)
+
+
+
 在所有节点需要执行的操作
 
 > 安装kubeadm必要软件包
 
 ```bash
-apt install -y kubelet=1.22.2-00 kubeadm=1.22.2-00 kubectl=1.22.2-00
+apt install -y -q kubeadm=1.22.2-00 kubectl=1.22.2-00 kubelet=1.22.2-00
 
-apt-mark hold kubelet kubeadm kubectl
+apt-mark hold kubeadm kubectl kubelet
 apt-mark showhold
+dpkg -l | grep kube
 ```
+
+
 
 > 完善crictl执行配置
 
@@ -193,63 +242,116 @@ EOF
 
 systemctl restart containerd
 crictl images
+crictl ps -a
 
-# 不配置指定时会默认依次按顺序使用：docker->containerd->cri-o，缺省优先使用docker
-WARN[0000] image connect using default endpoints: [unix:///var/run/dockershim.sock unix:///run/containerd/containerd.sock unix:///run/crio/crio.sock]
+# 不配置指定时会默认依次按顺序使用：docker--> containerd --> cri-o，缺省默认使用docker
+# WARN[0000] image connect using default endpoints: [unix:///var/run/dockershim.sock unix:///run/containerd/containerd.sock unix:///run/crio/crio.sock]
 
 # 若容器运行时没有则报错，如下
-FATA[0010] failed to connect: failed to connect: context deadline exceeded
+# FATA[0010] failed to connect: failed to connect: context deadline exceeded
 ```
 
 
 
 ### 3.3 初始化集群
 
-选择其中一台 control-plane,master 节点，这里选择 10.101.11.240
+**选择其中一台** *control-plane, master* 节点，这里选择 `10.101.11.240`
 
-> 默认配置
-
-```bash
-kubeadm config print init-defaults
-```
-
-
+> 初始操作
 
 ```bash
-curl -s https://books.8ops.top/attachment/kubernetes/kubeadmin-init-usage.yaml \
-  -o kubeadm-init.yaml
+# 默认配置
+kubeadm config print init-defaults > kubeadm-init-default.yaml
 
-#OR
-#curl -s https://books.8ops.top/attachment/kubernetes/kubeadmin-init-usage-v2.yaml \
-#  -o kubeadm-init.yaml
-```
+# curl -s https://books.8ops.top/attachment/kubernetes/kubeadmin-init-usage.yaml \
+#  -o kubeadm-init-config.yaml
 
-> 操作镜像
-
-```bash
 # 默认镜像
 kubeadm config images list -v 5
+
 # 打印镜像
-kubeadm config images list --config kubeadm-init.yaml -v 5
+kubeadm config images list --config kubeadm-init-config.yaml -v 5
+
 # 预取镜像
-kubeadm config images pull --config kubeadm-init.yaml -v 5
+kubeadm config images pull --config kubeadm-init-config.yaml -v 5
 ```
 
+
+
+> vim kubeadm-init-config.yaml
+
+```yaml
+apiVersion: kubeadm.k8s.io/v1beta3
+bootstrapTokens:
+- groups:
+  - system:bootstrappers:kubeadm:default-node-token
+  ttl: 24h0m0s
+  usages:
+  - signing
+  - authentication
+kind: InitConfiguration
+localAPIEndpoint:
+  advertiseAddress: 10.101.11.240
+  bindPort: 6443
+nodeRegistration:
+  criSocket: /run/containerd/containerd.sock
+  name: K-KUBE-LAB-01
+  taints: null
+  kubeletExtraArgs: null
+---
+apiServer:
+  timeoutForControlPlane: 4m0s
+apiVersion: kubeadm.k8s.io/v1beta3
+certificatesDir: /etc/kubernetes/pki
+clusterName: kubernetes
+controllerManager: {}
+dns:
+  imageRepository: hub.8ops.top/google_containers
+  imageTag: 1.8.4
+etcd:
+  local:
+    dataDir: /var/lib/etcd
+imageRepository: hub.8ops.top/google_containers
+kind: ClusterConfiguration
+kubernetesVersion: 1.22.2
+controlPlaneEndpoint: 10.101.11.240:6443
+networking:
+  dnsDomain: cluster.local
+  podSubnet: 172.20.0.0/16
+  serviceSubnet: 192.168.0.0/16
+scheduler: {}
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+cgroupDriver: systemd
+---
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+```
+
+
+
 ![操作镜像](../images/kubernetes/screen/01-08.png)
+
+
 
 > 初始化集群
 
 ```bash
-kubeadm init --config kubeadm-init.yaml --upload-certs -v 5
+kubeadm init --config kubeadm-init-config.yaml --upload-certs -v 5
 ```
 
 ![初始化集群](../images/kubernetes/screen/01-09.png)
+
+
 
 > 配置缺省时kubeconfig文件
 
 ```bash
 mkdir -p ~/.kube && ln -s /etc/kubernetes/admin.conf ~/.kube/config 
 ```
+
+
 
 > 查看节点
 
@@ -259,13 +361,64 @@ kubectl get no
 
 ![查看节点](../images/kubernetes/screen/01-12.png)
 
+
+
+> 修改全局配置
+
+kubelet 和 kube-proxy 需要相应重启
+
+```bash
+# kubeadm
+kubectl -n kube-system edit cm kubeadm-config
+
+# kubelet
+kubectl -n kube-system edit cm kubelet-config-1.22
+
+……
+		# GC
+    imageGCLowThresholdPercent: 40
+    imageGCHighThresholdPercent: 50
+    # Resource
+    systemReserved:
+      cpu: 500m
+      memory: 500m
+    kubeReserved:
+      cpu: 500m
+      memory: 500m
+    evictionPressureTransitionPeriod: 300s # upgrade
+    nodeStatusReportFrequency: 10s # upgrade
+    nodeStatusUpdateFrequency: 10s # upgrade
+    cgroupDriver: systemd
+    maxPods: 200
+kind: ConfigMap
+……
+
+# kube-proxy 
+# 当flannel采用host-gw时，需要开启ipvs
+kubectl -n kube-system edit cm kube-proxy
+
+……
+    configSyncPeriod: 5s # upgrade
+    mode: "ipvs" # upgrade
+    ipvs:
+      tcpTimeout: 10s
+      syncPeriod: 5s
+      minSyncPeriod: 5s
+……
+
+```
+
+
+
 ### 3.4 Join 节点
 
 获取Join信息
 
+
+
 **方式一**
 
-在初始化集群成功时输出的信息中有打印出来，参考上面Output内容
+> 在初始化集群成功时输出的信息中有打印出来，参考上面Output内容
 
 
 
@@ -293,6 +446,8 @@ kubeadm token create n1em3c.bc2bvyp7rrka399e --print-join-command -v 5 \
 kubeadm token create 3gn6g3.53pxqq890sjxuzjh --print-join-command -v 5
 ```
 
+
+
 > 查看 token list
 
 ```bash
@@ -301,6 +456,8 @@ kubeadm token list
 
 ![查看 token list](../images/kubernetes/screen/01-11.png)
 
+
+
 > join control-plane,master
 
 ```bash
@@ -308,6 +465,8 @@ kubeadm join 10.101.11.240:6443 --token abcdef.0123456789abcdef \
  --discovery-token-ca-cert-hash sha256:ae1d593bbadecf245c30f4c1cfe9250faa0aaa9e4c27b7f34bcb10142d0dd0c8 \
  --control-plane --certificate-key 811e33703005a1df116201ae6469d86746274c3579e62b7c924cc4c13a804bca -v 5in the cluster.
 ```
+
+
 
 > join node
 
@@ -350,8 +509,38 @@ sed -i '/--port/d' /etc/kubernetes/manifests/kube-scheduler.yaml
 > 部署flannel
 
 ```bash
-kubectl apply -f https://books.8ops.top/attachment/kubernetes/kube-flannel.yaml
+## 引用官方 
+# https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+# kubectl apply -f https://books.8ops.top/attachment/kubernetes/kube-flannel.yaml
+
+kubectl apply -f kube-flannel-config.yaml
 ```
+
+> vim kube-flannel-config.yaml
+
+```yaml
+……
+  net-conf.json: |
+    {
+      "Network": "172.22.0.0/16",
+      "Backend": {
+        "Type": "vxlan"
+      }
+    }
+……
+      initContainers:
+      - name: install-cni-plugin
+        image: hub.8ops.top/google_containers/mirrored-flannelcni-flannel-cni-plugin:v1.0.0
+        ……
+      - name: install-cni
+        image: hub.8ops.top/google_containers/flannel:v0.15.1
+        ……
+      containers:
+      - name: kube-flannel
+        image: hub.8ops.top/google_containers/flannel:v0.15.1
+```
+
+
 
 > 查看应用
 
@@ -361,7 +550,9 @@ kubectl get all -A
 
 ![all](../images/kubernetes/screen/01-18.png)
 
-coredns未就位，修复此问题
+
+
+> coredns未就位手动修复（ v1.22.0已经修复）
 
 ```bash
 kubectl edit clusterrole system:coredns
@@ -385,6 +576,8 @@ append
 kubectl -n kube-system delete pod/coredns-55866688ff-hwp4m pod/coredns-55866688ff-tn8sj
 ```
 
+
+
 > 查看节点
 
 ```bash
@@ -392,6 +585,23 @@ kubectl get no
 ```
 
 ![Success](../images/kubernetes/screen/01-17.png)
+
+
+
+> 试运行容器
+
+```bash
+## 建议使用1.28.0新版本会有nslookup的BUG
+# kubectl apply -f https://books.8ops.top/attachment/kubernetes/10-nginx-deployment.yaml
+kubectl run busybox --image hub.8ops.top/third/busybox:1.28.0 --command -- sh -c "while true;do sleep 60;date;done"
+
+# kubectl apply -f https://books.8ops.top/attachment/kubernetes/11-busybox-daemonset.yaml
+kubectl run nginx --image hub.8ops.top/third/nginx:1.21.3
+
+```
+
+![Usage](../images/kubernetes/screen/01-20.png)
+
 
 至此 kubernetes cluster 搭建完成了。
 
