@@ -149,7 +149,8 @@ apt-mark showhold
 ```bash
 # 替换ctr运行时
 mkdir -p /etc/containerd
-containerd config default > /etc/containerd/config.toml
+containerd config default > /etc/containerd/config.toml-default
+cp /etc/containerd/config.toml-default /etc/containerd/config.toml
 
 sed -i 's#sandbox_image.*$#sandbox_image = "hub.8ops.top/google_containers/pause:3.5"#' /etc/containerd/config.toml  
 sed -i 's#SystemdCgroup = false#SystemdCgroup = true#' /etc/containerd/config.toml 
@@ -163,7 +164,7 @@ cp CERTIFICATE.crt /usr/local/share/ca-certificates
 update-ca-certificates
 
 ## deprecated 直接替换
-# curl -s https://books.8ops.top/attachment/kubernetes/config-usage.toml \
+# curl -s https://books.8ops.top/attachment/kubernetes/10-config.toml \
 #  -o /etc/containerd/config.toml
 ```
 
@@ -261,24 +262,25 @@ crictl ps -a
 
 ```bash
 # 默认配置
-kubeadm config print init-defaults > kubeadm-init-default.yaml
+kubeadm config print init-defaults > kubeadm-init.yaml-default
 
-# curl -s https://books.8ops.top/attachment/kubernetes/kubeadmin-init-usage.yaml \
-#  -o kubeadm-init-config.yaml
+# vim kubeadm-init.yaml
+# curl -s https://books.8ops.top/attachment/kubernetes/20-kubeadmin-init.yaml \
+#  -o kubeadm-init.yaml
 
 # 默认镜像
 kubeadm config images list -v 5
 
 # 打印镜像
-kubeadm config images list --config kubeadm-init-config.yaml -v 5
+kubeadm config images list --config kubeadm-init.yaml -v 5
 
 # 预取镜像
-kubeadm config images pull --config kubeadm-init-config.yaml -v 5
+kubeadm config images pull --config kubeadm-init.yaml -v 5
 ```
 
 
 
-> vim kubeadm-init-config.yaml
+> vim kubeadm-init.yaml
 
 ```yaml
 apiVersion: kubeadm.k8s.io/v1beta3
@@ -338,7 +340,7 @@ kind: KubeProxyConfiguration
 > 初始化集群
 
 ```bash
-kubeadm init --config kubeadm-init-config.yaml --upload-certs -v 5
+kubeadm init --config kubeadm-init.yaml --upload-certs -v 5
 ```
 
 ![初始化集群](../images/kubernetes/screen/01-09.png)
@@ -506,17 +508,21 @@ sed -i '/--port/d' /etc/kubernetes/manifests/kube-scheduler.yaml
 
 ![cs](../images/kubernetes/screen/01-16.png)
 
+
+
 > 部署flannel
 
 ```bash
 ## 引用官方 
 # https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
-# kubectl apply -f https://books.8ops.top/attachment/kubernetes/kube-flannel.yaml
+# kubectl apply -f https://books.8ops.top/attachment/kubernetes/30-kube-flannel.yaml
 
-kubectl apply -f kube-flannel-config.yaml
+kubectl apply -f kube-flannel.yaml
 ```
 
-> vim kube-flannel-config.yaml
+
+
+> vim kube-flannel.yaml
 
 ```yaml
 ……
@@ -592,10 +598,10 @@ kubectl get no
 
 ```bash
 ## 建议使用1.28.0新版本会有nslookup的BUG
-# kubectl apply -f https://books.8ops.top/attachment/kubernetes/10-nginx-deployment.yaml
+# kubectl apply -f https://books.8ops.top/attachment/kubernetes/50-nginx-deployment.yaml
 kubectl run busybox --image hub.8ops.top/third/busybox:1.28.0 --command -- sh -c "while true;do sleep 60;date;done"
 
-# kubectl apply -f https://books.8ops.top/attachment/kubernetes/11-busybox-daemonset.yaml
+# kubectl apply -f https://books.8ops.top/attachment/kubernetes/51-busybox-daemonset.yaml
 kubectl run nginx --image hub.8ops.top/third/nginx:1.21.3
 
 ```

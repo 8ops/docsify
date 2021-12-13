@@ -1,6 +1,8 @@
-
-
 # Kubernetes 常用组件-Ingress-Controller
+
+推荐[使用helm安装](05-helm-usage.md)
+
+
 
 Kubernetes 编排管理的应用需要对外暴露访问，这种方式叫流量控制，目前常用流量控制的技术有好几种如下
 

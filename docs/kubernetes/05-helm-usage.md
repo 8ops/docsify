@@ -6,6 +6,8 @@
 
 ## 镜像源私有化
 
+将外部镜像产物拉到私有环境缓存起来
+
 ```bash
 #!/bin/bash
 
@@ -13,21 +15,27 @@
 # example
 #  pull_image_to_local.sh kubernetesui/metrics-scraper:v1.0.7
 #  pull_image_to_local.sh registry.cn-hangzhou.aliyuncs.com/google_containers/nginx-ingress-controller:v1.1.0
+#  pull_image_to_local.sh nginx:1.21.4 third
 #
 # explain
 #  docker pull kubernetesui/metrics-scraper:v1.0.7
-#  docker tag kubernetesui/metrics-scraper:v1.0.7 registry.wuxingdev.cn/google_containers/metrics-scraper:v1.0.7
-#  docker push registry.wuxingdev.cn/google_containers/metrics-scraper:v1.0.7
+#  docker tag kubernetesui/metrics-scraper:v1.0.7 hub.8ops.top/google_containers/metrics-scraper:v1.0.7
+#  docker push hub.8ops.top/google_containers/metrics-scraper:v1.0.7
 #  docker rmi kubernetesui/metrics-scraper:v1.0.7
-#  docker rmi registry.wuxingdev.cn/google_containers/metrics-scraper:v1.0.7
+#  docker rmi hub.8ops.top/google_containers/metrics-scraper:v1.0.7
 #
 
+set -e
+
 src=$1
+dst=$2
+harbor=hub.8ops.top
+[ -z $dst ] && dst=google_containers
 docker pull ${src}
-docker tag ${src} `echo ${src} |awk -F'/' '{printf("registry.wuxingdev.cn/google_containers/%s",$NF)}'`
-docker push `echo ${src} |awk -F'/' '{printf("registry.wuxingdev.cn/google_containers/%s",$NF)}'`
+docker tag ${src} `echo ${src} |awk -v harbor=${harbor} -v dst=${dst} -F'/' '{printf("%s/%s/%s",harbor,dst,$NF)}'`
+docker push `echo ${src} |awk -v harbor=${harbor} -v dst=${dst} -F'/' '{printf("%s/%s/%s",harbor,dst,$NF)}'`
 docker rmi ${src}
-docker rmi `echo ${src} |awk -F'/' '{printf("registry.wuxingdev.cn/google_containers/%s",$NF)}'`
+docker rmi `echo ${src} |awk -v harbor=${harbor} -v dst=${dst} -F'/' '{printf("%s/%s/%s",harbor,dst,$NF)}'`
 
 ```
 
@@ -57,6 +65,8 @@ kubernetes-dashboard	https://kubernetes.github.io/dashboard/
 
 推荐使用`azure`和`aliyun`
 
+
+
 ## 使用场景
 
 ### Ingress-nginx
@@ -67,38 +77,48 @@ helm repo update
 
 helm search repo ingress-nginx
 
-helm show values ingress-nginx/ingress-nginx > ingress-nginx-default.yaml
+helm show values ingress-nginx/ingress-nginx > ingress-nginx.yaml-default
 
-# vim ingress-nginx-external-config.yaml
+# vim ingress-nginx-external.yaml
 
+# deprecated
 # 若不FW需要变更 ~/.cache/helm/repository/ingress-nginx-index.yaml 从私有文件站下载
 ## sed -i 's#https://github.com/kubernetes/ingress-nginx/releases/download/helm-chart-4.0.13/ingress-nginx-4.0.13.tgz#http://filestorage.wuxingdev.cn/ops/helm/ingress-nginx-4.0.13.tgz#' ~/.cache/helm/repository/ingress-nginx-index.yaml
 
-kubectl label no gat-dev-k8s-node-11 edge=external
+kubectl label no k-kube-lab-04 edge=external
 helm install ingress-nginx-external-controller ingress-nginx/ingress-nginx \
-    -f ingress-nginx-external-config.yaml \
+    -f ingress-nginx-external.yaml \
     -n kube-server \
     --create-namespace \
     --version 4.0.13 --debug
 
-kubectl label no gat-dev-k8s-node-12 edge=internal
+kubectl label no k-kube-lab-05 edge=internal
 helm install ingress-nginx-internal-controller ingress-nginx/ingress-nginx \
-    -f ingress-nginx-internal-config.yaml \
+    -f ingress-nginx-internal.yaml \
     -n kube-server \
     --version 4.0.13 --debug
 
 helm list -A
 
-helm -n kube-server uninstall ingress-nginx-external-controller
+## upgrade
+# helm upgrade ingress-nginx-external-controller ingress-nginx/ingress-nginx \
+#     -f ingress-nginx-external-config.yaml \
+#     -n kube-server \
+#     --version 4.0.13 --debug
+
+## uninstall     
+# helm -n kube-server uninstall ingress-nginx-external-controller
 ```
 
-> vim ingress-nginx-external-config.yaml
+
+
+> vim ingress-nginx-external.yaml
 
 ```yaml
 controller:
   name: external
   image:
-    registry: registry.wuxingdev.cn
+    registry: hub.8ops.top
     image: google_containers/nginx-ingress-controller
     tag: "v1.1.0"
     digest:
@@ -121,10 +141,15 @@ controller:
     kubernetes.io/os: linux
     edge: external
 
+  service:
+    enabled: false
+
   lifecycle:
   admissionWebhooks:
     enabled: false
 ```
+
+![ingress-nginx](../images/kubernetes/screen/04-20.png)
 
 
 
@@ -136,35 +161,92 @@ helm repo update
 
 helm search repo kubernetes-dashboard
 
-helm show values kubernetes-dashboard/kubernetes-dashboard > kubernetes-dashboard-default.yaml
+helm show values kubernetes-dashboard/kubernetes-dashboard > kubernetes-dashboard.yaml-default
 
+# vim kubernetes-dashboard.yaml
+
+# deprecated
 # 若不FW需要变更 ~/.cache/helm/repository/kubernetes-dashboard-index.yaml 从私有文件站下载
 ## sed -i 's#kubernetes-dashboard-5.0.4.tgz#http://filestorage.wuxingdev.cn/ops/helm/kubernetes-dashboard-5.0.4.tgz#' ~/.cache/helm/repository/kubernetes-dashboard-index.yaml
 
 helm install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard \
-    -f kubernetes-dashboard-config.yaml \
+    -f kubernetes-dashboard.yaml \
     -n kube-server \
     --create-namespace \
     --version 5.0.4 --debug
 
-helm upgrade kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard -f kubernetes-dashboard-config.yaml -n kube-server --version 5.0.4 --debug
+helm upgrade kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard \
+    -f kubernetes-dashboard.yaml \
+    -n kube-server \
+    --version 5.0.4 --debug
 
+# create sa
 kubectl create serviceaccount dashboard-admin -n kube-server
-kubectl create clusterrolebinding dashboard-server --clusterrole=cluster-admin --serviceaccount=kube-system:dashboard-admin
-kubectl describe secrets -n kube-system $(kubectl -n kube-server get secret | awk '/dashboard-admin/{print $1}')
+
+# binding cluster-admin
+kubectl create clusterrolebinding dashboard-admin \
+  --clusterrole=cluster-admin \
+  --serviceaccount=kube-server:dashboard-admin
+
+# output token
+kubectl describe secrets \
+  -n kube-server $(kubectl -n kube-server get secret | awk '/dashboard-admin/{print $1}')
 ```
 
-> vim kubernetes-dashboard-config.yaml
+
+
+> vim kubernetes-dashboard.yaml
 
 ```yaml
 image:
-  repository: registry.wuxingdev.cn/google_containers/dashboard
+  repository: hub.8ops.top/google_containers/dashboard
   tag: v2.4.0
+
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+
+  className: "external"
+
+  hosts:
+    - dashboard.8ops.top
+  tls:
+    - secretName: tls-8ops.top
+      hosts:
+        - dashboard.8ops.top
+
+extraArgs:
+
+settings:
+  clusterName: "Dashboard of Lab"
+  itemsPerPage: 20
+  labelsLimit: 3
+  logsAutoRefreshTimeInterval: 10
+  resourceAutoRefreshTimeInterval: 10
+
+metricsScraper:
+  enabled: true
+  image:
+    repository: hub.8ops.top/google_containers/metrics-scraper
+    tag: v1.0.7
+
+metrics-server:
+  enabled: true
+  image:
+    repository: hub.8ops.top/google_containers/metrics-server
+    tag: v0.5.0
+  args:
+    - --kubelet-preferred-address
 ```
 
 
 
 
+![dashboard](../images/kubernetes/screen/04-21.png)
+
+
+![dashboard](../images/kubernetes/screen/04-22.png)
 
 
 
@@ -173,22 +255,4 @@ image:
 
 
 
-
-kubelet
-
-```yaml
-
-    nodeStatusReportFrequency: 10s
-    nodeStatusUpdateFrequency: 10s
-    imageGCLowThresholdPercent: 40
-    imageGCHighThresholdPercent: 50
-    systemReserved:
-      cpu: 500m
-      memory: 500m
-    kubeReserved:
-      cpu: 500m
-      memory: 500m
-    evictionPressureTransitionPeriod: 300s
-    maxPods: 200
-```
 

@@ -1,5 +1,9 @@
 # Kubernetes 常用组件-Dashboard
 
+推荐[使用helm安装](05-helm-usage.md)
+
+
+
 Kubernetes Cluster 安装好后我们需要一个面板来可视化管理，此处我们引用官方的dashboard。
 
 github[[1\]](https://github.com/kubernetes/dashboard)
