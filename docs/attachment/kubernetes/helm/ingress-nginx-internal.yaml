@@ -1,0 +1,32 @@
+controller:
+  name: internal
+  image:
+    registry: hub.8ops.top
+    image: google_containers/nginx-ingress-controller
+    tag: "v1.1.0"
+    digest:
+
+  hostNetwork: true
+  hostPort:
+    enabled: true
+    ports:
+      http: 80
+      https: 443
+
+  ingressClassResource:
+    name: internal
+    enabled: true
+    default: false
+    controllerValue: "k8s.io/ingress-nginx"
+
+  kind: DaemonSet
+  nodeSelector:
+    kubernetes.io/os: linux
+    edge: internal
+
+  service:
+    enabled: false
+
+  lifecycle:
+  admissionWebhooks:
+    enabled: false

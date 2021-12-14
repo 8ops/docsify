@@ -20,7 +20,9 @@ Kubernetes 编排管理的应用需要对外暴露访问，这种方式叫流量
 
 这里我们演示使用ingress-nginx
 
-相关引用github[[1\]](http://github.com/kubernetes/ingress-nginx),docs[[2\]](https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx),usage[[3\]](https://kubernetes.io/zh/docs/concepts/services-networking/ingress/),nginx[[4\]](https://docs.nginx.com/nginx-ingress-controller/installation/running-multiple-ingress-controllers/),configmap[[5\]](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/),metallb[[6\]](https://metallb.universe.tf/)
+相关引用github[[1]](http://github.com/kubernetes/ingress-nginx),docs[[2]](https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx),usage[[3]](https://kubernetes.io/zh/docs/concepts/services-networking/ingress/),nginx[[4]](https://docs.nginx.com/nginx-ingress-controller/installation/running-multiple-ingress-controllers/),configmap[[5]](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/),metallb[[6]](https://metallb.universe.tf/)
+
+
 
 ## 一、环境说明
 
@@ -48,7 +50,7 @@ kubectl label node k-kube-lab-02 edge=external
 kubectl label node k-kube-lab-03 edge=internal
 
 # 快速创建ingress-nginx-controller
-kubectl apply -f https://m.8ops.top/attachment/kubernetes/kube-ingress-controller.yaml
+kubectl apply -f https://books.8ops.top/attachment/kubernetes/02-ingress-controller.yaml
 
 # 移除admission and job
 kubectl -n kube-server delete ValidatingWebhookConfiguration/ingress-nginx-admission job.batch/ingress-nginx-admission-create job.batch/ingress-nginx-admission-patch service/ingress-nginx-controller-admission
@@ -72,25 +74,25 @@ kubectl -n kube-server delete ValidatingWebhookConfiguration/ingress-nginx-admis
 
 ```bash
 # 创建IngressClass
-kubectl apply -f https://m.8ops.top/attachment/kubernetes/ingress-controller/01-ingressclass.yaml
+kubectl apply -f https://books.8ops.top/attachment/kubernetes/addon/02-ingress-controller/01-ingressclass.yaml
 
 # 创建应用：方式一（此处选用）
-kubectl apply -f https://m.8ops.top/attachment/kubernetes/ingress-controller/02-app-echoserver.yaml
+kubectl apply -f https://books.8ops.top/attachment/kubernetes/addon/02-ingress-controller/02-app-echoserver.yaml
 
 # 创建应用：方式二
-kubectl apply -f https://m.8ops.top/attachment/kubernetes/ingress-controller/02-app-http-echo.yaml
+kubectl apply -f https://books.8ops.top/attachment/kubernetes/addon/02-ingress-controller/02-app-http-echo.yaml
 
 # 创建应用：方式三
-kubectl apply -f https://m.8ops.top/attachment/kubernetes/ingress-controller/02-app-nginx.yaml
+kubectl apply -f https://books.8ops.top/attachment/kubernetes/addon/02-ingress-controller/02-app-nginx.yaml
 
 # 暴露流量：方式一（nginx）
-kubectl apply -f https://m.8ops.top/attachment/kubernetes/ingress-controller/03-ing-default.yaml
+kubectl apply -f https://books.8ops.top/attachment/kubernetes/addmon/02-ingress-controller/03-ing-default.yaml
 
 # 暴露流量：方式二（external）
-kubectl apply -f https://m.8ops.top/attachment/kubernetes/ingress-controller/04-ing-external.yaml
+kubectl apply -f https://books.8ops.top/attachment/kubernetes/addon/02-ingress-controller/04-ing-external.yaml
 
 # 暴露流量：方式三（internal）
-kubectl apply -f https://m.8ops.top/attachment/kubernetes/ingress-controller/05-ing-internal.yaml
+kubectl apply -f https://books.8ops.top/attachment/kubernetes/addmon/02-ingress-controller/05-ing-internal.yaml
 ```
 
 ![快速应用](../images/kubernetes/screen/04-10.png)

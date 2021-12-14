@@ -83,7 +83,7 @@ helm show values ingress-nginx/ingress-nginx > ingress-nginx.yaml-default
 
 # deprecated
 # 若不FW需要变更 ~/.cache/helm/repository/ingress-nginx-index.yaml 从私有文件站下载
-## sed -i 's#https://github.com/kubernetes/ingress-nginx/releases/download/helm-chart-4.0.13/ingress-nginx-4.0.13.tgz#http://filestorage.wuxingdev.cn/ops/helm/ingress-nginx-4.0.13.tgz#' ~/.cache/helm/repository/ingress-nginx-index.yaml
+## sed -i 's#https://github.com/kubernetes/ingress-nginx/releases/download/helm-chart-4.0.13/ingress-nginx-4.0.13.tgz#http://d.8ops.top/ops/helm/ingress-nginx-4.0.13.tgz#' ~/.cache/helm/repository/ingress-nginx-index.yaml
 
 kubectl label no k-kube-lab-04 edge=external
 helm install ingress-nginx-external-controller ingress-nginx/ingress-nginx \
@@ -100,14 +100,14 @@ helm install ingress-nginx-internal-controller ingress-nginx/ingress-nginx \
 
 helm list -A
 
-## upgrade
-# helm upgrade ingress-nginx-external-controller ingress-nginx/ingress-nginx \
-#     -f ingress-nginx-external-config.yaml \
-#     -n kube-server \
-#     --version 4.0.13 --debug
+# upgrade
+helm upgrade ingress-nginx-external-controller ingress-nginx/ingress-nginx \
+    -f ingress-nginx-external-config.yaml \
+    -n kube-server \
+    --version 4.0.13 --debug
 
-## uninstall     
-# helm -n kube-server uninstall ingress-nginx-external-controller
+# uninstall     
+helm -n kube-server uninstall ingress-nginx-external-controller
 ```
 
 
@@ -149,7 +149,7 @@ controller:
     enabled: false
 ```
 
-![ingress-nginx](../images/kubernetes/screen/04-20.png)
+![ingress-nginx](../images/kubernetes/screen/05-20.png)
 
 
 
@@ -167,7 +167,7 @@ helm show values kubernetes-dashboard/kubernetes-dashboard > kubernetes-dashboar
 
 # deprecated
 # 若不FW需要变更 ~/.cache/helm/repository/kubernetes-dashboard-index.yaml 从私有文件站下载
-## sed -i 's#kubernetes-dashboard-5.0.4.tgz#http://filestorage.wuxingdev.cn/ops/helm/kubernetes-dashboard-5.0.4.tgz#' ~/.cache/helm/repository/kubernetes-dashboard-index.yaml
+## sed -i 's#kubernetes-dashboard-5.0.4.tgz#http://d.8ops.top/ops/helm/kubernetes-dashboard-5.0.4.tgz#' ~/.cache/helm/repository/kubernetes-dashboard-index.yaml
 
 helm install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard \
     -f kubernetes-dashboard.yaml \
@@ -243,10 +243,10 @@ metrics-server:
 
 
 
-![dashboard](../images/kubernetes/screen/04-21.png)
+![dashboard](../images/kubernetes/screen/05-21.png)
 
 
-![dashboard](../images/kubernetes/screen/04-22.png)
+![dashboard](../images/kubernetes/screen/05-22.png)
 
 
 

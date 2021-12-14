@@ -22,7 +22,7 @@ github[[1\]](https://github.com/kubernetes/dashboard)
 4. 增加nodeport-30001用于暴露服务
 
 ```bash
-kubectl apply -f https://m.8ops.top/attachment/kubernetes/kube-dashboard.yaml
+kubectl apply -f https://books.8ops.top/attachment/kubernetes/addon/01-kube-dashboard.yaml
 ```
 
 ![dashboard](../images/kubernetes/screen/03-09.png)
