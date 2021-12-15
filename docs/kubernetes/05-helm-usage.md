@@ -102,9 +102,15 @@ helm list -A
 
 # upgrade
 helm upgrade ingress-nginx-external-controller ingress-nginx/ingress-nginx \
-    -f ingress-nginx-external-config.yaml \
+    -f ingress-nginx-external.yaml \
     -n kube-server \
     --version 4.0.13 --debug
+
+helm upgrade ingress-nginx-internal-controller ingress-nginx/ingress-nginx \
+    -f ingress-nginx-internal.yaml \
+    -n kube-server \
+    --version 4.0.13 --debug
+
 
 # uninstall     
 helm -n kube-server uninstall ingress-nginx-external-controller

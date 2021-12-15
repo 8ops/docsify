@@ -168,6 +168,8 @@ update-ca-certificates
 #  -o /etc/containerd/config.toml
 ```
 
+
+
 > vim /etc/containerd/config.toml
 
 ```toml
@@ -195,6 +197,30 @@ update-ca-certificates
         [plugins."io.containerd.grpc.v1.cri".registry.configs."hub.8ops.top".tls]
           insecure_skip_verify = true    
 ```
+
+
+
+> lib存储目录变更
+
+来源于配置文件`/etc/containerd/config.toml`
+
+`/var/lib/containerd`需要指向到磁盘性能相对好的位置，空间、性能
+
+```bash
+systemctl stop containerd
+
+mkdir -p /data1/lib/containerd && \
+    mv /var/lib/containerd{,-20211215} && \
+    ln -s /data1/lib/containerd /var/lib/containerd
+
+systemctl start containerd
+```
+
+
+
+来源于配置文件`/etc/kubernetes/manifests/etcd.yaml`
+
+`/var/lib/etcd`
 
 
 
