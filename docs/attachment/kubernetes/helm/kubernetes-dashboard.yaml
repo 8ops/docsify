@@ -2,6 +2,14 @@ image:
   repository: hub.8ops.top/google_containers/dashboard
   tag: v2.4.0
 
+resources:
+  requests:
+    cpu: 100m
+    memory: 200Mi
+  limits:
+    cpu: 2
+    memory: 512Mi
+
 ingress:
   enabled: true
   annotations:
@@ -17,6 +25,7 @@ ingress:
         - dashboard.8ops.top
 
 extraArgs: 
+  - --token-ttl=86400
 
 settings:
   clusterName: "Dashboard of Lab"
