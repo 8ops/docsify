@@ -67,9 +67,7 @@ kubernetes-dashboard	https://kubernetes.github.io/dashboard/
 
 
 
-## 使用场景
-
-### Ingress-nginx
+## Ingress-nginx
 
 ```bash
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -159,7 +157,7 @@ controller:
 
 
 
-### Dashboard
+## Dashboard
 
 ```bash
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
