@@ -134,11 +134,21 @@ controller:
       http: 80
       https: 443
 
+  config: {} # nginx.conf 全局配置
+
   ingressClassResource:
     name: external
     enabled: true
     default: false
-    controllerValue: "k8s.io/ingress-nginx"
+    controllerValue: "k8s.io/ingress-nginx" # 这里的nginx是缺省的ingress-class
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
 
   kind: DaemonSet
   nodeSelector:
@@ -184,6 +194,7 @@ helm upgrade kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard \
     -n kube-server \
     --version 5.0.4 --debug
 
+#-----------------------------------------------------------
 # create sa
 kubectl create serviceaccount dashboard-admin -n kube-server
 
@@ -206,6 +217,14 @@ image:
   repository: hub.8ops.top/google_containers/dashboard
   tag: v2.4.0
 
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 1
+    memory: 512Mi
+
 ingress:
   enabled: true
   annotations:
@@ -220,7 +239,8 @@ ingress:
       hosts:
         - dashboard.8ops.top
 
-extraArgs:
+extraArgs: 
+  - --token-ttl=86400
 
 settings:
   clusterName: "Dashboard of Lab"
@@ -234,14 +254,30 @@ metricsScraper:
   image:
     repository: hub.8ops.top/google_containers/metrics-scraper
     tag: v1.0.7
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
 
 metrics-server:
   enabled: true
   image:
     repository: hub.8ops.top/google_containers/metrics-server
     tag: v0.5.0
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
   args:
-    - --kubelet-preferred-address
+    - --kubelet-preferred-address-types=InternalIP
+    - --kubelet-insecure-tls
+
 ```
 
 

@@ -13,11 +13,21 @@ controller:
       http: 80
       https: 443
 
+  config: {}
+
   ingressClassResource:
     name: internal
     enabled: true
     default: false
     controllerValue: "k8s.io/ingress-nginx"
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
 
   kind: DaemonSet
   nodeSelector:

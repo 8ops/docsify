@@ -25,10 +25,11 @@ spec:
         name: busybox
         resources:
           limits:
-            memory: 200Mi
+            cpu: 200m
+            memory: 100Mi
           requests:
             cpu: 100m
-            memory: 200Mi
+            memory: 50Mi
   updateStrategy:
     rollingUpdate:
       maxSurge: 0

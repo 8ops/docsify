@@ -27,6 +27,13 @@ items:
         - image: hub.8ops.top/third/nginx:1.21.3
           imagePullPolicy: IfNotPresent
           name: nginx
+          resources:
+            limits:
+              cpu: 200m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 50Mi
 - apiVersion: v1
   kind: Service
   metadata:
