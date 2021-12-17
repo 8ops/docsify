@@ -1,6 +1,6 @@
 # Helm的使用
 
-[docs](https://helm.sh/zh/docs/)
+[官方文档](https://helm.sh/zh/docs/)
 
 [helm hub](https://artifacthub.io/) 
 
@@ -39,26 +39,32 @@ docker rmi `echo ${src} |awk -v harbor=${harbor} -v dst=${dst} -F'/' '{printf("%
 
 ```
 
+[下载](https://books.8ops.top/attachment/kubernetes/02-pull-image-to-local.sh)
+
 
 
 ## 优化源
 
-生成缓存文件，必要时清空
+生成缓存文件所在目录，必要时清空
 
 - ~/.config/helm
 - ~/.cache/helm
 
+
+
+> 常用源
+
 ```bash
 # helm repo list
-NAME       URL
-azure      https://mirror.azure.cn/kubernetes/charts
-aliyun     https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
-elastic    https://helm.elastic.co
-gitlab     https://charts.gitlab.io
-harbor     https://helm.goharbor.io
-bitnami    https://charts.bitnami.com/bitnami
-incubator  https://kubernetes-charts-incubator.storage.googleapis.com
-google     https://kubernetes-charts.storage.googleapis.com
+NAME       						URL
+azure      						https://mirror.azure.cn/kubernetes/charts
+aliyun     						https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+elastic    						https://helm.elastic.co
+gitlab     						https://charts.gitlab.io
+harbor     						https://helm.goharbor.io
+bitnami    						https://charts.bitnami.com/bitnami
+incubator  						https://kubernetes-charts-incubator.storage.googleapis.com
+google     						https://kubernetes-charts.storage.googleapis.com
 ingress-nginx       	https://kubernetes.github.io/ingress-nginx
 kubernetes-dashboard	https://kubernetes.github.io/dashboard/
 ```
