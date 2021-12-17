@@ -1,5 +1,13 @@
 # Kubernetes Cluster 重置环境
 
+![Kubernetes Cluster 重置环境](../images/kubernetes/cover/02-cluster-reset.png)
+
+
+
+在搭建kubernetes cluster时很多时候需要快速重置一个节点，避免第二次搭建或重新将节点加入集群时被干扰，故整理了一键重置操作方便快速复用。
+
+
+
 *已经封装一键脚本，下载直接执行*
 
 ## 一、快速应用

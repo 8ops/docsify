@@ -19,7 +19,7 @@ set -e
 src=$1
 dst=$2
 harbor=hub.8ops.top
-[ -z $dst ] && dst=google_containers
+[ -z ${dst} ] && dst=google_containers
 docker pull ${src}
 docker tag ${src} `echo ${src} |awk -v harbor=${harbor} -v dst=${dst} -F'/' '{printf("%s/%s/%s",harbor,dst,$NF)}'`
 docker push `echo ${src} |awk -v harbor=${harbor} -v dst=${dst} -F'/' '{printf("%s/%s/%s",harbor,dst,$NF)}'`

@@ -1,8 +1,18 @@
 # Helm的使用
 
-[官方文档](https://helm.sh/zh/docs/)
+![Helm的使用](../images/kubernetes/cover/05-helm-usage.png)
 
-[helm hub](https://artifacthub.io/) 
+Helm 是 Kubernetes 的包管理器，从CNCF毕业。
+
+使用Helm安装Kubernetes中的插件将会变得是一件容易的事情。
+
+
+
+官方文档 https://helm.sh/zh/docs/
+
+helm hub https://artifacthub.io/ 
+
+
 
 ## 镜像源私有化
 
@@ -10,6 +20,9 @@
 
 ```bash
 #!/bin/bash
+
+# download
+#   https://books.8ops.top/attachment/kubernetes/02-pull-image-to-local.sh
 
 #
 # example
@@ -30,7 +43,7 @@ set -e
 src=$1
 dst=$2
 harbor=hub.8ops.top
-[ -z $dst ] && dst=google_containers
+[ -z ${dst} ] && dst=google_containers
 docker pull ${src}
 docker tag ${src} `echo ${src} |awk -v harbor=${harbor} -v dst=${dst} -F'/' '{printf("%s/%s/%s",harbor,dst,$NF)}'`
 docker push `echo ${src} |awk -v harbor=${harbor} -v dst=${dst} -F'/' '{printf("%s/%s/%s",harbor,dst,$NF)}'`
@@ -39,13 +52,11 @@ docker rmi `echo ${src} |awk -v harbor=${harbor} -v dst=${dst} -F'/' '{printf("%
 
 ```
 
-[下载](https://books.8ops.top/attachment/kubernetes/02-pull-image-to-local.sh)
-
 
 
 ## 优化源
 
-生成缓存文件所在目录，必要时清空
+使用Helm后会生成相应的缓存文件，使用过程中必要时可以主动清空。目录如下
 
 - ~/.config/helm
 - ~/.cache/helm
@@ -57,16 +68,16 @@ docker rmi `echo ${src} |awk -v harbor=${harbor} -v dst=${dst} -F'/' '{printf("%
 ```bash
 # helm repo list
 NAME       						URL
-azure      						https://mirror.azure.cn/kubernetes/charts
-aliyun     						https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
-elastic    						https://helm.elastic.co
-gitlab     						https://charts.gitlab.io
-harbor     						https://helm.goharbor.io
-bitnami    						https://charts.bitnami.com/bitnami
-incubator  						https://kubernetes-charts-incubator.storage.googleapis.com
-google     						https://kubernetes-charts.storage.googleapis.com
-ingress-nginx       	https://kubernetes.github.io/ingress-nginx
-kubernetes-dashboard	https://kubernetes.github.io/dashboard/
+azure                 https://mirror.azure.cn/kubernetes/charts
+aliyun                https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+elastic               https://helm.elastic.co
+gitlab                https://charts.gitlab.io
+harbor                https://helm.goharbor.io
+bitnami               https://charts.bitnami.com/bitnami
+incubator             https://kubernetes-charts-incubator.storage.googleapis.com
+google                https://kubernetes-charts.storage.googleapis.com
+ingress-nginx         https://kubernetes.github.io/ingress-nginx
+kubernetes-dashboard  https://kubernetes.github.io/dashboard/
 ```
 
 推荐使用`azure`和`aliyun`
@@ -169,7 +180,11 @@ controller:
     enabled: false
 ```
 
-![ingress-nginx](../images/kubernetes/screen/05-20.png)
+
+
+> 效果演示
+
+![查看应用效果](../images/kubernetes/screen/05-20.png)
 
 
 
@@ -288,11 +303,14 @@ metrics-server:
 
 
 
+> 效果演示
 
-![dashboard](../images/kubernetes/screen/05-21.png)
+
+![打开Dashboard](../images/kubernetes/screen/05-21.png)
 
 
-![dashboard](../images/kubernetes/screen/05-22.png)
+
+![登录Dashboard](../images/kubernetes/screen/05-22.png)
 
 
 

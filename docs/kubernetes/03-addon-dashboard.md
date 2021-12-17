@@ -1,5 +1,9 @@
 # Kubernetes 常用组件-Dashboard
 
+![Kubernetes 常用组件-Dashboard](../images/kubernetes/cover/03-addon-dashboard.png)
+
+
+
 推荐[使用helm安装](05-helm-usage.md)
 
 

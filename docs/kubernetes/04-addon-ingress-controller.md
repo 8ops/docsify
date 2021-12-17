@@ -1,5 +1,7 @@
 # Kubernetes 常用组件-Ingress-Controller
 
+![Kubernetes 常用组件-Ingress-Controller](../images/kubernetes/cover/04-addon-ingress-controller.png)
+
 推荐[使用helm安装](05-helm-usage.md)
 
 

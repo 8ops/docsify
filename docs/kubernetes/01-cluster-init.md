@@ -1,6 +1,6 @@
 # Kubernetes Cluster 快速搭建
 
-
+![Kubernetes Cluster 快速搭建](../images/kubernetes/cover/01-cluster-init.png)
 
 *跟着我的笔记一步一步操作成功搭建 kubernetes cluster吧*
 
