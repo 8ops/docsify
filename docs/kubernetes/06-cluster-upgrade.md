@@ -1,5 +1,7 @@
 # 升级kubernetes
 
+![upgrade](../images/kubernetes/cover/06-cluster-upgrade.png)
+
 [Upgrading kubeadm clusters | Kubernetes](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/)
 
 [kubeadm upgrade | Kubernetes](https://kubernetes.io/zh/docs/reference/setup-tools/kubeadm/kubeadm-upgrade/)
@@ -8,9 +10,9 @@
 
 
 
-## 镜像同步
+## 一、镜像同步
 
-[image-syncer](https://github.com/AliyunContainerService/image-syncer)
+推荐使用image-syncer [[1]](https://github.com/AliyunContainerService/image-syncer)
 
 > auth.json
 
@@ -51,7 +53,7 @@ image-syncer --auth=auth.json --images=images.json --arch=amd64 --os=linux
 
 
 
-## 安装二进制
+## 二、升级二进制
 
 ```bash
 # --------- update ----------- #
@@ -67,7 +69,7 @@ apt-mark showhold
 
 
 
-## 升级
+## 三、升级环境
 
 ```yaml
 kubeadm upgrade plan 
@@ -96,29 +98,6 @@ kubeadm certs check-expiration
 
 ```bash
 KUBELET_KUBEADM_ARGS="--container-runtime=remote --container-runtime-endpoint=/var/run/containerd/containerd.sock --pod-infra-container-image=hub.8ops.top/google_containers/pause:3.6"
-```
-
-
-
-## 迁移应用
-
-[yq](https://github.com/mikefarah/yq)
-
-```bash
-
-for OBJ in $(kubectl api-resources --verbs=list --namespaced -o name)
-do
-   for DEF in $(kubectl get --show-kind --ignore-not-found $OBJ -o name)
-   do
-      mkdir -p $(dirname $DEF)
-      kubectl get $DEF -o yaml \
-      | yq eval 'del(.metadata.resourceVersion, .metadata.uid, .metadata.annotations, .metadata.creationTimestamp, .metadata.selfLink, .metadata.managedFields)' - > $DEF.yaml 
-   done
-done
-
-
-kubectl get ep  -l k8s-ep=custom-ep -o yaml | \
-    ./yq eval 'del(.items[].metadata.resourceVersion, .items[].metadata.uid, .items[].metadata.annotations, .items[].metadata.creationTimestamp, .items[].metadata.selfLink, .items[].metadata.managedFields, .metadata)' - > endpoints.list.yaml
 ```
 
 

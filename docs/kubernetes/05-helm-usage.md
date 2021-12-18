@@ -1,6 +1,6 @@
 # Helm的使用
 
-![Helm的使用](../images/kubernetes/cover/05-helm-usage.png)
+![helm](../images/kubernetes/cover/05-helm-usage.png)
 
 Helm 是 Kubernetes 的包管理器，从CNCF毕业。
 
@@ -14,7 +14,7 @@ helm hub https://artifacthub.io/
 
 ![Helm](../images/kubernetes/helm.png)
 
-## 镜像源私有化
+## 一、镜像源私有化
 
 将外部镜像产物拉到私有环境缓存起来
 
@@ -54,7 +54,7 @@ docker rmi `echo ${src} |awk -v harbor=${harbor} -v dst=${dst} -F'/' '{printf("%
 
 
 
-## 优化源
+## 二、优化源
 
 使用Helm后会生成相应的缓存文件，使用过程中必要时可以主动清空。目录如下
 
@@ -84,7 +84,7 @@ kubernetes-dashboard  https://kubernetes.github.io/dashboard/
 
 
 
-## Ingress-nginx
+## 三、Ingress-nginx
 
 ```bash
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -188,7 +188,7 @@ controller:
 
 
 
-## Dashboard
+## 四、Dashboard
 
 ```bash
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/

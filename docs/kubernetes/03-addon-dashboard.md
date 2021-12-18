@@ -1,6 +1,6 @@
 # Kubernetes 常用组件-Dashboard
 
-![Kubernetes 常用组件-Dashboard](../images/kubernetes/cover/03-addon-dashboard.png)
+![dashboard](../images/kubernetes/cover/03-addon-dashboard.png)
 
 
 

@@ -1,6 +1,6 @@
 # Kubernetes Cluster 重置环境
 
-![Kubernetes Cluster 重置环境](../images/kubernetes/cover/02-cluster-reset.png)
+![reset](../images/kubernetes/cover/02-cluster-reset.png)
 
 
 
@@ -12,7 +12,7 @@
 
 ## 一、快速应用
 
-清除内容包括
+> 清除内容包括
 
 1. reset kubernetes cluster 
 2. release network
