@@ -37,6 +37,18 @@ curl -s https://books.8ops.top/attachment/kubernetes/99-reset.sh | bash
 
 ## 二、逻辑解析
 
+> 设计原理
+
+在kubernetes cluster搭建过程中会产生很多的虚拟网卡，安装相应的软件包在ubuntu操作系统中。
+
+为达到彻底重置一个节点，让他回到最初的无污染操作系统状态。
+
+充分应用了ubuntu操作系统特性对网络模块、软件包模块及服务模块的管理环节。
+
+
+
+> 脚本内容
+
 ```Bash
 #!/bin/bash
 

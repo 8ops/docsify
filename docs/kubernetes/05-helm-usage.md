@@ -14,6 +14,10 @@ helm hub https://artifacthub.io/
 
 ![Helm](../images/kubernetes/helm.png)
 
+Helm是个很意思的工具，简化了kubernetes上常用组件的管理。
+
+
+
 ## 一、镜像源私有化
 
 将外部镜像产物拉到私有环境缓存起来

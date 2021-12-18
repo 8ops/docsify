@@ -1,7 +1,3 @@
-
-
-
-
 # Kubernetes 常用组件-Ingress-Controller
 
 ![ingress-controller](../images/kubernetes/cover/04-addon-ingress-controller.png)
@@ -41,6 +37,10 @@ Kubernetes 编排管理的应用需要对外暴露访问，这种方式叫流量
 
 
 
+ingress-nginx是google官方基于nginx最新版本，通过Lua动态加载nginx配置，其配置来源于ingress资源。
+
+
+
 ## 一、环境说明
 
 | 主机名称      | 主机IP        | 操作系统           | 角色分配             | IngressClass |
@@ -51,7 +51,7 @@ Kubernetes 编排管理的应用需要对外暴露访问，这种方式叫流量
 | K-KUBE-LAB-04 | 10.101.11.234 | Ubuntu 20.04.2 LTS | node                 |              |
 | K-KUBE-LAB-05 | 10.101.11.171 | Ubuntu 20.04.2 LTS | node                 |              |
 
-这里使用3台control-plane,master节点分别暴露流量
+这里使用3台control-plane,master节点分别暴露流量。
 
 
 
@@ -72,6 +72,10 @@ kubectl apply -f https://books.8ops.top/attachment/kubernetes/02-ingress-control
 # 移除admission and job
 kubectl -n kube-server delete ValidatingWebhookConfiguration/ingress-nginx-admission job.batch/ingress-nginx-admission-create job.batch/ingress-nginx-admission-patch service/ingress-nginx-controller-admission
 ```
+
+
+
+> 演示效果
 
 ![启动控制器](../images/kubernetes/screen/04-09.png)
 

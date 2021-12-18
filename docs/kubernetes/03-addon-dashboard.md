@@ -78,6 +78,8 @@ kubectl describe secrets \
 
 创建完成后在**Chrome**浏览器打开提示非安全站点，由于证书是私有的浏览器无法识别，可以通过在页面上盲敲命令**thisisunsafe**成功打开网页。
 
+究其原因是Chrome浏览器对站点访问安全级别较高。
+
 
 
 > 演示效果
