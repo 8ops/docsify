@@ -1,4 +1,4 @@
-# 升级kubernetes
+# Kubernetes Cluster 升级版本
 
 ![upgrade](../images/kubernetes/cover/06-cluster-upgrade.png)
 
@@ -7,6 +7,18 @@
 [kubeadm upgrade | Kubernetes](https://kubernetes.io/zh/docs/reference/setup-tools/kubeadm/kubeadm-upgrade/)
 
 
+
+升级前后版本对比
+
+| 软件名称   | 当前版本               | 最新版本 |
+| ---------- | ---------------------- | -------- |
+| kubeadm    | v1.22.2                | v1.23.0  |
+| kubelet    | v1.22.2                | v1.23.0  |
+| kubernetes | v1.22.2                | v1.23.0  |
+| etcd       | 3.4.13-0               | v3.5.1   |
+| flannel    | v0.15.0                | v0.15.1  |
+| coredns    | 1.8.4                  | 1.8.6    |
+| containerd | 1.5.5-0ubuntu3~20.04.1 | 1.5.8    |
 
 
 
