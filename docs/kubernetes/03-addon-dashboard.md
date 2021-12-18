@@ -6,11 +6,13 @@
 
 推荐[使用helm安装](05-helm-usage.md)
 
+https://books.8ops.top/#/kubernetes/05-helm-usage
+
 
 
 Kubernetes Cluster 安装好后我们需要一个面板来可视化管理，此处我们引用官方的dashboard。
 
-github[[1\]](https://github.com/kubernetes/dashboard)
+github[[1]](https://github.com/kubernetes/dashboard)
 
 ![dashboard](../images/kubernetes/screen/03-11.png)
 
@@ -28,6 +30,10 @@ github[[1\]](https://github.com/kubernetes/dashboard)
 ```bash
 kubectl apply -f https://books.8ops.top/attachment/kubernetes/addon/01-kube-dashboard.yaml
 ```
+
+
+
+> 演示效果
 
 ![dashboard](../images/kubernetes/screen/03-09.png)
 
@@ -51,22 +57,30 @@ kubectl describe secrets \
 
 
 
-指令用意
+> 指令用意
 
 1. 授予管理员权限用于通过dashboard管理cluster
 2. 获取网页版登录token
+
+
+
+> 演示效果
 
 ![token](../images/kubernetes/screen/03-10.png)
 
 
 
-> 浏览器访问
+> 演示效果
 
 `https://10.101.11.240:30001/`
 
-![Dashboard](../images/kubernetes/screen/03-12.png)
+![浏览器访问](../images/kubernetes/screen/03-12.png)
 
 创建完成后在**Chrome**浏览器打开提示非安全站点，由于证书是私有的浏览器无法识别，可以通过在页面上盲敲命令**thisisunsafe**成功打开网页。
+
+
+
+> 演示效果
 
 ![Dashboard](../images/kubernetes/screen/03-13.png)
 

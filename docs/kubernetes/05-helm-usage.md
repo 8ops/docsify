@@ -12,7 +12,7 @@ Helm 是 Kubernetes 的包管理器，从CNCF毕业。
 
 helm hub https://artifacthub.io/ 
 
-
+![Helm](../images/kubernetes/helm.png)
 
 ## 镜像源私有化
 
@@ -182,7 +182,7 @@ controller:
 
 
 
-> 效果演示
+> 演示效果
 
 ![查看应用效果](../images/kubernetes/screen/05-20.png)
 
@@ -303,7 +303,7 @@ metrics-server:
 
 
 
-> 效果演示
+> 演示效果
 
 
 ![打开Dashboard](../images/kubernetes/screen/05-21.png)

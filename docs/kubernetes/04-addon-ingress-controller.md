@@ -1,8 +1,14 @@
+
+
+
+
 # Kubernetes 常用组件-Ingress-Controller
 
 ![Kubernetes 常用组件-Ingress-Controller](../images/kubernetes/cover/04-addon-ingress-controller.png)
 
 推荐[使用helm安装](05-helm-usage.md)
+
+https://books.8ops.top/#/kubernetes/05-helm-usage
 
 
 
@@ -20,9 +26,18 @@ Kubernetes 编排管理的应用需要对外暴露访问，这种方式叫流量
 - [gloo](https://github.com/solo-io/gloo)
 - [skipper](https://github.com/zalando/skipper)
 
+
+
 这里我们演示使用ingress-nginx
 
-相关引用github[[1]](http://github.com/kubernetes/ingress-nginx),docs[[2]](https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx),usage[[3]](https://kubernetes.io/zh/docs/concepts/services-networking/ingress/),nginx[[4]](https://docs.nginx.com/nginx-ingress-controller/installation/running-multiple-ingress-controllers/),configmap[[5]](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/),metallb[[6]](https://metallb.universe.tf/)
+相关引用
+
+- github[[1]](http://github.com/kubernetes/ingress-nginx)
+- docs[[2]](https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx)
+- guide[[3]](https://kubernetes.io/zh/docs/concepts/services-networking/ingress/)
+- nginx[[4]](https://docs.nginx.com/nginx-ingress-controller/installation/running-multiple-ingress-controllers/)
+- configmap[[5]](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/)
+- metallb[[6]](https://metallb.universe.tf/)
 
 
 
@@ -97,6 +112,10 @@ kubectl apply -f https://books.8ops.top/attachment/kubernetes/addon/02-ingress-c
 kubectl apply -f https://books.8ops.top/attachment/kubernetes/addmon/02-ingress-controller/05-ing-internal.yaml
 ```
 
+
+
+> 演示效果
+
 ![快速应用](../images/kubernetes/screen/04-10.png)
 
 
@@ -114,13 +133,19 @@ curl -i -k -H Host:external.8ops.top https://10.101.11.146/
 curl -i -H Host:internal.8ops.top http://10.101.11.154/
 ```
 
-![access nginx](../images/kubernetes/screen/04-13.png)
+
+
+> 演示效果
+
+![缺省访问](../images/kubernetes/screen/04-13.png)
+
+
 
 ![access external](../images/kubernetes/screen/04-14.png)
 
+
+
 ![access internal](../images/kubernetes/screen/04-15.png)
-
-
 
 
 

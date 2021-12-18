@@ -2,7 +2,13 @@
 
 ![Kubernetes Cluster 快速搭建](../images/kubernetes/cover/01-cluster-init.png)
 
-*跟着我的笔记一步一步操作成功搭建 kubernetes cluster吧*
+Kubernetes 是一个开源的容器编排引擎，用来对容器化应用进行自动化部署、 扩缩和管理。
+
+从CNCF毕业，Kubernetes是当下最火热的技术各大中小互联网公司都在积极推进他的落地。
+
+*接下来跟着我的笔记一步一步操作简单快速搭建 kubernetes cluster吧*。
+
+
 
 > 目录
 
@@ -359,6 +365,8 @@ kind: KubeProxyConfiguration
 
 
 
+> 演示效果
+
 ![操作镜像](../images/kubernetes/screen/01-08.png)
 
 
@@ -368,6 +376,10 @@ kind: KubeProxyConfiguration
 ```bash
 kubeadm init --config kubeadm-init.yaml --upload-certs -v 5
 ```
+
+
+
+> 演示效果
 
 ![初始化集群](../images/kubernetes/screen/01-09.png)
 

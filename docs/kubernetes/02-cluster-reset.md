@@ -29,6 +29,8 @@ curl -s https://books.8ops.top/attachment/kubernetes/99-reset.sh | bash
 
 
 
+> 演示效果
+
 ![kubernetes cluster reset](../images/kubernetes/screen/02-reset.png)
 
 
