@@ -1,18 +1,14 @@
-# Kubernetes 常用组件-Dashboard
+# 实战 | Kubernetes 常用组件-Dashboard
 
 ![dashboard](../images/kubernetes/cover/03-addon-dashboard.png)
 
-
-
-推荐[使用helm安装](05-helm-usage.md)
-
-https://books.8ops.top/#/kubernetes/05-helm-usage
+推荐使用helm安装，参考[实战 | Helm的使用](https://books.8ops.top/#/kubernetes/05-helm-usage)
 
 
 
 Kubernetes Cluster 安装好后我们需要一个面板来可视化管理，此处我们引用官方的dashboard。
 
-github[[1]](https://github.com/kubernetes/dashboard)
+[code](https://github.com/kubernetes/dashboard)
 
 ![dashboard](../images/kubernetes/screen/03-11.png)
 
@@ -57,7 +53,7 @@ kubectl describe secrets \
 
 
 
-> 指令用意
+> 操作解说
 
 1. 授予管理员权限用于通过dashboard管理cluster
 2. 获取网页版登录token
@@ -72,7 +68,7 @@ kubectl describe secrets \
 
 > 演示效果
 
-`https://10.101.11.240:30001/`
+通过浏览器访问`https://10.101.11.240:30001/`
 
 ![浏览器访问](../images/kubernetes/screen/03-12.png)
 

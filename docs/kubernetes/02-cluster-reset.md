@@ -1,4 +1,4 @@
-# Kubernetes Cluster 重置环境
+# 实战 | Kubernetes Cluster 重置环境
 
 ![reset](../images/kubernetes/cover/02-cluster-reset.png)
 
@@ -20,8 +20,6 @@
 4. stop service
 5. remove package
 6. release directory or files
-
-
 
 ```bash
 curl -s https://books.8ops.top/attachment/kubernetes/99-reset.sh | bash

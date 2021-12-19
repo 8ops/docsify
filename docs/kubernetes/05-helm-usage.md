@@ -1,4 +1,4 @@
-# Helm的使用
+# 实战 | Helm的使用
 
 ![helm](../images/kubernetes/cover/05-helm-usage.png)
 
@@ -8,9 +8,9 @@ Helm 是 Kubernetes 的包管理器，从CNCF毕业。
 
 
 
-官方文档 https://helm.sh/zh/docs/
+[官方文档](https://helm.sh/zh/docs/)
 
-helm hub https://artifacthub.io/ 
+[helm hub](https://artifacthub.io/ ) 
 
 ![Helm](../images/kubernetes/helm.png)
 
@@ -20,13 +20,10 @@ Helm是个很意思的工具，简化了kubernetes上常用组件的管理。
 
 ## 一、镜像源私有化
 
-将外部镜像产物拉到私有环境缓存起来
+将外部镜像产物拉到私有环境缓存起来[下载脚本](https://books.8ops.top/attachment/kubernetes/02-pull-image-to-local.sh)
 
 ```bash
 #!/bin/bash
-
-# download
-#   https://books.8ops.top/attachment/kubernetes/02-pull-image-to-local.sh
 
 #
 # example

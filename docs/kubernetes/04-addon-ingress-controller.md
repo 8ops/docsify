@@ -1,14 +1,14 @@
-# Kubernetes 常用组件-Ingress-Controller
+# 实战 | Kubernetes 常用组件-Ingress-Controller
 
 ![ingress-controller](../images/kubernetes/cover/04-addon-ingress-controller.png)
 
-推荐[使用helm安装](05-helm-usage.md)
-
-https://books.8ops.top/#/kubernetes/05-helm-usage
+推荐使用helm安装，参考[实战 | Helm的使用](https://books.8ops.top/#/kubernetes/05-helm-usage)
 
 
 
-Kubernetes 编排管理的应用需要对外暴露访问，这种方式叫流量控制，目前常用流量控制的技术有好几种如下
+Kubernetes 编排管理的Web应用需要对外暴露访问，这种方式叫流量控制。
+
+> 目前常用流量控制的技术有好几种，整理如下
 
 - [ingress-nginx](https://github.com/kubernetes/ingress-nginx)
 - [nginxinc](https://github.com/nginxinc/kubernetes-ingress)
@@ -26,14 +26,14 @@ Kubernetes 编排管理的应用需要对外暴露访问，这种方式叫流量
 
 这里我们演示使用ingress-nginx
 
-相关引用
+> 相关引用
 
-- github[[1]](http://github.com/kubernetes/ingress-nginx)
-- docs[[2]](https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx)
-- guide[[3]](https://kubernetes.io/zh/docs/concepts/services-networking/ingress/)
-- nginx[[4]](https://docs.nginx.com/nginx-ingress-controller/installation/running-multiple-ingress-controllers/)
-- configmap[[5]](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/)
-- metallb[[6]](https://metallb.universe.tf/)
+- [code](http://github.com/kubernetes/ingress-nginx)
+- [docs](https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx)
+- [guide](https://kubernetes.io/zh/docs/concepts/services-networking/ingress/)
+- [nginx](https://docs.nginx.com/nginx-ingress-controller/installation/running-multiple-ingress-controllers/)
+- [configmap](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/)
+- [metallb](https://metallb.universe.tf/)
 
 
 

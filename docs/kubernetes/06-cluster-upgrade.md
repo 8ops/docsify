@@ -1,6 +1,14 @@
-# Kubernetes Cluster 升级版本
+# 实战 | Kubernetes Cluster 升级版本
 
 ![upgrade](../images/kubernetes/cover/06-cluster-upgrade.png)
+
+Kubernetes Cluster升级是一件必要的事情，因为kubernetes更新实在太频繁了。
+
+一旦落下太多版本，很多新特性就会使用不上，同时很多及时的补丁也无法享用。
+
+这里演示我的一次升级过程。
+
+
 
 [Upgrading kubeadm clusters | Kubernetes](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/)
 
@@ -24,7 +32,7 @@
 
 ## 一、镜像同步
 
-推荐使用image-syncer [[1]](https://github.com/AliyunContainerService/image-syncer)
+推荐使用[image-syncer](https://github.com/AliyunContainerService/image-syncer)
 
 > auth.json
 
@@ -53,7 +61,7 @@
 }
 ```
 
-需要存在项目 hub.8ops.top/google_containers ，否则会出现同步不成功情况
+需要存在项目 `hub.8ops.top/google_containers` ，否则会出现同步不成功情况
 
 
 
@@ -61,7 +69,7 @@
 image-syncer --auth=auth.json --images=images.json --arch=amd64 --os=linux
 ```
 
-一定要指定arch，否则会同步非预期的arch镜像产物过来
+一定要指定**arch**，否则会同步非预期的arch镜像产物过来
 
 
 

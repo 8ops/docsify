@@ -1,4 +1,4 @@
-# 跨集群迁移容器
+# 实战 | 跨集群迁移容器
 
 ![migrate](../images/kubernetes/cover/00-coverpage.png)
 
@@ -10,14 +10,12 @@
 
 推荐使用 yq
 
-- page[[1]](https://mikefarah.gitbook.io/yq/)
-- code[[2]](https://github.com/mikefarah/yq)
+- [page](https://mikefarah.gitbook.io/yq/)
+- [code](https://github.com/mikefarah/yq)
 
 ```bash
-# 
-# https://mikefarah.gitbook.io/yq
-# https://github.com/mikefarah/yq
-# 
+#!/bin/bash 
+
 for OBJ in $(kubectl api-resources --verbs=list --namespaced -o name)
 do
    for DEF in $(kubectl get --show-kind --ignore-not-found $OBJ -o name)
@@ -242,9 +240,9 @@ exit 0
 
 
 
-### 2.3 后续跟进
+### 2.3 跟进维护
 
-由于一次性执行会导致kubernetes cluster吃不消
+由于一次性执行过多的命令去创建资源会导致kubernetes cluster吃不消
 
 ```bash
 # 查看生效状态

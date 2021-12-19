@@ -1,10 +1,12 @@
-# Kubernetes Cluster 快速搭建
+# 实战 | Kubernetes Cluster 快速搭建
 
 ![init](../images/kubernetes/cover/01-cluster-init.png)
 
 Kubernetes 是一个开源的容器编排引擎，用来对容器化应用进行自动化部署、 扩缩和管理。
 
 从CNCF毕业，Kubernetes是当下最火热的技术各大中小互联网公司都在积极推进他的落地。
+
+
 
 *接下来跟着我的笔记一步一步操作简单快速搭建 kubernetes cluster吧*。
 
@@ -39,7 +41,7 @@ Kubernetes 是一个开源的容器编排引擎，用来对容器化应用进行
 
 ## 一、背景描述
 
-采用**kubeadm**方式安装[[1]](https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/)
+采用**[kubeadm](https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/)**方式安装
 
 ![kubeadm](../images/kubernetes/kubeadm-stacked.png)
 
@@ -71,14 +73,14 @@ Kubernetes 是一个开源的容器编排引擎，用来对容器化应用进行
 | coredns    | 1.8.4                  | 1.8.6    |
 | containerd | 1.5.5-0ubuntu3~20.04.1 | 1.5.8    |
 
-- kubeadm  [[2]](https://github.com/kubernetes/kubeadm)
-- kubernetes  [[3]](https://github.com/kubernetes/kubernetes)
-- [etcd](https://etcd.io/)  [[4]](https://github.com/etcd-io/etcd) 
-- cni  [[5]](https://github.com/containernetworking/cni)
-- containerd  [[6]](https://github.com/containerd/containerd)
-- flannel  [[7]](https://github.com/flannel-io/flannel)
-- coredns  [[8]](https://github.com/coredns/coredns)
-- dashboard  [[9]](https://github.com/kubernetes/dashboard)
+- [kubeadm](https://github.com/kubernetes/kubeadm)
+- [kubernetes](https://github.com/kubernetes/kubernetes)
+- [etcd](https://etcd.io/)、[code](https://github.com/etcd-io/etcd) 
+- [cni](https://github.com/containernetworking/cni)
+- [containerd](https://github.com/containerd/containerd)
+- [flannel](https://github.com/flannel-io/flanne)
+- [coredns](https://github.com/coredns/coredns)
+- [dashboard](https://github.com/kubernetes/dashboard)
 
 
 
@@ -146,7 +148,7 @@ apt-mark hold containerd
 apt-mark showhold
 ```
 
-更多容器运行时[[10]](https://kubernetes.io/zh/docs/setup/production-environment/container-runtimes/)
+更多[容器运行时](https://kubernetes.io/zh/docs/setup/production-environment/container-runtimes/)
 
 
 
@@ -557,8 +559,6 @@ etcdctl member list \
 	--cert=/etc/kubernetes/pki/etcd/server.crt \
 	--key=/etc/kubernetes/pki/etcd/server.key
 ```
-
-
 
 
 
