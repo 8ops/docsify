@@ -4,11 +4,11 @@ image:
 
 resources:
   requests:
-    cpu: 200m
-    memory: 256Mi
+    cpu: 500m
+    memory: 512Mi
   limits:
     cpu: 1
-    memory: 512Mi
+    memory: 1Gi
 
 ingress:
   enabled: true
@@ -30,8 +30,6 @@ extraArgs:
 settings:
   clusterName: "Dashboard of Lab"
   itemsPerPage: 20
-  labelsLimit: 3
-  logsAutoRefreshTimeInterval: 10
   resourceAutoRefreshTimeInterval: 10
 
 metricsScraper:
@@ -42,10 +40,10 @@ metricsScraper:
   resources:
     requests:
       cpu: 100m
-      memory: 128Mi
+      memory: 256Mi
     limits:
       cpu: 100m
-      memory: 128Mi
+      memory: 256Mi
 
 metrics-server:
   enabled: true
@@ -55,10 +53,11 @@ metrics-server:
   resources:
     requests:
       cpu: 100m
-      memory: 128Mi
+      memory: 256Mi
     limits:
       cpu: 100m
-      memory: 128Mi
+      memory: 256Mi
   args:
     - --kubelet-preferred-address-types=InternalIP
     - --kubelet-insecure-tls
+

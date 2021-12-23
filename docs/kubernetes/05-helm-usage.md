@@ -87,6 +87,14 @@ kubernetes-dashboard  https://kubernetes.github.io/dashboard/
 
 ## 三、Ingress-nginx
 
+> 宿主机kernel优化
+
+```bash
+sysctl -w net.core.somaxconn=32768; sysctl -w net.ipv4.ip_local_port_range='1024 65000'
+```
+
+
+
 ```bash
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
@@ -102,6 +110,7 @@ helm show values ingress-nginx/ingress-nginx > ingress-nginx.yaml-default
 ## sed -i 's#https://github.com/kubernetes/ingress-nginx/releases/download/helm-chart-4.0.13/ingress-nginx-4.0.13.tgz#http://d.8ops.top/ops/helm/ingress-nginx-4.0.13.tgz#' ~/.cache/helm/repository/ingress-nginx-index.yaml
 
 kubectl label no k-kube-lab-04 edge=external
+kubectl cordon k-kube-lab-04
 helm install ingress-nginx-external-controller ingress-nginx/ingress-nginx \
     -f ingress-nginx-external.yaml \
     -n kube-server \
@@ -109,6 +118,7 @@ helm install ingress-nginx-external-controller ingress-nginx/ingress-nginx \
     --version 4.0.13 --debug
 
 kubectl label no k-kube-lab-05 edge=internal
+kubectl cordon k-kube-lab-05
 helm install ingress-nginx-internal-controller ingress-nginx/ingress-nginx \
     -f ingress-nginx-internal.yaml \
     -n kube-server \

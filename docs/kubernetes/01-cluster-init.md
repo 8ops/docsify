@@ -443,7 +443,7 @@ kubectl -n kube-system edit cm kube-proxy
     configSyncPeriod: 5s # upgrade
     mode: "ipvs" # upgrade
     ipvs:
-      tcpTimeout: 10s
+      tcpTimeout: 900s
       syncPeriod: 5s
       minSyncPeriod: 5s
 ……
