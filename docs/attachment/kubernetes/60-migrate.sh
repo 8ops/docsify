@@ -87,7 +87,8 @@ function do_ingresses(){
 ${kubectl_old} get ingress -l k8s-app,8ops.top/ingress.class=external -o yaml | \
     yq eval '
         del( 
-	    .items[].metadata.annotations, 
+            .items[].metadata.annotations["kubernetes.io/ingress.class"],
+            .items[].metadata.annotations["kubectl.kubernetes.io/last-applied-configuration"],
 	    .items[].metadata.creationTimestamp, 
 	    .items[].metadata.generation, 
 	    .items[].metadata.resourceVersion, 
