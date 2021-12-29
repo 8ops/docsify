@@ -227,17 +227,30 @@ helm upgrade kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard \
     --version 5.0.4 --debug
 
 #-----------------------------------------------------------
-# create sa
-kubectl create serviceaccount dashboard-admin -n kube-server
+# create sa for guest
+kubectl create serviceaccount dashboard-guest -n kube-server
 
-# binding cluster-admin
-kubectl create clusterrolebinding dashboard-admin \
-  --clusterrole=cluster-admin \
-  --serviceaccount=kube-server:dashboard-admin
+# binding clusterrole
+kubectl create clusterrolebinding dashboard-guest \
+  --clusterrole=view \
+  --serviceaccount=kube-server:dashboard-guest
 
 # output token
 kubectl describe secrets \
-  -n kube-server $(kubectl -n kube-server get secret | awk '/dashboard-admin/{print $1}')
+  -n kube-server $(kubectl -n kube-server get secret | awk '/dashboard-guest/{print $1}')
+
+#----
+# create sa for ops
+kubectl create serviceaccount dashboard-ops -n kube-server
+
+# binding clusterrole
+kubectl create clusterrolebinding dashboard-ops \
+  --clusterrole=cluster-admin \
+  --serviceaccount=kube-server:dashboard-ops
+
+# output token
+kubectl describe secrets \
+  -n kube-server $(kubectl -n kube-server get secret | awk '/dashboard-ops/{print $1}')
 ```
 
 
