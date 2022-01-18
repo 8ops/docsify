@@ -1,0 +1,52 @@
+logstashPipeline: 
+  logstash.conf: |
+    input {
+      tcp {
+        port => 514
+        type => syslog
+      }
+      udp {
+        port => 514
+        type => syslog
+      }
+    }
+    output { 
+      stdout {
+        codec => rubydebug 
+      } 
+    }
+
+
+image: "hub.8ops.top/third/logstash"
+imageTag: "7.16.2"
+
+service: 
+  type: ClusterIP
+  ports:
+    - name: beats
+      port: 5044
+      protocol: TCP
+      targetPort: 5044
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: tcp
+      port: 514 
+      protocol: TCP
+      targetPort: 514
+    - name: udp
+      port: 514
+      protocol: UDP
+      targetPort: 514
+
+ingress:
+  enabled: true
+  className: "external"
+  pathtype: Prefix
+  hosts:
+    - host: logstash.8ops.top
+      paths:
+        - path: /
+
+

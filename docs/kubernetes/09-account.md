@@ -8,7 +8,11 @@
 
 
 
-M1
+[多集群管理方式](https://kubernetes.io/zh/docs/tasks/access-application-cluster/configure-access-multiple-clusters/)
+
+
+
+## M1
 
 ```bash
 cat > ca-config.json <<EOF
@@ -31,9 +35,9 @@ cat > ca-config.json <<EOF
   }
 }
 EOF
-cat > user01-csr.json <<EOF
+cat > demo-csr.json <<EOF
 {
-  "CN": "user01",
+  "CN": "demo",
   "hosts": [],
   "key": {
     "algo": "rsa",
@@ -56,8 +60,8 @@ cfssl gencert \
     -ca-key=/etc/kubernetes/pki/ca.key \
     -config=ca-config.json \
     -profile=kubernetes \
-    user01-csr.json | \
-    cfssljson -bare user01
+    demo-csr.json | \
+    cfssljson -bare demo
 
 # 设置集群参数
 export KUBE_APISERVER="https://10.101.11.240:6443"
@@ -65,49 +69,49 @@ kubectl config set-cluster kubernetes \
 --certificate-authority=/etc/kubernetes/pki/ca.crt \
 --embed-certs=true \
 --server=${KUBE_APISERVER} \
---kubeconfig=user01.kubeconfig
+--kubeconfig=demo.kubeconfig
 
 # 设置客户端认证参数
-kubectl config set-credentials user01 \
---client-certificate=user01.pem \
---client-key=user01-key.pem \
+kubectl config set-credentials demo \
+--client-certificate=demo.pem \
+--client-key=demo-key.pem \
 --embed-certs=true \
 --token=bearer_token \
---kubeconfig=user01.kubeconfig
+--kubeconfig=demo.kubeconfig
 
 # 设置上下文参数
 kubectl config set-context kubernetes \
 --cluster=kubernetes \
---user=user01 \
---kubeconfig=user01.kubeconfig
+--user=demo \
+--kubeconfig=demo.kubeconfig
 
 # 设置默认上下文
-kubectl config use-context kubernetes --kubeconfig=user01.kubeconfig
+kubectl config use-context kubernetes --kubeconfig=demo.kubeconfig
 
-# kubectl create crolebinding user01-binding --clusterrole=admin --user=user01 --namespace=default
+# kubectl create crolebinding demo-binding --clusterrole=admin --user=demo --namespace=default
 
-kubectl create serviceaccount user01 
+kubectl create serviceaccount demo 
 
-kubectl create clusterrolebinding user01-binding --clusterrole=cluster-admin --user=user01 
+kubectl create clusterrolebinding demo-binding --clusterrole=cluster-admin --user=demo 
 
-kubectl describe secrets $(kubectl get secret | awk '/user01/{print $1}')
+kubectl describe secrets $(kubectl get secret | awk '/demo/{print $1}')
 
 ----
-kubectl create serviceaccount user01 -n kube-server
-kubectl create clusterrolebinding user01 \
+kubectl create serviceaccount demo -n kube-server
+kubectl create clusterrolebinding demo \
   --clusterrole=cluster-admin \
-  --serviceaccount=kube-server:user01
+  --serviceaccount=kube-server:demo
 kubectl describe secrets \
-  -n kube-server $(kubectl -n kube-server get secret | awk '/user01/{print $1}')
+  -n kube-server $(kubectl -n kube-server get secret | awk '/demo/{print $1}')
 #kubectl -n kube-system get secret admin-token-nwphb -o jsonpath={.data.token}|base64 -d
 ```
 
 
 
-M2
+## M2
 
 ```bash
-cat > config-demo <<EOF
+cat > demo.kubeconfig <<EOF
 apiVersion: v1
 kind: Config
 preferences: {}
@@ -150,7 +154,7 @@ kubectl --kubeconfig=demo.kubeconfig config use-context lab
 kubectl --kubeconfig=demo.kubeconfig config view --minify
 
 kubectl -n kube-server create serviceaccount lab-admin
-kubectl create clusterrolebinding demo-binding \
+kubectl create clusterrolebinding lab-admin-binding \
 		--clusterrole=cluster-admin \
 	  --serviceaccount=kube-server:lab-admin
 ```

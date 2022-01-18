@@ -338,9 +338,96 @@ metrics-server:
 
 
 
+## 五、Zadig
+
+`TODO`
+
+```bash
+
+helm repo add koderover-chart https://koderover.tencentcloudcr.com/chartrepo/chart
+
+helm search repo zadig
+
+helm show values koderover-chart/zadig > koderover-zadig.yaml-default
+
+export NAMESPACE=kube-server
+export DOMAIN=zadig.8ops.top
+
+# helm upgrade --install zadig \
+#     --namespace ${NAMESPACE} \
+#     koderover-chart/zadig \
+#     --version=1.8.0 \
+#     --set endpoint.FQDN=${DOMAIN} \
+#     --set global.extensions.extAuth.extauthzServerRef.namespace=${NAMESPACE} \
+#     --set "dex.config.staticClients[0].redirectURIs[0]=http://${DOMAIN}/api/v1/callback,dex.config.staticClients[0].id=zadig,dex.config.staticClients[0].name=zadig,dex.config.staticClients[0].secret=ZXhhbXBsZS1hcHAtc2VjcmV0"
+
+helm install zadig koderover-chart/zadig \
+    -f koderover-zadig.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 1.8.0 --debug
+
+helm -n kube-server uninstall zadig
+kubectl -n kube-server delete all -l app.kubernetes.io/name=zadig
+
+# backup. Either IP+PORT or DOMAIN shoule be provided
+# export IP=10.101.11.234
+# export PORT=30010
+export NAMESPACE=kube-server
+export DOMAIN=zadig.8ops.top
+export INGRESS_CLASS=external
+
+curl -SsL https://download.koderover.com/install?type=standard -o zadig-install.sh
+bash zadig-install.sh
+
+
+```
+
+> vim koderover-zadig.yaml
+
+```yaml
+endpoint:
+  FQDN: zadig.8ops.top
+global:
+  image:
+    registry: koderover.tencentcloudcr.com/koderover-public
+  extensions:
+    extAuth:
+      extauthzServerRef:
+        namespace: kube-server
+
+dex:
+  config:
+    staticClients:
+      - id: zadig
+        redirectURIs:
+          - 'http://zadig.8ops.top/api/v1/callback'
+        name: 'zadig'
+        secret: ZXhhbXBsZS1hcHAtc2VjcmV0
+```
 
 
 
+## 六、Elastic
+
+```bash
+helm repo add elastic https://helm.elastic.co
+
+helm search repo logstash
+
+helm show values elastic/logstash > elastic_logstash.yaml-default
+
+helm install logstash elastic/logstash \
+    -f elastic_logstash.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 7.16.2 --debug
+    
+helm upgrade logstash elastic/logstash \
+    -f elastic_logstash.yaml \
+    -n kube-server \
+    --version 7.16.2 --debug
+```
 
 
 

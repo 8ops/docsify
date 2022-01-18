@@ -58,8 +58,12 @@ items:
     namespace: default
   spec:
     ingressClassName: external
+    tls:
+      - hosts:
+          - nginx.8ops.top
+        secretName: tls-8ops.top
     rules:
-    - host: nignx.8ops.top
+    - host: nginx.8ops.top
       http:
         paths:
         - backend:
@@ -68,7 +72,7 @@ items:
               port:
                 number: 80
           path: /
-          pathType: ImplementationSpecific
+          pathType: Prefix
 kind: List
 metadata:
   resourceVersion: ""
