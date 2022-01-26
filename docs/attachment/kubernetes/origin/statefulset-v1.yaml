@@ -82,9 +82,6 @@ items:
       kind: PersistentVolumeClaim
       name: www-web-0 # auto generate
       namespace: default
-      metadata:
-        labels:
-          8ops.top/study: volume
     hostPath:
       path: /data1/pv-0
       type: ""
@@ -110,9 +107,6 @@ items:
       kind: PersistentVolumeClaim
       name: www-web-1
       namespace: default
-      metadata:
-        labels:
-          8ops.top/study: volume
     hostPath:
       path: /data1/pv-1
       type: ""
