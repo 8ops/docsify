@@ -102,19 +102,15 @@ export DP_Key=
 acme.sh --issue \
 -d 8ops.top \
 -d *.8ops.top \
--d *.api.8ops.top \
--d *.dev.8ops.top \
--d *.test.8ops.top \
--d *.uat.8ops.top \
--d *.prod.8ops.top \
 --dns dns_dp \
 --debug 2
 
 # install
 acme.sh --install-cert \
 -d 8ops.top \
---key-file /data/ca/8ops.top.key \
---fullchain-file /data/8ops.top.crt
+--key-file /etc/nginx/ssl.d/8ops.top.key \
+--fullchain-file /etc/nginx/ssl.d/8ops.top.crt \
+--reloadcmd "service nginx reload"
 
 # renew
 acme.sh --renew -d 8ops.top -f

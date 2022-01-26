@@ -85,7 +85,9 @@ kubernetes-dashboard  https://kubernetes.github.io/dashboard/
 
 
 
-## 三、Ingress-nginx
+## 三、组件
+
+### 3.1 Ingress-nginx
 
 > 宿主机kernel优化
 
@@ -199,7 +201,7 @@ controller:
 
 
 
-## 四、Dashboard
+### 3.2 Dashboard
 
 ```bash
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
@@ -336,9 +338,60 @@ metrics-server:
 
 ![登录Dashboard](../images/kubernetes/screen/05-22.png)
 
+### 3.3 Elastic
+
+```bash
+helm repo add elastic https://helm.elastic.co
+
+helm search repo logstash
+
+helm show values elastic/logstash > elastic_logstash.yaml-default
+
+helm install logstash elastic/logstash \
+    -f elastic_logstash.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 7.16.2 --debug
+    
+helm upgrade logstash elastic/logstash \
+    -f elastic_logstash.yaml \
+    -n kube-server \
+    --version 7.16.2 --debug
+    
+#------------------------------------------#
+helm search repo elastic
+
+helm show values elastic/eck-operator > elastic_eck.yaml-default
+
+helm install elastic-operator elastic/eck-operator \
+		-f elastic_eck.yaml \
+		-n kube-server \
+		--create-namespace \
+		--version 1.9.1 --debug
+		
+helm upgrade elastic-operator elastic/eck-operator \
+		-f elastic_eck.yaml \
+		-n kube-server \
+		--create-namespace \
+		--version 1.9.1 --debug
+		
+#------------------------------------------#
+kubectl create -f https://download.elastic.co/downloads/eck/1.9.1/crds.yaml
+kubectl apply -f https://download.elastic.co/downloads/eck/1.9.1/operator.yaml
+
+kubectl -n elastic-system logs -f statefulset.apps/elastic-operator
+```
 
 
-## 五、Zadig
+
+### 3.4 Prometheus
+
+```bash
+```
+
+
+
+### 3.5 ~~Zadig~~
 
 `TODO`
 
@@ -408,26 +461,21 @@ dex:
 
 
 
-## 六、Elastic
+### 3.6 ~~Banzai~~
 
 ```bash
-helm repo add elastic https://helm.elastic.co
+helm repo add banzaicloud-stable https://kubernetes-charts.banzaicloud.com
 
-helm search repo logstash
+helm repo update
 
-helm show values elastic/logstash > elastic_logstash.yaml-default
+helm search repo logging-operator-logging
 
-helm install logstash elastic/logstash \
-    -f elastic_logstash.yaml \
+helm install banzaicloud-stable/logging-operator-logging
+
+helm install banzaicloud banzaicloud-stable/logging-operator-logging \
     -n kube-server \
     --create-namespace \
-    --version 7.16.2 --debug
-    
-helm upgrade logstash elastic/logstash \
-    -f elastic_logstash.yaml \
-    -n kube-server \
-    --version 7.16.2 --debug
+    --version 3.16.0 --debug
+
 ```
-
-
 

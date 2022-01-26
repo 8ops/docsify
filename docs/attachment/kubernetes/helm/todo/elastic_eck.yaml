@@ -1,0 +1,7 @@
+
+
+image:
+  repository: hub.8ops.top/third/eck-operator
+
+webhook:
+  enabled: false

@@ -1,0 +1,13 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: quickstart
+  namespace: kube-server
+spec:
+  version: 7.16.3
+  image: "hub.8ops.top/third/elasticsearch:7.16.3"
+  nodeSets:
+  - name: default
+    count: 1
+    config:
+      node.store.allow_mmap: false
