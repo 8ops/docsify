@@ -137,12 +137,13 @@ curl -s https://books.8ops.top/attachment/kubernetes/01-init.sh | bash
 
 ### 3.1 容器运行时
 
-在所有节点需要执行的操作
+**在所有节点需要执行的操作**
 
 > 使用containerd做为容器运行时
 
 ```bash
-apt install -y containerd=1.5.5-0ubuntu3~20.04.1
+CONTAINERD_VERSION=1.5.5-0ubuntu3~20.04.2
+apt install -y containerd=${CONTAINERD_VERSION}
 
 apt-mark hold containerd
 apt-mark showhold
@@ -244,12 +245,13 @@ systemctl start containerd
 
 
 
-在所有节点需要执行的操作
+**在所有节点需要执行的操作**
 
 > 安装kubeadm必要软件包
 
 ```bash
-apt install -y -q kubeadm=1.22.2-00 kubectl=1.22.2-00 kubelet=1.22.2-00
+KUBENETES_VERSION=1.23.0-00
+apt install -y -q kubeadm=${KUBENETES_VERSION} kubectl=${KUBENETES_VERSION} kubelet=${KUBENETES_VERSION}
 
 apt-mark hold kubeadm kubectl kubelet
 apt-mark showhold
@@ -472,20 +474,20 @@ kubectl -n kube-system edit cm kube-proxy
 # 上传 cert
 kubeadm init phase upload-certs --upload-certs
 
-#或者获取已经上传的certs
-openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | \
-   openssl rsa -pubin -outform der 2>/dev/null | \
-   openssl dgst -sha256 -hex | sed 's/^.* //'
+## 或者获取已经上传的certs
+#openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | \
+#   openssl rsa -pubin -outform der 2>/dev/null | \
+#   openssl dgst -sha256 -hex | sed 's/^.* //'
 
 # 生成 token
 kubeadm token generate
 
 # 打印 join control-plane,master
-kubeadm token create n1em3c.bc2bvyp7rrka399e --print-join-command -v 5 \
-  --certificate-key 8b0c2a63ff252e88f0a87a82e9b4ff6059984b2ed3c7bc60523ceb001ebcfb64
+kubeadm token create um69xx.qg70e11b92fmsevs --print-join-command -v 5 \
+  --certificate-key 3c7b6191702471e8ee2f3dea4ce422044b266928c808b6957fb0c81ef2388bed
 
 # 打印 join node
-kubeadm token create 3gn6g3.53pxqq890sjxuzjh --print-join-command -v 5
+kubeadm token create kvj7wh.buud7djga5j76xil --print-join-command -v 5
 ```
 
 
