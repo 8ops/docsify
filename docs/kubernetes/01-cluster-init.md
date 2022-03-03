@@ -651,11 +651,11 @@ kubectl get no
 > 试运行容器
 
 ```bash
-## 建议使用1.28.0新版本会有nslookup的BUG
-# kubectl apply -f https://books.8ops.top/attachment/kubernetes/50-nginx-deployment.yaml
+## 建议使用1.28.0，新版本会有nslookup的BUG
+# kubectl apply -f https://books.8ops.top/attachment/kubernetes/app/50-nginx-deployment.yaml
 kubectl run busybox --image hub.8ops.top/third/busybox:1.28.0 --command -- sh -c "while true;do sleep 60;date;done"
 
-# kubectl apply -f https://books.8ops.top/attachment/kubernetes/51-busybox-daemonset.yaml
+# kubectl apply -f https://books.8ops.top/attachment/kubernetes/app/51-busybox-daemonset.yaml
 kubectl run nginx --image hub.8ops.top/third/nginx:1.21.3
 
 ```

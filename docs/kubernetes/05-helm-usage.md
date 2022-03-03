@@ -146,7 +146,7 @@ helm -n kube-server uninstall ingress-nginx-external-controller
 
 
 
-> vim ingress-nginx-external.yaml
+> vim [ingress-nginx-external.yaml](https://books.8ops.top/attachment/kubernetes/helm/ingress-nginx-external.yaml)
 
 ```yaml
 controller:
@@ -462,6 +462,8 @@ dex:
 
 
 ### 3.6 ~~Banzai~~
+
+`TODO`
 
 ```bash
 helm repo add banzaicloud-stable https://kubernetes-charts.banzaicloud.com
