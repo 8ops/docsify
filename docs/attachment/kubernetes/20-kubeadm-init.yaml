@@ -24,14 +24,14 @@ clusterName: kubernetes
 controllerManager: {}
 dns:
   imageRepository: hub.8ops.top/google_containers
-  imageTag: 1.8.4
+  imageTag: 1.8.6
 etcd:
   local:
     dataDir: /var/lib/etcd
 imageRepository: hub.8ops.top/google_containers
 kind: ClusterConfiguration
-kubernetesVersion: 1.22.2
-controlPlaneEndpoint: 10.101.11.240:6443
+kubernetesVersion: 1.23.0
+controlPlaneEndpoint: 10.101.11.110:6443
 networking:
   dnsDomain: cluster.local
   podSubnet: 172.20.0.0/16
