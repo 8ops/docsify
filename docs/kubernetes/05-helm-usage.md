@@ -111,16 +111,16 @@ helm show values ingress-nginx/ingress-nginx > ingress-nginx.yaml-default
 # 若不FW需要变更 ~/.cache/helm/repository/ingress-nginx-index.yaml 从私有文件站下载
 ## sed -i 's#https://github.com/kubernetes/ingress-nginx/releases/download/helm-chart-4.0.13/ingress-nginx-4.0.13.tgz#http://d.8ops.top/ops/helm/ingress-nginx-4.0.13.tgz#' ~/.cache/helm/repository/ingress-nginx-index.yaml
 
-kubectl label no k-kube-lab-04 edge=external
-kubectl cordon k-kube-lab-04
+kubectl label no k-kube-lab-08 edge=external
+# kubectl cordon k-kube-lab-08
 helm install ingress-nginx-external-controller ingress-nginx/ingress-nginx \
     -f ingress-nginx-external.yaml \
     -n kube-server \
     --create-namespace \
     --version 4.0.13 --debug
 
-kubectl label no k-kube-lab-05 edge=internal
-kubectl cordon k-kube-lab-05
+kubectl label no k-kube-lab-09 edge=internal
+# kubectl cordon k-kube-lab-09
 helm install ingress-nginx-internal-controller ingress-nginx/ingress-nginx \
     -f ingress-nginx-internal.yaml \
     -n kube-server \

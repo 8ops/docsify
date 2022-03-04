@@ -47,13 +47,15 @@ Kubernetes 是一个开源的容器编排引擎，用来对容器化应用进行
 
 ### 1.1 机器准备
 
+VIP：`10.101.11.110`
+
 | 主机名称      | 主机IP        | 操作系统           | 角色分配             |
 | ------------- | ------------- | ------------------ | -------------------- |
 | K-KUBE-LAB-01 | 10.101.11.240 | Ubuntu 20.04.2 LTS | control-plane,master |
 | K-KUBE-LAB-02 | 10.101.11.146 | Ubuntu 20.04.2 LTS | control-plane,master |
 | K-KUBE-LAB-03 | 10.101.11.154 | Ubuntu 20.04.2 LTS | control-plane,master |
-| K-KUBE-LAB-04 | 10.101.11.234 | Ubuntu 20.04.2 LTS | node                 |
-| K-KUBE-LAB-05 | 10.101.11.171 | Ubuntu 20.04.2 LTS | node                 |
+| K-KUBE-LAB-08 | 10.101.11.196 | Ubuntu 20.04.2 LTS | node                 |
+| K-KUBE-LAB-09 | 10.101.11.182 | Ubuntu 20.04.2 LTS | node                 |
 
 机器参考官方最小配置指导，采用**2**核CPU/**8**G内存/**100**G磁盘，私有化虚拟机部署。
 
@@ -219,7 +221,7 @@ update-ca-certificates
 systemctl stop containerd
 
 mkdir -p /data1/lib/containerd && \
-    mv /var/lib/containerd{,-20211215} && \
+    mv /var/lib/containerd{,-$(date +%Y%m%d)} && \
     ln -s /data1/lib/containerd /var/lib/containerd
 
 systemctl start containerd
@@ -345,14 +347,14 @@ clusterName: kubernetes
 controllerManager: {}
 dns:
   imageRepository: hub.8ops.top/google_containers
-  imageTag: 1.8.4
+  imageTag: 1.8.6
 etcd:
   local:
     dataDir: /var/lib/etcd
 imageRepository: hub.8ops.top/google_containers
 kind: ClusterConfiguration
-kubernetesVersion: 1.22.2
-controlPlaneEndpoint: 10.101.11.240:6443
+kubernetesVersion: 1.23.0
+controlPlaneEndpoint: 10.101.11.110:6443
 networking:
   dnsDomain: cluster.local
   podSubnet: 172.20.0.0/16
@@ -416,7 +418,7 @@ kubelet 和 kube-proxy 需要相应重启
 kubectl -n kube-system edit cm kubeadm-config
 
 # kubelet
-kubectl -n kube-system edit cm kubelet-config-1.22
+kubectl -n kube-system edit cm kubelet-config-1.23
 
 ……
 		# GC
@@ -582,9 +584,9 @@ kubectl apply -f kube-flannel.yaml
 ……
   net-conf.json: |
     {
-      "Network": "172.22.0.0/16",
+      "Network": "172.20.0.0/16",
       "Backend": {
-        "Type": "vxlan"
+        "Type": "host-gw"
       }
     }
 ……
@@ -612,7 +614,7 @@ kubectl get all -A
 
 
 
-> coredns未就位手动修复（ v1.22.0已经修复）
+> coredns未就位手动修复（ v1.22.0后已经修复）
 
 ```bash
 kubectl edit clusterrole system:coredns
