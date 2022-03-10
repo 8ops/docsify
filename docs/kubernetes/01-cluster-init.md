@@ -65,15 +65,15 @@ VIP：`10.101.11.110`
 
 示例匹配版本
 
-| 软件名称   | 选中版本               | 当前最新 |
-| ---------- | ---------------------- | -------- |
-| kubeadm    | v1.22.2                | v1.23.0  |
-| kubelet    | v1.22.2                | v1.23.0  |
-| kubernetes | v1.22.2                | v1.23.0  |
-| etcd       | 3.4.13-0               | v3.5.1   |
-| flannel    | v0.15.0                | v0.15.1  |
-| coredns    | 1.8.4                  | 1.8.6    |
-| containerd | 1.5.5-0ubuntu3~20.04.1 | 1.5.8    |
+| 软件名称   | 当前最新               |
+| ---------- | ---------------------- |
+| kubeadm    | v1.23.0                |
+| kubelet    | v1.23.0                |
+| kubernetes | v1.23.0                |
+| etcd       | v3.5.1                 |
+| flannel    | v0.15.1                |
+| coredns    | 1.8.6                  |
+| containerd | 1.5.5-0ubuntu3~20.04.2 |
 
 - [kubeadm](https://github.com/kubernetes/kubeadm)
 - [kubernetes](https://github.com/kubernetes/kubernetes)
@@ -191,7 +191,7 @@ update-ca-certificates
   [plugins."io.containerd.grpc.v1.cri"]
  		……
  		# sandbox_image
-    sandbox_image = "hub.8ops.top/google_containers/pause:3.5"
+    sandbox_image = "hub.8ops.top/google_containers/pause:3.6"
 		……
       [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
         [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
@@ -232,6 +232,14 @@ systemctl start containerd
 来源于配置文件`/etc/kubernetes/manifests/etcd.yaml`
 
 `/var/lib/etcd`
+
+```bash
+
+mkdir -p /data1/lib/etcd && \
+    mv /var/lib/etcd{,-$(date +%Y%m%d)} && \
+    ln -s /data1/lib/etcd /var/lib/etcd
+
+```
 
 
 
@@ -507,7 +515,7 @@ kubeadm token list
 > join control-plane,master
 
 ```bash
-kubeadm join 10.101.11.240:6443 --token abcdef.0123456789abcdef \
+kubeadm join 10.101.11.110:6443 --token abcdef.0123456789abcdef \
  --discovery-token-ca-cert-hash sha256:ae1d593bbadecf245c30f4c1cfe9250faa0aaa9e4c27b7f34bcb10142d0dd0c8 \
  --control-plane --certificate-key 811e33703005a1df116201ae6469d86746274c3579e62b7c924cc4c13a804bca -v 5in the cluster.
 ```
@@ -517,7 +525,7 @@ kubeadm join 10.101.11.240:6443 --token abcdef.0123456789abcdef \
 > join node
 
 ```bash
-kubeadm join 10.101.11.240:6443 --token abcdef.0123456789abcdef \
+kubeadm join 10.101.11.110:6443 --token abcdef.0123456789abcdef \
   --discovery-token-ca-cert-hash sha256:ae1d593bbadecf245c30f4c1cfe9250faa0aaa9e4c27b7f34bcb10142d0dd0c8
 ```
 

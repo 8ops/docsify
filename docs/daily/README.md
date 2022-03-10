@@ -15,6 +15,7 @@
 - [图片处理](daily/09-imagemagick.md)
 - [证书管理](daily/10-openssl.md)
 - [网络操作](daily/11-network.md)
-- [HTML小技巧](daily/12-html.md)
+- [HTML](daily/12-html.md)
+- [Python](daily/13-python.md)
 - [文章管理](daily/99-article.md)
 
