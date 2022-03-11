@@ -82,13 +82,13 @@ mv pyenv-${PYENV_VERSION} ~/.pyenv
 grep -q PYENV_ROOT ~/.profile | cat > ~/.profile <<EOF
 export PYENV_ROOT="~/.pyenv"
 export PATH="\${PYENV_ROOT}/bin:\$PATH"' 
-eval "$(pyenv init --path)"
+eval "\$(pyenv init --path)"
 EOF
 
 grep -q PYENV_ROOT ~/.bashrc | cat > ~/.bashrc <<EOF
 export PYENV_ROOT="~/.pyenv"
 export PATH="\${PYENV_ROOT}/bin:\$PATH"' 
-eval "$(pyenv init --path)"
+eval "\$(pyenv init --path)"
 EOF
 
 . ~/.bashrc
