@@ -6,6 +6,7 @@
   - [图片处理](daily/09-imagemagick.md)
   - [证书管理](daily/10-openssl.md)
   - [网络操作](daily/11-network.md)
+  - [Python](daily/13-python.md)
 - [运维进阶](ops/)
   - [devops](ops/01-devops.md)
   - [aiops](ops/02-aiops.md)

@@ -85,9 +85,18 @@ a \
 export PATH="$PYENV_ROOT/bin:$PATH"
 a \
 ' -e ':a' -e '$!{n;ba};}' ~/.profile
-echo 'eval "$(pyenv init --path)"' >>~/.profile
 
-echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+grep -q PYENV_ROOT ~/.profile | cat > ~/.profile <<EOF
+export PYENV_ROOT="~/.pyenv"
+export PATH="\${PYENV_ROOT}/bin:\$PATH"' 
+eval "$(pyenv init --path)"
+EOF
+
+grep -q PYENV_ROOT ~/.bashrc | cat > ~/.bashrc <<EOF
+export PYENV_ROOT="~/.pyenv"
+export PATH="\${PYENV_ROOT}/bin:\$PATH"' 
+eval "$(pyenv init --path)"
+EOF
 . ~/.bashrc
 
 # validate
@@ -102,11 +111,11 @@ pyenv --version
 
 mkdir -p ~/.pyenv/cache
 curl -s -o ~/.pyenv/cache/Python-3.10.2.tar.xz https://m.8ops.top/python/Python-3.10.2.tar.xz
-lib64readline-dev
+
 # ubuntu's install require package
 apt install -y gcc make binutils build-essential zlib1g-dev \
     libffi-dev libbz2-dev  libsqlite3-dev \
-    libreadline-dev libncurses5-dev libncursesw5-dev 
+    libreadline-dev lib64readline-dev libncurses5-dev libncursesw5-dev 
 
 ## centos's install require package
 # yum install gcc gcc-c++ autoconf automake binutils make cmake wget openssl-devel libsqlite3x libffi-devel httpd-devel libsqlite3x-devel ncurses-devel bzip2-devel bzip2-libs bzip2 readline-devel readline mod-wsgi
