@@ -79,13 +79,6 @@ tar xzf /tmp/pyenv-${PYENV_VERSION}.tar.gz
 mv pyenv-${PYENV_VERSION} ~/.pyenv
 
 # 2.初始pyenv环境
-sed -Ei -e '/^([^#]|$)/ {a \
-export PYENV_ROOT="$HOME/.pyenv"
-a \
-export PATH="$PYENV_ROOT/bin:$PATH"
-a \
-' -e ':a' -e '$!{n;ba};}' ~/.profile
-
 grep -q PYENV_ROOT ~/.profile | cat > ~/.profile <<EOF
 export PYENV_ROOT="~/.pyenv"
 export PATH="\${PYENV_ROOT}/bin:\$PATH"' 
@@ -97,6 +90,7 @@ export PYENV_ROOT="~/.pyenv"
 export PATH="\${PYENV_ROOT}/bin:\$PATH"' 
 eval "$(pyenv init --path)"
 EOF
+
 . ~/.bashrc
 
 # validate
