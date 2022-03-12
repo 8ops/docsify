@@ -79,13 +79,13 @@ tar xzf /tmp/pyenv-${PYENV_VERSION}.tar.gz
 mv pyenv-${PYENV_VERSION} ~/.pyenv
 
 # 2.初始pyenv环境
-grep -q PYENV_ROOT ~/.profile | cat > ~/.profile <<EOF
+grep -q PYENV_ROOT ~/.profile | cat >> ~/.profile <<EOF
 export PYENV_ROOT="~/.pyenv"
 export PATH="\${PYENV_ROOT}/bin:\$PATH"
 eval "\$(pyenv init --path)"
 EOF
 
-grep -q PYENV_ROOT ~/.bashrc | cat > ~/.bashrc <<EOF
+grep -q PYENV_ROOT ~/.bashrc | cat >> ~/.bashrc <<EOF
 export PYENV_ROOT="~/.pyenv"
 export PATH="\${PYENV_ROOT}/bin:\$PATH"
 eval "\$(pyenv init --path)"
