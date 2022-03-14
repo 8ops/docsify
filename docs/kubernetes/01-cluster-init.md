@@ -426,8 +426,8 @@ kubelet 和 kube-proxy 需要相应重启
 kubectl -n kube-system edit cm kubeadm-config
 
 # kubelet
-kubectl -n kube-system edit cm kubelet-config-1.23
 
+kubectl -n kube-system edit cm kubelet-config-1.23
 ……
 		# GC
     imageGCLowThresholdPercent: 40
@@ -444,6 +444,7 @@ kubectl -n kube-system edit cm kubelet-config-1.23
     nodeStatusUpdateFrequency: 10s # upgrade
     cgroupDriver: systemd
     maxPods: 200
+    resolvConf: /etc/resolv.conf
 kind: ConfigMap
 ……
 
