@@ -387,18 +387,50 @@ kubectl -n elastic-system logs -f statefulset.apps/elastic-operator
 ### 3.4 Prometheus
 
 ```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm search repo prometheus
+
+# kube-state-metrics
+helm show values prometheus-community/kube-state-metrics > kube-state-metrics.yaml-default
+
+helm install kube-state-metrics prometheus-community/kube-state-metrics \
+    -f kube-state-metrics.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 4.7.0 --debug
+    
+helm upgrade --install kube-state-metrics prometheus-community/kube-state-metrics \
+    -f kube-state-metrics.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 4.7.0 --debug
+    
+# prometheus
+helm show values prometheus-community/prometheus > prometheus.yaml-default
+
+helm install prometheuss prometheus-community/prometheus \
+    -f prometheus.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 15.8.0 --debug
+    
+helm upgrade --install prometheuss prometheus-community/prometheus \
+    -f prometheus.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 15.8.0 --debug
 ```
 
 
 
 ### 3.5 ~~Zadig~~
 
-`TODO`
+`UnSuccess`
 
 ```bash
-
 helm repo add koderover-chart https://koderover.tencentcloudcr.com/chartrepo/chart
-
+helm repo update
 helm search repo zadig
 
 helm show values koderover-chart/zadig > koderover-zadig.yaml-default
@@ -463,7 +495,7 @@ dex:
 
 ### 3.6 ~~Banzai~~
 
-`TODO`
+`UnSuccess`
 
 ```bash
 helm repo add banzaicloud-stable https://kubernetes-charts.banzaicloud.com

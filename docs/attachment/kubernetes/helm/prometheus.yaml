@@ -1,0 +1,148 @@
+alertmanager:
+  image:
+    repository: hub.8ops.top/prometheus/alertmanager
+    tag: v0.23.0
+    pullPolicy: IfNotPresent
+
+  ingress:
+    enabled: true
+    ingressClassName: external
+
+    hosts: 
+      - alertmanager.8ops.top
+    path: /
+    pathType: Prefix
+
+    tls: 
+      - secretName: tls-8ops.top
+        hosts:
+          - alertmanager.8ops.top
+
+  resources: 
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+
+  persistentVolume:
+    enabled: false
+
+configmapReload:
+  prometheus:
+    enabled: true
+    name: configmap-reload
+    image:
+      repository: hub.8ops.top/prometheus/configmap-reload
+      tag: v0.5.0
+      pullPolicy: IfNotPresent
+
+    resources: 
+      limits:
+        cpu: 100m
+        memory: 64Mi
+      requests:
+        cpu: 10m
+        memory: 32Mi
+
+  alertmanager:
+    enabled: true
+    name: configmap-reload
+    image:
+      repository: hub.8ops.top/prometheus/configmap-reload
+      tag: v0.5.0
+      pullPolicy: IfNotPresent
+
+    resources: 
+      limits:
+        cpu: 100m
+        memory: 64Mi
+      requests:
+        cpu: 10m
+        memory: 32Mi
+
+kubeStateMetrics:
+  enabled: false
+
+nodeExporter:
+  image:
+    repository: hub.8ops.top/prometheus/node-exporter
+    tag: v1.3.0
+    pullPolicy: IfNotPresent
+
+  resources: 
+    limits:
+      cpu: 200m
+      memory: 50Mi
+    requests:
+      cpu: 100m
+      memory: 30Mi
+
+server:
+  image:
+    repository: hub.8ops.top/prometheus/prometheus
+    tag: v2.34.0
+
+  ingress:
+    enabled: true
+    ingressClassName: external
+
+    hosts:
+      - prometheus.8ops.top
+
+    path: /
+    pathType: Prefix
+
+    tls: 
+      - secretName: tls-8ops.top
+        hosts:
+          - prometheus.8ops.top
+
+  resources: 
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  persistentVolume:
+    enabled: false
+
+pushgateway:
+  image:
+    repository: hub.8ops.top/prometheus/pushgateway
+    tag: v1.4.2
+
+  ingress:
+    enabled: true
+    ingressClassName: external
+
+    hosts: 
+      - pushgateway.8ops.top
+
+    path: /
+    pathType: Prefix
+
+    tls: 
+      - secretName: tls-8ops.top
+        hosts:
+          - pushgateway.8ops.top
+
+  resources: 
+    limits:
+      cpu: 100m
+      memory: 64Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+
+#serverFiles:
+#  prometheus.yml:
+#    scrape_configs:
+#      - job_name: kube-state-metrics
+#        static_configs:
+#          - targets:
+#            - 'kube-state-metrics:8080'
+
