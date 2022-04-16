@@ -8,9 +8,11 @@ Helm 是 Kubernetes 的包管理器，从CNCF毕业。
 
 
 
-[官方文档](https://helm.sh/zh/docs/)
+> Reference
 
-[helm hub](https://artifacthub.io/ ) 
+- [docs](https://helm.sh/zh/docs/)
+
+- [hub](https://artifacthub.io/ ) 
 
 ![Helm](../images/kubernetes/helm.png)
 
@@ -18,44 +20,9 @@ Helm是个很意思的工具，简化了kubernetes上常用组件的管理。
 
 
 
-## 一、镜像源私有化
-
-将外部镜像产物拉到私有环境缓存起来[下载脚本](https://books.8ops.top/attachment/kubernetes/02-pull-image-to-local.sh)
-
-```bash
-#!/bin/bash
-
-#
-# example
-#  pull_image_to_local.sh kubernetesui/metrics-scraper:v1.0.7
-#  pull_image_to_local.sh registry.cn-hangzhou.aliyuncs.com/google_containers/nginx-ingress-controller:v1.1.0
-#  pull_image_to_local.sh nginx:1.21.4 third
-#
-# explain
-#  docker pull kubernetesui/metrics-scraper:v1.0.7
-#  docker tag kubernetesui/metrics-scraper:v1.0.7 hub.8ops.top/google_containers/metrics-scraper:v1.0.7
-#  docker push hub.8ops.top/google_containers/metrics-scraper:v1.0.7
-#  docker rmi kubernetesui/metrics-scraper:v1.0.7
-#  docker rmi hub.8ops.top/google_containers/metrics-scraper:v1.0.7
-#
-
-set -e
-
-src=$1
-dst=$2
-harbor=hub.8ops.top
-[ -z ${dst} ] && dst=google_containers
-docker pull ${src}
-docker tag ${src} `echo ${src} |awk -v harbor=${harbor} -v dst=${dst} -F'/' '{printf("%s/%s/%s",harbor,dst,$NF)}'`
-docker push `echo ${src} |awk -v harbor=${harbor} -v dst=${dst} -F'/' '{printf("%s/%s/%s",harbor,dst,$NF)}'`
-docker rmi ${src}
-docker rmi `echo ${src} |awk -v harbor=${harbor} -v dst=${dst} -F'/' '{printf("%s/%s/%s",harbor,dst,$NF)}'`
-
-```
+[优化访问镜像](kubernetes/10-access-image.md)
 
 
-
-## 二、优化源
 
 使用Helm后会生成相应的缓存文件，使用过程中必要时可以主动清空。目录如下
 
@@ -81,13 +48,17 @@ ingress-nginx         https://kubernetes.github.io/ingress-nginx
 kubernetes-dashboard  https://kubernetes.github.io/dashboard/
 ```
 
-推荐使用`azure`和`aliyun`
+可以使用`azure`和`aliyun`
+
+推荐配置系统网络代理
+
+```bash
+export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
+```
 
 
 
-## 三、组件
-
-### 3.1 Ingress-nginx
+## Ingress-nginx
 
 > 宿主机kernel优化
 
@@ -201,7 +172,7 @@ controller:
 
 
 
-### 3.2 Dashboard
+## Dashboard
 
 ```bash
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
@@ -338,7 +309,7 @@ metrics-server:
 
 ![登录Dashboard](../images/kubernetes/screen/05-22.png)
 
-### 3.3 Elastic
+## Elastic
 
 ```bash
 helm repo add elastic https://helm.elastic.co
@@ -384,7 +355,7 @@ kubectl -n elastic-system logs -f statefulset.apps/elastic-operator
 
 
 
-### 3.4 Prometheus
+## Prometheus
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -424,7 +395,7 @@ helm upgrade --install prometheuss prometheus-community/prometheus \
 
 
 
-### 3.5 ~~Zadig~~
+## ~~Zadig~~
 
 `UnSuccess`
 
@@ -493,7 +464,7 @@ dex:
 
 
 
-### 3.6 ~~Banzai~~
+## ~~Banzai~~
 
 `UnSuccess`
 

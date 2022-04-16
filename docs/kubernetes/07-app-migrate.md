@@ -5,12 +5,11 @@
 在kubernetes cluster相距较大版本升级时，无法直接进行升级。这时需要我们新搭建容器编排环境，再进行应用容器迁移，这里分享我迁移的一次过程。
 
 
+
+
 ## 一、技术参考
 
-推荐使用 yq
-
-- [page](https://mikefarah.gitbook.io/yq/)
-- [code](https://github.com/mikefarah/yq)
+推荐使用 [yq](https://github.com/mikefarah/yq)
 
 ```bash
 #!/bin/bash 
@@ -26,7 +25,7 @@ do
 done 
 ```
 
-将导出的yaml文件通过kubectl apply -f 应用至新的kubernetes cluster编排环境。
+将导出的yaml文件通过`kubectl apply -f `应用至新的kubernetes cluster编排环境。
 
 
 

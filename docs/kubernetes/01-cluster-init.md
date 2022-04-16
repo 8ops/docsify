@@ -75,9 +75,11 @@ VIP：`10.101.11.110`
 | coredns    | 1.8.6                  |
 | containerd | 1.5.5-0ubuntu3~20.04.2 |
 
+> Reference
+
 - [kubeadm](https://github.com/kubernetes/kubeadm)
 - [kubernetes](https://github.com/kubernetes/kubernetes)
-- [etcd](https://etcd.io/)、[code](https://github.com/etcd-io/etcd) 
+- [etcd](https://github.com/etcd-io/etcd) 
 - [cni](https://github.com/containernetworking/cni)
 - [containerd](https://github.com/containerd/containerd)
 - [flannel](https://github.com/flannel-io/flanne)

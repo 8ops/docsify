@@ -17,7 +17,7 @@
 
 
 
-[固件下载](https://m.8ops.top/other/TargetHis.rar)
+[固件下载](https://m.8ops.top/meta/TargetHis.rar)
 
 
 

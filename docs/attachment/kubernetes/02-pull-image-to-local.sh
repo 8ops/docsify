@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# example
+# usage
 #  pull_image_to_local.sh kubernetesui/metrics-scraper:v1.0.7 
 #  pull_image_to_local.sh registry.cn-hangzhou.aliyuncs.com/google_containers/nginx-ingress-controller:v1.1.0
 #  pull_image_to_local.sh nginx:1.21.4 third
