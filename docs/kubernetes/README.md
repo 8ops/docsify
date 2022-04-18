@@ -10,4 +10,6 @@
 - [实战 | Helm的使用](kubernetes/05-helm-usage.md)
 - [实战 | Kubernetes Cluster 升级版本](kubernetes/06-cluster-upgrade.md)
 - [实战 | 跨集群迁移容器](kubernetes/07-app-migrate.md)
+- [实战 | Prometheus 的使用](kubernetes/20-prometheus.md)
+- [实战 | MySQL 的使用](kubernetes/21-mysql.md)
 
