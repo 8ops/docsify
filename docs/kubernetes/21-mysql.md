@@ -265,7 +265,7 @@ service/mysql-5                               NodePort    192.168.145.159   <non
 ### 2.3 访问
 
 ```bash
-~ $ mysql -h 10.101.11.196 -P30306 -uroot -pjifenpay
+~ $ mysql -h 10.101.11.196 -P30306 -uroot -ppassword
 mysql: [Warning] Using a password on the command line interface can be insecure.
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 141
@@ -291,8 +291,7 @@ mysql> show databases;
 +--------------------+
 5 rows in set (0.01 sec)
 
-mysql> show grants
-    -> ;
+mysql> show grants;
 +-------------------------------------------------------------+
 | Grants for root@%                                           |
 +-------------------------------------------------------------+
@@ -301,5 +300,22 @@ mysql> show grants
 1 row in set (0.02 sec)
 
 mysql>
+```
+
+
+
+> 8
+
+```bash
+# my.cnf 去掉 symbolic-links = 0
+# 连接进数据库创建帐号
+CREATE USER 'admin'@'%' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%';
+
+ALTER USER 'admin'@'%' IDENTIFIED WITH mysql_native_password BY 'password';
+FLUSH PRIVILEGES;
+
+SELECT host,user FROM mysql.user;
+
 ```
 

@@ -58,7 +58,7 @@ export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_pr
 
 
 
-## Ingress-nginx
+## 一、Ingress-nginx
 
 > 宿主机kernel优化
 
@@ -172,7 +172,7 @@ controller:
 
 
 
-## Dashboard
+## 二、Dashboard
 
 ```bash
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
@@ -309,7 +309,7 @@ metrics-server:
 
 ![登录Dashboard](../images/kubernetes/screen/05-22.png)
 
-## Elastic
+## 三、Elastic
 
 ```bash
 helm repo add elastic https://helm.elastic.co
@@ -355,7 +355,7 @@ kubectl -n elastic-system logs -f statefulset.apps/elastic-operator
 
 
 
-## Prometheus
+## 四、Prometheus
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -377,6 +377,7 @@ helm upgrade --install kube-state-metrics prometheus-community/kube-state-metric
     --create-namespace \
     --version 4.7.0 --debug
     
+# ---
 # prometheus
 helm show values prometheus-community/prometheus > prometheus.yaml-default
 
@@ -391,6 +392,15 @@ helm upgrade --install prometheuss prometheus-community/prometheus \
     -n kube-server \
     --create-namespace \
     --version 15.8.0 --debug
+
+# master schedule
+kubectl taint no k-kube-lab-01 node-role.kubernetes.io/master:NoSchedule-
+kubectl taint no k-kube-lab-02 node-role.kubernetes.io/master:NoSchedule-
+kubectl taint no k-kube-lab-03 node-role.kubernetes.io/master:NoSchedule-
+
+kubectl taint no k-kube-lab-01 node-role.kubernetes.io/master:NoSchedule
+kubectl taint no k-kube-lab-02 node-role.kubernetes.io/master:NoSchedule
+kubectl taint no k-kube-lab-03 node-role.kubernetes.io/master:NoSchedule
 ```
 
 

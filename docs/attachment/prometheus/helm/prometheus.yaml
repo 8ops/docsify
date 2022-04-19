@@ -27,7 +27,8 @@ alertmanager:
       memory: 32Mi
 
   persistentVolume:
-    enabled: false
+    enabled: true
+    existingClaim: "pvc-alertmanager"
 
 configmapReload:
   prometheus:
@@ -108,7 +109,8 @@ server:
       memory: 128Mi
 
   persistentVolume:
-    enabled: false
+    enabled: true
+    existingClaim: "pvc-prometheus"
 
 pushgateway:
   image:
