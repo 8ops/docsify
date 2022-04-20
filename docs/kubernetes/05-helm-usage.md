@@ -362,45 +362,20 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo update
 helm search repo prometheus
 
-# kube-state-metrics
-helm show values prometheus-community/kube-state-metrics > kube-state-metrics.yaml-default
-
-helm install kube-state-metrics prometheus-community/kube-state-metrics \
-    -f kube-state-metrics.yaml \
-    -n kube-server \
-    --create-namespace \
-    --version 4.7.0 --debug
-    
-helm upgrade --install kube-state-metrics prometheus-community/kube-state-metrics \
-    -f kube-state-metrics.yaml \
-    -n kube-server \
-    --create-namespace \
-    --version 4.7.0 --debug
-    
-# ---
 # prometheus
 helm show values prometheus-community/prometheus > prometheus.yaml-default
 
-helm install prometheuss prometheus-community/prometheus \
+helm install prometheus prometheus-community/prometheus \
     -f prometheus.yaml \
     -n kube-server \
     --create-namespace \
     --version 15.8.0 --debug
     
-helm upgrade --install prometheuss prometheus-community/prometheus \
+helm upgrade --install prometheus prometheus-community/prometheus \
     -f prometheus.yaml \
     -n kube-server \
     --create-namespace \
     --version 15.8.0 --debug
-
-# master schedule
-kubectl taint no k-kube-lab-01 node-role.kubernetes.io/master:NoSchedule-
-kubectl taint no k-kube-lab-02 node-role.kubernetes.io/master:NoSchedule-
-kubectl taint no k-kube-lab-03 node-role.kubernetes.io/master:NoSchedule-
-
-kubectl taint no k-kube-lab-01 node-role.kubernetes.io/master:NoSchedule
-kubectl taint no k-kube-lab-02 node-role.kubernetes.io/master:NoSchedule
-kubectl taint no k-kube-lab-03 node-role.kubernetes.io/master:NoSchedule
 ```
 
 

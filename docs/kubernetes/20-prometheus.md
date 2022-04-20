@@ -24,6 +24,134 @@ prometheus是目前人气较高的一款监控软件，活跃的社区吸引了�
 
 
 
+通过helm安装prometheus
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm search repo prometheus
+
+# blackbox
+helm show values prometheus-community/prometheus-blackbox-exporter > blackbox-exporter.yaml-default
+
+helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
+    -f blackbox-exporter.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 5.6.0 --debug
+    
+helm upgrade --install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
+    -f blackbox-exporter.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 5.6.0 --debug
+
+# mysql
+helm repo add bitnami https://charts.bitnami.com/bitnami
+
+prometheus-community/prometheus-mysql-exporter
+
+
+
+# prometheus
+helm show values prometheus-community/prometheus > prometheus.yaml-default
+
+helm install prometheus prometheus-community/prometheus \
+    -f prometheus.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 15.8.0 --debug
+    
+helm upgrade --install prometheus prometheus-community/prometheus \
+    -f prometheus.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 15.8.0 --debug
+
+#extraScrapeConfigs
+```
+
+
+
+
+
+> 让master节点也部署node-exporter
+
+```yaml
+...
+nodeExporter:
+  ...
+  tolerations:
+    - key: "node-role.kubernetes.io/master"
+      operator: "Exists"
+```
+
+
+
+> edit cm
+
+```yaml
+...
+    - job_name: node-instance
+      honor_timestamps: true
+      scrape_interval: 1m
+      scrape_timeout: 10s
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets:
+          - 10.101.11.168:19100
+          - 10.101.11.188:19100
+          - 10.101.11.197:19100
+          - 10.101.11.209:19100
+          - 10.101.11.236:19100
+    - job_name: 'blackbox-exporter'
+      metrics_path: /probe
+      scheme: http
+      params:
+        module: [http_2xx]
+      static_configs:
+        - targets:
+          - http://blackbox-exporter-prometheus-blackbox-exporter:9115
+      relabel_configs:
+        - source_labels: [__address__]
+          target_label: __param_target
+        - source_labels: [__param_target]
+          target_label: instance
+        - target_label: __address__
+          replacement: blackbox-exporter-prometheus-blackbox-exporter:9115
+    alerting: # relative
+...          
+```
+
+
+
+
+
+> grafana
+
+```bash
+# templ
+
+Kubernetes Cluster 
+
+Kubernetes Cluster (Prometheus)
+
+Kubernetes cluster monitoring (via Prometheus)
+
+Kubernetes Pods (Prometheus)
+
+NGINX Ingress controller
+
+Node Exporter Full
+
+
+```
+
+
+
+
+
 ## 集成模式
 
 多业务集群下独立存在prometheus场景
