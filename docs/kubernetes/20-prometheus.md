@@ -126,8 +126,6 @@ nodeExporter:
 
 
 
-
-
 > grafana
 
 ```bash
