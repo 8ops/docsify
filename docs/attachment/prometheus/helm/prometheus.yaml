@@ -4,7 +4,6 @@ alertmanager:
   image:
     repository: hub.8ops.top/prometheus/alertmanager
     tag: v0.23.0
-    pullPolicy: IfNotPresent
 
   ingress:
     enabled: true
@@ -28,7 +27,8 @@ alertmanager:
 
   persistentVolume:
     enabled: true
-    existingClaim: "pvc-alertmanager"
+    storageClass: "alertmanager"
+    size: 10Gi
 
   service:
     servicePort: 9093
@@ -42,7 +42,6 @@ configmapReload:
     image:
       repository: hub.8ops.top/prometheus/configmap-reload
       tag: v0.5.0
-      pullPolicy: IfNotPresent
 
     resources: 
       limits:
@@ -59,7 +58,6 @@ configmapReload:
     image:
       repository: hub.8ops.top/prometheus/configmap-reload
       tag: v0.5.0
-      pullPolicy: IfNotPresent
 
     resources: 
       limits:
@@ -74,7 +72,6 @@ kubeStateMetrics:
 
 kube-state-metrics:
   image:
-    pullPolicy: IfNotPresent
     repository: hub.8ops.top/prometheus/kube-state-metrics
     tag: v2.4.1
 
@@ -92,7 +89,6 @@ nodeExporter:
   image:
     repository: hub.8ops.top/prometheus/node-exporter
     tag: v1.3.0
-    pullPolicy: IfNotPresent
 
   tolerations:
     - key: "node-role.kubernetes.io/master"
@@ -133,7 +129,8 @@ server:
 
   persistentVolume:
     enabled: true
-    existingClaim: "pvc-prometheus"
+    storageClass: "prometheus"
+    size: 50Gi
 
   service:
     enabled: true
@@ -164,6 +161,12 @@ pushgateway:
     requests:
       cpu: 10m
       memory: 32Mi
+
+  persistentVolume:
+    enabled: true
+    storageClass: "pushgateway"
+    size: 10Gi
+
 
 alertmanagerFiles:
   alertmanager.yml:

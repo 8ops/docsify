@@ -10,6 +10,10 @@ resources:
     cpu: 100m
     memory: 100Mi
 
+service:
+  annotations: 
+    prometheus.io/scrape: "true"
+
 ingress:
   enabled: true
   className: "external"

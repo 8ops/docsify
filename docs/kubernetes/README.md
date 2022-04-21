@@ -12,4 +12,6 @@
 - [实战 | 跨集群迁移容器](kubernetes/07-app-migrate.md)
 - [实战 | Prometheus 的使用](kubernetes/20-prometheus.md)
 - [实战 | MySQL 的使用](kubernetes/21-mysql.md)
+- [实战 | 通过Helm搭建MySQL](kubernetes/21-helm-mysql.md)
+- [实战 | 使用Docker](kubernetes/22-docker.md)
 

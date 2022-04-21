@@ -4,6 +4,10 @@
 
 
 
+[通过helm搭建MySQL](kubernetes/21-helm-mysql.md)
+
+
+
 当下最新版本
 
 - 5.7.37

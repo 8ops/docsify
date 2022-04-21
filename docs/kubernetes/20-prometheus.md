@@ -31,28 +31,6 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo update
 helm search repo prometheus
 
-# blackbox
-helm show values prometheus-community/prometheus-blackbox-exporter > blackbox-exporter.yaml-default
-
-helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
-    -f blackbox-exporter.yaml \
-    -n kube-server \
-    --create-namespace \
-    --version 5.6.0 --debug
-    
-helm upgrade --install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
-    -f blackbox-exporter.yaml \
-    -n kube-server \
-    --create-namespace \
-    --version 5.6.0 --debug
-
-# mysql
-helm repo add bitnami https://charts.bitnami.com/bitnami
-
-prometheus-community/prometheus-mysql-exporter
-
-
-
 # prometheus
 helm show values prometheus-community/prometheus > prometheus.yaml-default
 
@@ -68,10 +46,49 @@ helm upgrade --install prometheus prometheus-community/prometheus \
     --create-namespace \
     --version 15.8.0 --debug
 
-#extraScrapeConfigs
+helm -n kube-server uninstall prometheus 
+
 ```
 
 
+
+> extra
+
+```bash
+# blackbox
+helm show values prometheus-community/prometheus-blackbox-exporter > blackbox-exporter.yaml-default
+
+helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
+    -f blackbox-exporter.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 5.6.0 --debug
+    
+helm upgrade --install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
+    -f blackbox-exporter.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 5.6.0 --debug
+
+helm -n kube-server uninstall blackbox-exporter 
+
+
+```
+
+
+
+
+
+> release persistence
+
+```bash
+kubectl edit pv xxx
+  finalizers:
+  - kubernetes.io/pv-protection
+  ...
+  # upgraded
+  finalizers: []
+```
 
 
 
@@ -88,9 +105,11 @@ nodeExporter:
 
 
 
-> edit cm
+> edit configmap
 
-```yaml
+```bash
+#helm中extraScrapeConfigs未成功
+~ $ kubectl -n kube-server edit cm prometheus-server
 ...
     - job_name: node-instance
       honor_timestamps: true
@@ -105,7 +124,7 @@ nodeExporter:
           - 10.101.11.197:19100
           - 10.101.11.209:19100
           - 10.101.11.236:19100
-    - job_name: 'blackbox-exporter'
+    - job_name: 'blackbox-instance'
       metrics_path: /probe
       scheme: http
       params:
