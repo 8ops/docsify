@@ -251,7 +251,7 @@ ssl_cert_key = /data/cert/r.8ops.cc.key
 email_server = smtp.exmail.qq.com
 email_server_port = 465
 email_username = k8s@8ops.cc
-email_password = Jesse2017
+email_password = password
 email_from = K8S <k8s@8ops.cc>
 email_ssl = true
 
@@ -379,7 +379,7 @@ docker-registry registrykey \
 --namespace=development \
 --docker-server=r.8ops.cc \
 --docker-username=jesse \
---docker-password=Harbor123 \
+--docker-password=password \
 --docker-email=m@8ops.cc
 
 kubectl -s http://10.10.10.36:8080 create secret \
@@ -387,7 +387,7 @@ docker-registry registrykey \
 --namespace=default \
 --docker-server=r.8ops.cc \
 --docker-username=jesse \
---docker-password=Harbor123 \
+--docker-password=password \
 --docker-email=m@8ops.cc
 
 kubectl -s http://10.10.10.36:8080 create secret \
@@ -395,7 +395,7 @@ docker-registry registrykey \
 --namespace=kube-system \
 --docker-server=r.8ops.cc \
 --docker-username=jesse \
---docker-password=Harbor123 \
+--docker-password=password \
 --docker-email=m@8ops.cc
 
 vim secret_registrykey.yaml

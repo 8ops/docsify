@@ -1138,7 +1138,7 @@ secretkey_path = /data/harbor
 email_server = smtp.exmail.qq.com
 email_server_port = 465
 email_username = k8s@8ops.cc
-email_password = Jesse2017
+email_password = password
 email_from = K8S <k8s@8ops.cc>
 email_ssl = true
 
@@ -1155,7 +1155,7 @@ docker-compose down
 docker-compose up -d
 
 # 注意域名命名不能下划线（奇特Bug测试出来）
-docker login ${KUBE_HUB} -u jesse -p Jesse2017
+docker login ${KUBE_HUB} -u jesse -p password 
 
 # tag push
 docker images | awk -v t=${KUBE_HUB} '$1~/^vmware/{printf("docker tag %s %s/%s:%s\ndocker push %s/%s:%s\n",$3,t,$1,$2,t,$1,$2)}'
@@ -1176,7 +1176,7 @@ kubectl create secret \
   --namespace=kube-system \
   --docker-server=${KUBE_HUB} \
   --docker-username=jesse \
-  --docker-password=Jesse2017 \
+  --docker-password=password \
   --docker-email=jesse@8ops.cc
 
 kubectl create secret \
@@ -1184,7 +1184,7 @@ kubectl create secret \
   --namespace=default \
   --docker-server=${KUBE_HUB} \
   --docker-username=jesse \
-  --docker-password=Jesse2017 \
+  --docker-password=password \
   --docker-email=jesse@8ops.cc
 
 kubectl get secret

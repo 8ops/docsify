@@ -1072,7 +1072,7 @@ secretkey_path = /data/harbor
 email_server = smtp.exmail.qq.com
 email_server_port = 465
 email_username = k8s@8ops.cc
-email_password = Jesse2017
+email_password =password 
 email_from = K8S <k8s@8ops.cc>
 email_ssl = true
 
@@ -1087,7 +1087,7 @@ email_ssl = true
 docker-compose down
 docker-compose up -d
 
-docker login r.k8s.8ops.cc -u jesse -p Jesse2017
+docker login r.k8s.8ops.cc -u jesse -p password 
 
 docker images | awk '$1~/^vmware/{printf("docker tag %s r.k8s.8ops.cc/%s:%s\ndocker push r.k8s.8ops.cc/%s:%s\n",$3,$1,$2,$1,$2)}'
 docker images | awk '$1~/^gcr\.io/{printf("docker tag %s r.k8s.8ops.cc/%s:%s\ndocker push r.k8s.8ops.cc/%s:%s\n",$3,substr($1,8,100),$2,substr($1,8,100),$2)}'
@@ -1103,7 +1103,7 @@ docker-registry registrykey \
 --namespace=kube-system \
 --docker-server=r.k8s.8ops.cc \
 --docker-username=jesse \
---docker-password=Jesse2017 \
+--docker-password=password \
 --docker-email=jesse@8ops.cc
 
 kubectl create secret \
@@ -1111,7 +1111,7 @@ docker-registry registrykey \
 --namespace=default \
 --docker-server=r.k8s.8ops.cc \
 --docker-username=jesse \
---docker-password=Jesse2017 \
+--docker-password=password \
 --docker-email=jesse@8ops.cc
 
 ```
