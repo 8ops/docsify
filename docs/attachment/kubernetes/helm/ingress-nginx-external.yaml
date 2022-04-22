@@ -76,6 +76,23 @@ controller:
   service:
     enabled: false
 
+  metrics:
+    port: 10254
+    enabled: true
+
+    service:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"
+      servicePort: 10254
+      type: ClusterIP
+
+    serviceMonitor:
+      enabled: true
+      scrapeInterval: 1m
+      honorLabels: true
+
   lifecycle:
   admissionWebhooks:
     enabled: false
+
