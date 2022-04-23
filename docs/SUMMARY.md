@@ -15,7 +15,7 @@
   - [实战 | Kubernetes Cluster 快速搭建](kubernetes/01-cluster-init.md)
   - [实战 | Kubernetes Cluster 重置环境](kubernetes/02-cluster-reset.md)
   - [实战 | 加速访问镜像](kubernetes/10-access-image.md)
-  - [实战 | Helm 的使用](kubernetes/05-helm-usage.md)
+  - [实战 | Helm 的使用](kubernetes/05-helm.md)
   - [实战 | Kubernetes Cluster 升级版本](kubernetes/06-cluster-upgrade.md)
   - [实战 | 跨集群迁移容器](kubernetes/07-app-migrate.md)
   - [实战 | 使用Docker](kubernetes/08-docker.md)
