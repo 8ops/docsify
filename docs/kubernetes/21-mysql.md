@@ -1,10 +1,60 @@
-# 实战 | 基于Kubernetes使用MySQL
+# 实战 | 通过Helm搭建MySQL
+
+## 一、Helm
+
+```bash
+# mysql
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm search repo mysql
+
+helm show values bitnami/mysql > mysql.yaml-default
+
+# - mysql-standalone.yaml
+# - mysql-replication.yaml
+
+helm install mysql-8 bitnami/mysql \
+    -f mysql-standalone.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 8.9.2 --debug
+
+helm upgrade --install mysql-8 bitnami/mysql \
+    -f mysql-standalone.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 8.9.2 --debug    
+
+helm -n kube-server uninstall mysql-8
+
+helm install mysql-8 bitnami/mysql \
+    -f mysql-replication.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 8.9.2 --debug
+
+helm upgrade --install mysql-8 bitnami/mysql \
+    -f mysql-replication.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 8.9.2 --debug 
+
+```
+
+
+
+> edit mysql.yaml
+
+```yaml
+```
+
+
+
+
+
+## 二、手动
 
 在kubernetes下小试MySQL的搭建
-
-
-
-[通过helm搭建MySQL](kubernetes/21-helm-mysql.md)
 
 
 
@@ -19,9 +69,9 @@
 
 ![mysql](../images/kubernetes/mysql.png)
 
-## 一、搭建
+### 2.1、搭建
 
-### 1.1 PVC
+#### 2.1.1 PVC
 
 先创建存储
 
@@ -89,7 +139,7 @@ items:
 kind: List    
 ```
 
-### 1.2 CM
+#### 2.1.2 CM
 
 配置管理
 
@@ -125,7 +175,7 @@ metadata:
   namespace: kube-server
 ```
 
-### 1.3 PO
+#### 2.1.3 PO
 
 创建容器
 
@@ -212,9 +262,9 @@ kind: List
 
 
 
-## 二、验收
+## 2.2、验收
 
-### 2.1 存储
+#### 2.2.1 存储
 
 ```bash
 ~ $ kubectl -n kube-server get pv,pvc -A
@@ -250,7 +300,7 @@ kube-server   persistentvolumeclaim/pvc-mysql-5     Bound    pv-mysql-5       20
 
 
 
-### 2.2 容器
+#### 2.2.2 容器
 
 ```bash
 ~ $ kubectl -n kube-server get cm,po,svc
@@ -266,7 +316,7 @@ service/mysql-5                               NodePort    192.168.145.159   <non
 
 
 
-### 2.3 访问
+#### 2.2.3 访问
 
 ```bash
 ~ $ mysql -h 10.101.11.196 -P30306 -uroot -ppassword

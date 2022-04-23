@@ -1,6 +1,6 @@
-# 通过Helm搭建Grafana
+# 实战 | 通过Helm搭建Grafana
 
-先准备mysql存储grafana的metedata信息
+先准备mysql存储grafana的metedata信息[实战 | 基于Kubernetes使用MySQL](kubernetes/21-mysql.md)
 
 | name     | value   |
 | -------- | ------- |
@@ -35,6 +35,10 @@ helm -n kube-server uninstall grafana
 
 CREATE DATABASE `grafana` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 ```
+
+
+
+## Template
 
 
 

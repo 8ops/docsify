@@ -1,0 +1,90 @@
+global:
+  imageRegistry: "hub.8ops.top"
+  storageClass: "redis"
+  redis:
+    password: "jesse"
+
+image:
+  registry: hub.8ops.top
+  repository: bitnami/redis
+  tag: 6.2.6
+
+auth:
+  enabled: true
+  sentinel: true
+  password: "jesse"
+
+master:
+  resources:
+    limits: 
+      cpu: 100m
+      memory: 128Mi
+    requests: 
+      cpu: 100m
+      memory: 128Mi
+
+  persistence:
+    #storageClass: "redis"
+    size: 1Gi
+
+  service:
+    type: NodePort
+    ports:
+      redis: 6379
+    nodePorts:
+      redis: "30379"
+
+replica:
+  replicaCount: 3
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  persistence:
+    #storageClass: "redis"
+    size: 1Gi
+
+sentinel:
+  enabled: true
+
+  image:
+    registry: hub.8ops.top
+    repository: bitnami/redis-sentinel
+    tag: 6.2.6
+
+  masterSet: mymaster
+
+  persistence:
+    enabled: true
+    #storageClass: "redis"
+    size: 100Mi
+
+  resources:
+    limits: 
+      cpu: 50m
+      memory: 64Mi
+    requests: 
+      cpu: 50m
+      memory: 64Mi
+
+metrics:
+  enabled: true
+
+  image:
+    registry: hub.8ops.top
+    repository: bitnami/redis-exporter
+    tag: 1.37.0
+
+  resources:
+    limits: 
+      cpu: 50m
+      memory: 64Mi
+    requests: 
+      cpu: 50m
+      memory: 64Mi
+
