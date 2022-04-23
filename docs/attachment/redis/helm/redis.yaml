@@ -24,7 +24,6 @@ master:
       memory: 128Mi
 
   persistence:
-    #storageClass: "redis"
     size: 1Gi
 
   service:
@@ -32,7 +31,7 @@ master:
     ports:
       redis: 6379
     nodePorts:
-      redis: "30379"
+      redis: 30379
 
 replica:
   replicaCount: 3
@@ -46,8 +45,14 @@ replica:
       memory: 128Mi
 
   persistence:
-    #storageClass: "redis"
     size: 1Gi
+
+  service:
+    type: NodePort
+    ports:
+      redis: 6379
+    nodePorts:
+      redis: 30380
 
 sentinel:
   enabled: true
@@ -61,7 +66,6 @@ sentinel:
 
   persistence:
     enabled: true
-    #storageClass: "redis"
     size: 100Mi
 
   resources:

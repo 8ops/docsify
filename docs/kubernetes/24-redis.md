@@ -17,6 +17,15 @@ helm install redis bitnami/redis \
     --create-namespace \
     --version 16.8.7 --debug
 
+helm upgrade --install redis bitnami/redis \
+    -f redis.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 16.8.7 --debug
+
+helm -n kube-server uninstall redis 
+
+# ---
 helm show values bitnami/redis-cluster > redis-cluster.yaml-default
 
 ```
