@@ -2,16 +2,16 @@
 autoscaling:
   enabled: true
   minReplicas: 1
-  maxReplicas: 10
+  maxReplicas: 5
   metrics:
   - type: Resource
     resource:
       name: cpu
-      targetAverageUtilization: 60
+      targetAverageUtilization: 90
   - type: Resource
     resource:
       name: memory
-      targetAverageUtilization: 60
+      targetAverageUtilization: 80
 
 image:
   repository: hub.8ops.top/prometheus/grafana
@@ -40,14 +40,14 @@ ingress:
   hosts:
     - grafana.8ops.top
   tls: 
-    - secretName: tls-wuxingdev.cn
+    - secretName: tls-8ops.top
       hosts:
         - grafana.8ops.top
 
 resources:
   limits:
-    cpu: 50m
-    memory: 64Mi
+    cpu: 200m
+    memory: 256Mi
   requests:
     cpu: 50m
     memory: 64Mi
@@ -77,7 +77,7 @@ grafana.ini:
     mode: console
   database:
     type: mysql
-    host: mysql-8-primary
+    host: mysql-replication-primary
     name: grafana
     user: grafana
     password: grafana

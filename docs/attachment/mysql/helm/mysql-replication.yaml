@@ -1,8 +1,7 @@
 
-
 image:
   registry: hub.8ops.top
-  repository: third/mysql
+  repository: bitnami/mysql
   tag: 8.0.28
 
 architecture: replication
@@ -22,7 +21,6 @@ primary:
     #
     # For explanations see
     # http://dev.mysql.com/doc/mysql/en/server-system-variables.html
-    
     [mysqld]
     pid-file        = /var/run/mysqld/mysqld.pid
     socket          = /var/run/mysqld/mysqld.sock
@@ -46,7 +44,7 @@ primary:
 
   persistence:
     enabled: true
-    storageClass: "mysql-8-primary"
+    storageClass: "mysql-replication-primary"
     size: 20Gi
 
   extraVolumeMounts:
@@ -59,7 +57,7 @@ primary:
   service:
     type: NodePort
     port: 3306
-    nodePort: "30380"
+    nodePort: "30381"
 
 secondary:
   configuration: |-
@@ -93,11 +91,11 @@ secondary:
       valueFrom:
         secretKeyRef:
           key: mysql-root-password
-          name: mysql-8
+          name: mysql-replication
 
   persistence:
     enabled: true
-    storageClass: "mysql-8-secondary"
+    storageClass: "mysql-replication-secondary"
     size: 20Gi
 
   extraVolumeMounts:
@@ -110,14 +108,14 @@ secondary:
   service:
     type: NodePort
     port: 3306
-    nodePort: "30381"
+    nodePort: "30382"
 
 metrics:
   enabled: true
 
   image:
     registry: hub.8ops.top
-    repository: prometheus/mysqld-exporter
+    repository: bitnami/mysqld-exporter
     tag: 0.14.0
 
   service:

@@ -2,6 +2,8 @@
 
 ## 一、Helm
 
+### 1.1 Install
+
 ```bash
 # mysql
 helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -11,41 +13,45 @@ helm search repo mysql
 helm show values bitnami/mysql > mysql.yaml-default
 
 # - mysql-standalone.yaml
-# - mysql-replication.yaml
-
-helm install mysql-8 bitnami/mysql \
+helm install mysql-standalone bitnami/mysql \
     -f mysql-standalone.yaml \
     -n kube-server \
     --create-namespace \
     --version 8.9.2 --debug
 
-helm upgrade --install mysql-8 bitnami/mysql \
+helm upgrade --install mysql-standalone bitnami/mysql \
     -f mysql-standalone.yaml \
     -n kube-server \
     --create-namespace \
     --version 8.9.2 --debug    
 
-helm -n kube-server uninstall mysql-8
+helm -n kube-server uninstall mysql-standalone
 
-helm install mysql-8 bitnami/mysql \
+# - mysql-replication.yaml
+helm install mysql-replication bitnami/mysql \
     -f mysql-replication.yaml \
     -n kube-server \
     --create-namespace \
     --version 8.9.2 --debug
 
-helm upgrade --install mysql-8 bitnami/mysql \
+helm upgrade --install mysql-replication bitnami/mysql \
     -f mysql-replication.yaml \
     -n kube-server \
     --create-namespace \
     --version 8.9.2 --debug 
 
+helm -n kube-server uninstall mysql-replication
 ```
 
 
 
-> edit mysql.yaml
+### 1.2 Usage
 
 ```yaml
+kubectl -n kube-server exec -it pod/mysql-replication-primary-0 sh
+mysql -uroot -pjesse
+
+mysql -h10.101.11.182 -P30380 -ugrafana -pgrafana
 ```
 
 

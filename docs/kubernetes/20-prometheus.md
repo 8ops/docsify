@@ -16,7 +16,7 @@ prometheus是目前人气较高的一款监控软件，活跃的社区吸引了�
 
 
 
-## 单一模式
+## 二、单一模式
 
 基于kubernetes
 
@@ -47,12 +47,11 @@ helm upgrade --install prometheus prometheus-community/prometheus \
     --version 15.8.0 --debug
 
 helm -n kube-server uninstall prometheus 
-
 ```
 
 
 
-> extra
+> add blackbox-exporter
 
 ```bash
 # blackbox
@@ -71,8 +70,6 @@ helm upgrade --install blackbox-exporter prometheus-community/prometheus-blackbo
     --version 5.6.0 --debug
 
 helm -n kube-server uninstall blackbox-exporter 
-
-
 ```
 
 
@@ -167,9 +164,47 @@ Node Exporter Full
 
 
 
+> [prometheus-alert-center](https://github.com/feiyu563/PrometheusAlert)
+
+```dockerfile
+ARG IMAGE_TAG=1.18-buster
+FROM golang:${IMAGE_TAG}
+
+ADD linux /opt
+
+RUN set -ex && \
+    chmod +x /opt/PrometheusAlert && \
+    ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "$TZ" > /etc/timezone
+
+ENTRYPOINT ["/opt/PrometheusAlert"]
+```
 
 
-## 集成模式
+
+```bash
+# 官方镜像不能发群通知
+docker run --rm -d \
+	-p 8070:8080 \
+	-v /opt/prometheusalert/conf:/app/conf \
+	registry.wuxingdev.cn/prometheus/prometheus-alert:v4.8 
+
+# 基于官方二进制可以发
+docker build . -t registry.wuxingdev.cn/prometheus/prometheus-alert-center:v4.8
+docker run --rm -d \
+	-p 8080:8080 \
+	-v /opt/prometheusalert/conf:/app/conf \
+	registry.wuxingdev.cn/prometheus/prometheus-alert-center:v4.8
+	
+# 基于二进帛直接运行
+8090
+```
+
+
+
+
+
+## 二、联邦模式
 
 多业务集群下独立存在prometheus场景
 

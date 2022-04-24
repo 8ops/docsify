@@ -1,8 +1,7 @@
 
-
 image:
   registry: hub.8ops.top
-  repository: third/mysql
+  repository: bitnami/mysql
   tag: 8.0.28
 
 architecture: standalone
@@ -20,7 +19,6 @@ primary:
     #
     # For explanations see
     # http://dev.mysql.com/doc/mysql/en/server-system-variables.html
-    
     [mysqld]
     pid-file        = /var/run/mysqld/mysqld.pid
     socket          = /var/run/mysqld/mysqld.sock
@@ -44,7 +42,7 @@ primary:
 
   persistence:
     enabled: true
-    storageClass: "mysql-8-primary"
+    storageClass: "mysql-standalone"
     size: 20Gi
 
   extraVolumeMounts:
@@ -64,7 +62,7 @@ metrics:
 
   image:
     registry: hub.8ops.top
-    repository: prometheus/mysqld-exporter
+    repository: bitnami/mysqld-exporter
     tag: 0.14.0
 
   service:

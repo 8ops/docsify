@@ -8,15 +8,15 @@ items:
     finalizers:
     - kubernetes.io/pv-protection
     labels:
-      pvname: pv-prometheus-server
-    name: pv-prometheus-server
+      pvname: pv-redis-sentinel-01
+    name: pv-redis-sentinel-01
   spec:
     accessModes:
     - ReadWriteOnce
     capacity:
-      storage: 50Gi
+      storage: 1Gi
     local:
-      path: /opt/data/prometheus/server
+      path: /opt/data/redis/sentinel/01
     nodeAffinity:
       required:
         nodeSelectorTerms:
@@ -24,9 +24,9 @@ items:
           - key: kubernetes.io/hostname
             operator: In
             values:
-            - k-kube-lab-08
+            - k-kube-lab-09
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: prometheus-server
+    storageClassName: redis-sentinel
     volumeMode: Filesystem
 - apiVersion: v1
   kind: PersistentVolume
@@ -36,15 +36,15 @@ items:
     finalizers:
     - kubernetes.io/pv-protection
     labels:
-      pvname: pv-prometheus-alertmanager
-    name: pv-prometheus-alertmanager
+      pvname: pv-redis-sentinel-02
+    name: pv-redis-sentinel-02
   spec:
     accessModes:
     - ReadWriteOnce
     capacity:
       storage: 1Gi
     local:
-      path: /opt/data/prometheus/alertmanager
+      path: /opt/data/redis/sentinel/02
     nodeAffinity:
       required:
         nodeSelectorTerms:
@@ -52,9 +52,9 @@ items:
           - key: kubernetes.io/hostname
             operator: In
             values:
-            - k-kube-lab-08
+            - k-kube-lab-09
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: prometheus-alertmanager
+    storageClassName: redis-sentinel
     volumeMode: Filesystem
 - apiVersion: v1
   kind: PersistentVolume
@@ -64,15 +64,15 @@ items:
     finalizers:
     - kubernetes.io/pv-protection
     labels:
-      pvname: pv-prometheus-pushgateway
-    name: pv-prometheus-pushgateway
+      pvname: pv-redis-sentinel-03
+    name: pv-redis-sentinel-03
   spec:
     accessModes:
     - ReadWriteOnce
     capacity:
       storage: 1Gi
     local:
-      path: /opt/data/prometheus/pushgateway
+      path: /opt/data/redis/sentinel/03
     nodeAffinity:
       required:
         nodeSelectorTerms:
@@ -80,8 +80,8 @@ items:
           - key: kubernetes.io/hostname
             operator: In
             values:
-            - k-kube-lab-08
+            - k-kube-lab-09
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: prometheus-pushgateway
+    storageClassName: redis-sentinel
     volumeMode: Filesystem
 kind: List

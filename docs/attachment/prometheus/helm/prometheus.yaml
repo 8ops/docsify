@@ -27,8 +27,8 @@ alertmanager:
 
   persistentVolume:
     enabled: true
-    storageClass: "alertmanager"
-    size: 10Gi
+    storageClass: "prometheus-alertmanager"
+    size: 1Gi
 
   service:
     servicePort: 9093
@@ -129,7 +129,7 @@ server:
 
   persistentVolume:
     enabled: true
-    storageClass: "prometheus"
+    storageClass: "prometheus-server"
     size: 50Gi
 
   service:
@@ -164,9 +164,8 @@ pushgateway:
 
   persistentVolume:
     enabled: true
-    storageClass: "pushgateway"
-    size: 10Gi
-
+    storageClass: "prometheus-pushgateway"
+    size: 1Gi
 
 alertmanagerFiles:
   alertmanager.yml:
@@ -217,7 +216,7 @@ alertmanagerFiles:
     - name: 'prometheusalert'
       webhook_configs:
       - send_resolved: true
-        url: 'http://10.101.11.236:8080/prometheus/alert?type=wx&tpl=prometheus-wx&wxurl=https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=d38f3a90-2b86-4d48-a9c7-228e1e89d416&at=@all'
+        url: 'http://prometheus-alert-center/prometheus/alert?type=wx&tpl=prometheus-wx&wxurl=https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=d38f3a90-2b86-4d48-a9c7-228e1e89d416&at=@all'
     templates:
     - '/etc/config/templates.tmpl'
   templates.tmpl: |
