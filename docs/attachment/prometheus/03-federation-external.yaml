@@ -4,63 +4,63 @@ items:
   kind: Endpoints
   metadata:
     labels:
-      app.kubernetes.io/instance: prometheus-alert-center
-      app.kubernetes.io/name: prometheus-alert-center
-    name: prometheus-alert-center
+      app.kubernetes.io/instance: federation
+      app.kubernetes.io/name: federation
+    name: federation
     namespace: kube-server
   subsets:
   - addresses:
     - ip: 10.101.11.236
     ports:
     - name: service
-      port: 8080
+      port: 9090
       protocol: TCP
 - apiVersion: v1
   kind: Service
   metadata:
     annotations:
-      meta.helm.sh/release-name: prometheus-alert-center
+      meta.helm.sh/release-name: federation
       meta.helm.sh/release-namespace: kube-server
       prometheus.io/scrape: "true"
-      prometheus.io/port: "8080"
+      prometheus.io/port: "9090"
     labels:
-      app.kubernetes.io/instance: prometheus-alert-center
-      app.kubernetes.io/name: prometheus-alert-center
-    name: prometheus-alert-center
+      app.kubernetes.io/instance: federation
+      app.kubernetes.io/name: federation
+    name: federation
     namespace: kube-server
   spec:
     ports:
     - name: service
-      port: 8080
+      port: 9090
       protocol: TCP
-      targetPort: 8080
+      targetPort: 9090
     type: ClusterIP
 - apiVersion: networking.k8s.io/v1
   kind: Ingress
   metadata:
     annotations:
-      meta.helm.sh/release-name: prometheus-alert-center
+      meta.helm.sh/release-name: federation
       meta.helm.sh/release-namespace: kube-server
     labels:
-      app.kubernetes.io/instance: prometheus-alert-center
-      app.kubernetes.io/name: prometheus-alert-center
-    name: prometheus-alert-center
+      app.kubernetes.io/instance: federation
+      app.kubernetes.io/name: federation
+    name: federation
     namespace: kube-server
   spec:
     ingressClassName: external
     rules:
-    - host: prometheus-alert-center.8ops.top
+    - host: federation.8ops.top
       http:
         paths:
         - backend:
             service:
-              name: prometheus-alert-center
+              name: federation
               port:
-                number: 8080
+                number: 9090
           path: /
           pathType: Prefix
     tls:
     - hosts:
-      - prometheus-alert-center.8ops.top
+      - federation.8ops.top
       secretName: tls-8ops.top
 kind: List

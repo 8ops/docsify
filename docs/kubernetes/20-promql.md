@@ -1,45 +1,53 @@
 # PromQL 基本使用
 
-- PromQL (Prometheus Query Language) 是 Prometheus 自己开发的数据查询 DSL 语言，语言表现力非常丰富，内置函数很多，在日常数据可视化以及rule 告警中都会使用到它。
+PromQL (Prometheus Query Language) 是 Prometheus 自己开发的数据查询 DSL 语言，语言表现力非常丰富，内置函数很多，在日常数据可视化以及rule 告警中都会使用到它。
 
-在页面 [http://localhost:9090/graph](https://link.juejin.cn?target=http%3A%2F%2Flocalhost%3A9090%2Fgraph) 中，输入下面的查询语句，查看结果，例如：
+
+
+摘抄于网友贡献。
+
+在页面 https://prometheus.8ops.top/graph 中
 
 ```
 http_requests_total{code="200"}
-复制代码
 ```
 
-### 字符串和数字
+> 字符串和数字
 
-- 字符串: 在查询语句中，字符串往往作为查询条件 labels 的值，和 Golang 字符串语法一致，可以使用 "", '', 或者 `` , 格式如：
+字符串: 在查询语句中，字符串往往作为查询条件 labels 的值，和 Golang 字符串语法一致，可以使用 "", '', 或者 `` 
 
 ```
-- "this is a string"
-- 'these are unescaped: \n \\ \t'
-- `these are not unescaped: \n ' " \t`
-复制代码
+"this is a string"
 ```
 
-## 查询结果类型
 
-> PromQL 查询结果主要有 3 种类型：
+
+## 一、基本概念
+
+
+
+### 1.1 查询结果类型
+
+PromQL 查询结果主要有 3 种类型
 
 - 瞬时数据 (Instant vector): 包含一组时序，每个时序只有一个点，例如：**http_requests_total**
 - 区间数据 (Range vector): 包含一组时序，每个时序有多个点，例如：**http_requests_total[5m]**
 - 纯量数据 (Scalar): 纯量只有一个数字，没有时序，例如：**count(http_requests_total)**
 
-## 查询条件
 
-> Prometheus 存储的是时序数据，而它的时序是由名字和一组标签构成的，其实名字也可以写出标签的形式，例如 **http_requests_total** 等价于 {name="http_requests_total"}。
 
-- 一个简单的查询相当于是对各种标签的筛选，例如：
+### 1.2 查询条件
+
+Prometheus 存储的是时序数据，而它的时序是由名字和一组标签构成的，其实名字也可以写出标签的形式，例如 **http_requests_total** 等价于 {name="http_requests_total"}。
+
+一个简单的查询相当于是对各种标签的筛选
 
 ```
 http_requests_total{code="200"}      # 表示查询名字为 http_requests_total，code 为 "200" 的数据
 复制代码
 ```
 
-- 查询条件支持正则匹配，例如：
+查询条件支持正则匹配
 
 ```
 http_requests_total{code!="200"}     # 表示查询 code 不为 "200" 的数据
@@ -48,32 +56,34 @@ http_requests_total{code!～"2.."}    # 表示查询 code 不为 "2xx" 的数据
 复制代码
 ```
 
-## 操作符
 
-> Prometheus 查询语句中，支持常见的各种表达式操作符，例如:
 
-- 算术运算符:
+### 1.3 操作符
+
+Prometheus 查询语句中，支持常见的各种表达式操作符
+
+算术运算符
 
 ```
 支持的算术运算符有 +，-，*，/，%，^, 例如 http_requests_total * 2 表示将 http_requests_total 所有数据 double 一倍。
 复制代码
 ```
 
-- 比较运算符:
+比较运算符
 
 ```
 支持的比较运算符有 ==，!=，>，<，>=，<=, 例如 http_requests_total > 100 表示 http_requests_total 结果中大于 100 的数据。
 复制代码
 ```
 
-- 逻辑运算符:
+逻辑运算符
 
 ```
 支持的逻辑运算符有 and，or，unless, 例如 http_requests_total == 5 or http_requests_total == 2 表示 http_requests_total 结果中等于 5 或者 2 的数据。
 复制代码
 ```
 
-- 聚合运算符:
+聚合运算符
 
 ```
 支持的聚合运算符有 sum，min，max，avg，stddev，stdvar，count，count_values，bottomk，topk，quantile，, 例如 max(http_requests_total) 表示 http_requests_total 结果中最大的数据。
@@ -82,9 +92,11 @@ http_requests_total{code!～"2.."}    # 表示查询 code 不为 "2xx" 的数据
 
 ***注意:和四则运算类型，Prometheus 的运算符也有优先级，它们遵从（^）> (\*, /, %) > (+, -) > (==, !=, <=, <, >=, >) > (and, unless) > (or) 的原则。***
 
-## 内置函数
 
-- Prometheus 内置不少函数，方便查询以及数据格式化，例如将结果由浮点数转为整数的 floor 和 ceil
+
+### 1.4 内置函数
+
+Prometheus 内置不少函数，方便查询以及数据格式化，例如将结果由浮点数转为整数的 floor 和 ceil
 
 ```
 - floor(avg(http_requests_total{code="200"}))
@@ -92,23 +104,25 @@ http_requests_total{code!～"2.."}    # 表示查询 code 不为 "2xx" 的数据
 复制代码
 ```
 
-- 查看 http_requests_total 5分钟内，平均每秒数据
+查看 http_requests_total 5分钟内，平均每秒数据
 
 ```
 rate(http_requests_total[5m])
 复制代码
 ```
 
-## PromQL 进阶语法
 
-### 即时矢量选择器
+
+## 二、语法进阶
+
+### 2.1 即时矢量选择器
 
 - =：匹配与标签相等的内容
 - !=：不匹配与标签相等的内容
 - =~: 根据正则表达式匹配与标签符合的内容
 - !~：根据正则表达式不匹配与标签符合的内容
 
-> 示例：
+
 
 ```
 # 这将匹配method不等于GET,environment匹配到staging，testing或development的http_requests_total请求内容。
@@ -116,7 +130,7 @@ http_requests_total{environment=~"staging|testing|development",method!="GET"}
 复制代码
 ```
 
-- 向量选择器必须指定一个名称或至少一个与空字符串不匹配的标签匹配器
+向量选择器必须指定一个名称或至少一个与空字符串不匹配的标签匹配器
 
 ```
 # 非法表达式
@@ -130,9 +144,11 @@ http_requests_total{environment=~"staging|testing|development",method!="GET"}
 复制代码
 ```
 
-### 范围矢量选择器
 
-- 持续时间仅限于数字
+
+### 2.2 范围矢量选择器
+
+持续时间仅限于数字
 
 ```
 s - seconds
@@ -144,7 +160,7 @@ y - years
 复制代码
 ```
 
-> 示例:
+
 
 ```
 # 选择在过去5分钟内为度量标准名称为http_requests_total且标签设置为job=prometheus的所有时间序列记录的所有值
@@ -152,17 +168,20 @@ http_requests_total{job="prometheus"}[5m]
 复制代码
 ```
 
-### 偏移量修改器
 
-- 偏移修改器允许更改查询中各个即时和范围向量的时间偏移
-- 例如：以下表达式相对于当前查询5分钟前的http_requests_total值
+
+### 2.3 偏移量修改器
+
+偏移修改器允许更改查询中各个即时和范围向量的时间偏移
+
+例如：以下表达式相对于当前查询5分钟前的http_requests_total值
 
 ```
 http_requests_total offset 5m
 复制代码
 ```
 
-- 偏移修改器需要立即跟随选择器
+偏移修改器需要立即跟随选择器
 
 ```
 # 非法表达式
@@ -173,7 +192,7 @@ sum(http_requests_total{method="GET"} offset 5m)
 复制代码
 ```
 
-- 同样适用于范围向量
+同样适用于范围向量
 
 ```
 # 将返回http_requests_total一周前的5分钟增长率
@@ -181,11 +200,15 @@ rate(http_requests_total[5m] offset 1w)
 复制代码
 ```
 
-## 二元运算符
 
-- Prometheus中存在以下二进制算术运算符：
 
-### 算术二元运算符
+## 三、二元运算符
+
+Prometheus中存在以下二进制算术运算符
+
+
+
+### 3.1 算术二元运算符
 
 ```
 + (addition)
@@ -197,7 +220,9 @@ rate(http_requests_total[5m] offset 1w)
 复制代码
 ```
 
-### 比较二元运算符
+
+
+### 3.2 比较二元运算符
 
 ```
 == (equal)
@@ -209,7 +234,9 @@ rate(http_requests_total[5m] offset 1w)
 复制代码
 ```
 
-### 逻辑/集二进制运算符
+
+
+### 3.4 逻辑/集二进制运算符
 
 ```
 and (intersection)
@@ -218,9 +245,11 @@ unless (complement)
 复制代码
 ```
 
-### 聚合运算符
 
-- Prometheus支持以下内置聚合运算符，这些运算符可用于聚合单个即时向量的元素，从而生成具有聚合值的较少元素的新向量：
+
+### 3.5 聚合运算符
+
+Prometheus支持以下内置聚合运算符，这些运算符可用于聚合单个即时向量的元素，从而生成具有聚合值的较少元素的新向量
 
 ```
 sum (calculate sum over dimensions)                               # 范围内求和
@@ -237,16 +266,14 @@ quantile (calculate φ-quantile (0 ≤ φ ≤ 1) over dimensions)      # 计算 
 复制代码
 ```
 
-- 这些运算符可以用于聚合所有标签维度，也可以通过包含without或by子句来保留不同的维度
-
-> 示例1：
+这些运算符可以用于聚合所有标签维度，也可以通过包含without或by子句来保留不同的维度
 
 ```
 <aggr-op>([parameter,] <vector expression>) [without|by (<label list>)]
 复制代码
 ```
 
-- 解析：
+解析
 
 ```
 - parameter仅用于count_values，quantile，topk和bottomk
@@ -255,9 +282,7 @@ quantile (calculate φ-quantile (0 ≤ φ ≤ 1) over dimensions)      # 计算 
 复制代码
 ```
 
-> 示例2：
-
-- 如果http_requests_total具有按application，instance和group标签列出的时间序列，我们可以通过以下方式
+如果http_requests_total具有按application，instance和group标签列出的时间序列，我们可以通过以下方式
 
 ```
 # 计算每个应用程序和组在所有实例上看到的HTTP请求总数
@@ -267,33 +292,38 @@ sum(http_requests_total) by (application, group)
 复制代码
 ```
 
-- 如果我们只对我们在所有应用程序中看到的HTTP请求总数感兴趣,可以写成：
+如果我们只对我们在所有应用程序中看到的HTTP请求总数感兴趣,可以写成
 
 ```
 sum(http_requests_total)
 复制代码
 ```
 
-- 要计算运行每个构建版本的二进制文件的数量，可以写成：
+要计算运行每个构建版本的二进制文件的数量，可以写成
 
 ```
 count_values("version", build_version)
 复制代码
 ```
 
-- 要在所有实例中获取5个最大的HTTP请求计数，可以写成：
+要在所有实例中获取5个最大的HTTP请求计数，可以写成
 
 ```
 topk(5, http_requests_total)
 复制代码
 ```
 
-## 矢量匹配
 
-### 一对一矢量匹配
 
-- 一对一从操作的每一侧找到唯一的条目对。在默认情况下，这是格式为vector1  vector2之后的操作。如果两个条目具有完全相同的标签集和相应的值，则它们匹配。
-- ignore关键字允许在匹配时忽略某些标签，而on关键字允许将所考虑的标签集减少到提供的列表：
+## 四、矢量匹配
+
+
+
+### 4.1 一对一矢量匹配
+
+一对一从操作的每一侧找到唯一的条目对。在默认情况下，这是格式为vector1  vector2之后的操作。如果两个条目具有完全相同的标签集和相应的值，则它们匹配。
+
+ignore关键字允许在匹配时忽略某些标签，而on关键字允许将所考虑的标签集减少到提供的列表
 
 ```
 <vector expr> <bin-op> ignoring(<label list>) <vector expr>
@@ -301,7 +331,7 @@ topk(5, http_requests_total)
 复制代码
 ```
 
-> 输出示例：
+输出示例
 
 ```
 method_code:http_errors:rate5m{method="get", code="500"} 24
@@ -316,7 +346,7 @@ method:http_requests:rate5m{method="post"} 120
 复制代码
 ```
 
-> 查询示例：
+查询示例
 
 ```
 method_code:http_errors:rate5m{code="500"} / ignoring(code) method:http_requests:rate5m
@@ -325,7 +355,7 @@ method_code:http_errors:rate5m{code="500"} / ignoring(code) method:http_requests
 
 ***这将返回一个结果向量，其中包含每个方法的状态代码为500的HTTP请求部分，在过去5分钟内测量。在不忽略（代码）的情况下，由于度量标准不共享同一组标签，因此不会匹配***
 
-- 方法put和del的条目没有匹配，并且不会显示在结果中：
+方法put和del的条目没有匹配，并且不会显示在结果中
 
 ```
 {method="get"} 0.04 // 24 / 600
@@ -333,12 +363,13 @@ method_code:http_errors:rate5m{code="500"} / ignoring(code) method:http_requests
 复制代码
 ```
 
-### 多对一与一对多矢量匹配
 
-> 多对一和一对多匹配指的是"一"侧的每个向量元素可以与"多"侧的多个元素匹配的情况
 
-- 必须使用group_left或group_right修饰符明确请求，其中left/right确定哪个向量具有更高的基数。
-- 例如：
+### 4.2 多对一与一对多矢量匹配
+
+多对一和一对多匹配指的是"一"侧的每个向量元素可以与"多"侧的多个元素匹配的情况
+
+必须使用group_left或group_right修饰符明确请求，其中left/right确定哪个向量具有更高的基数。
 
 ```
 <vector expr> <bin-op> ignoring(<label list>) group_left(<label list>) <vector expr>
@@ -348,7 +379,7 @@ method_code:http_errors:rate5m{code="500"} / ignoring(code) method:http_requests
 复制代码
 ```
 
-> 查询示例：
+查询示例
 
 ```
 # 在这种情况下，左向量每个方法标签值包含多个条目
@@ -365,7 +396,9 @@ method_code:http_errors:rate5m / ignoring(code) group_left method:http_requests:
 
 ***多对一和一对多匹配是高级用例，使用前请仔细认真思考***
 
-### 扩展
+
+
+## 五、篇外
 
 ```
 abs(v instant-vector)     # 返回其绝对值
@@ -373,7 +406,7 @@ absent()                  # 如果传递给它的向量具有该元素，则返�
 复制代码
 ```
 
-> 查询示例：
+查询
 
 ```
 nginx_server_connections
@@ -385,7 +418,7 @@ absent(nginx_server_connections{job="nginx-vts123"}) => {job="nginx-vts123"}
 复制代码
 ```
 
-- 推送一大波运算符（仅供参考）
+运算符（仅供参考）
 
 ```
 ceil(v instant-vector)                              # 返回向量中所有样本值(向上取整数)
@@ -415,5 +448,4 @@ sort_desc(v instant-vector)                         # 对向量按元素的值�
 sqrt(v instant-vector)                              # 返回v中所有向量的平方根
 time()                                              # 返回从1970-1-1起至今的秒数,UTC时间
 ```
-
 

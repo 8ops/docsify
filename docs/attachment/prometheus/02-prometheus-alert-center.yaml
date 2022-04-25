@@ -46,7 +46,7 @@ items:
       spec:
         automountServiceAccountToken: true
         containers:
-        - image: hub.8ops.top/prometheus/prometheus-alert-center:v4.8
+        - image: hub.8ops.top/prometheus/prometheus-alert:v4.8-manual
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 10

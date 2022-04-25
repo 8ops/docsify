@@ -1,4 +1,4 @@
-# 实战 | Prometheus 的使用
+# 实战 | 通过Helm使用Prometheus
 
 在《SRE: Google运维解密》一书中指出，监控系统需要能够有效的支持白盒监控和黑盒监控。通过白盒能够了解其内部的实际运行状态，通过对监控指标的观察能够预判可能出现的问题，从而对潜在的不确定因素进行优化。而黑盒监控，常见的如HTTP探针，TCP探针等，可以在系统或者服务在发生故障时能够快速通知相关的人员进行处理。通过建立完善的监控体系，从而达到以下目的：
 
@@ -8,21 +8,25 @@
 - 故障分析与定位：当问题发生后，需要对问题进行调查和处理。通过对不同监控监控以及历史数据的分析，能够找到并解决根源问题。
 - 数据可视化：通过可视化仪表盘能够直接获取系统的运行状态、资源使用情况、以及服务运行状态等直观的信息。
 
+
+
 prometheus是目前人气较高的一款监控软件，活跃的社区吸引了无数的geeker。当然业内常用的监控系统还有nagios、zabbix。
 
 大致原理是数据采集端（exporter）注册到prometheus后，由prometheus周期拉取暴露的metrics。
 
-![architecture](../images/kubernetes/prometheus.jpg)
+![architecture](../images/prometheus/architecture.jpg)
 
 
 
-## 二、单一模式
+## 一、单一模式
 
 基于kubernetes
 
-![single](../images/kubernetes/prometheus-single.png)
+![single](../images/prometheus/single.png)
 
 
+
+### 2.1 安装
 
 通过helm安装prometheus
 
@@ -51,32 +55,22 @@ helm -n kube-server uninstall prometheus
 
 
 
-> add blackbox-exporter
+常用配置
 
-```bash
-# blackbox
-helm show values prometheus-community/prometheus-blackbox-exporter > blackbox-exporter.yaml-default
-
-helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
-    -f blackbox-exporter.yaml \
-    -n kube-server \
-    --create-namespace \
-    --version 5.6.0 --debug
-    
-helm upgrade --install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
-    -f blackbox-exporter.yaml \
-    -n kube-server \
-    --create-namespace \
-    --version 5.6.0 --debug
-
-helm -n kube-server uninstall blackbox-exporter 
-```
+- prometheus.yaml
+  - alerting_rules.yml
+  - recording_rules.yml
+- alertmanager.yml
 
 
 
+推荐配置指导
+
+[awesone prometheus alerts](https://awesome-prometheus-alerts.grep.to/)
 
 
-> release persistence
+
+> 释放持久化卷
 
 ```bash
 kubectl edit pv xxx
@@ -102,7 +96,7 @@ nodeExporter:
 
 
 
-> edit configmap
+> 采集外部exporter的metrics
 
 ```bash
 #helm中extraScrapeConfigs未成功
@@ -142,40 +136,97 @@ nodeExporter:
 
 
 
-> grafana
+### 2.2 blackbox
+
+blackbox-exporter 常用的一个黑盒
 
 ```bash
-# templ
+helm show values prometheus-community/prometheus-blackbox-exporter > blackbox-exporter.yaml-default
 
-Kubernetes Cluster 
+helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
+    -f blackbox-exporter.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 5.6.0 --debug
+    
+helm upgrade --install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
+    -f blackbox-exporter.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version 5.6.0 --debug
 
-Kubernetes Cluster (Prometheus)
-
-Kubernetes cluster monitoring (via Prometheus)
-
-Kubernetes Pods (Prometheus)
-
-NGINX Ingress controller
-
-Node Exporter Full
-
-
+helm -n kube-server uninstall blackbox-exporter 
 ```
 
 
 
-> [prometheus-alert-center](https://github.com/feiyu563/PrometheusAlert)
+### 2.3 grafana
+
+[官方模板](https://grafana.com/grafana/dashboards/)
+
+```bash
+# templ
+
+## kubernetes
+Kubernetes Cluster 
+
+Kubernetes cluster monitoring
+
+Kubernetes / Node Exporter Full
+
+Kubernetes Nodes
+
+kube-state-metrics
+
+## middleware
+NGINX Ingress controller
+
+MySQL Overview
+
+Redis Dashboard for Prometheus Redis Exporter
+```
+
+效果集锦
+
+![kube-state-metrics](../images/grafana/kube-state-metrics.png)
+
+![Kubernetes cluster monitoring](../images/grafana/kubernetes-cluster-monitoring.png)
+
+![Kubernetes / Node Exporter Full](../images/grafana/kubernetes-node-exporter-full.png)
+
+![Kubernetes Nodes](../images/grafana/kubernetes-nodes.png)
+
+![Kubernetes Cluster](../images/grafana/kuernetes-cluster.png)
+
+![MySQL Overview](../images/grafana/middleware-mysql.png)
+
+![NGINX Ingress controller](../images/grafana/middleware-nginx.png)
+
+![Redis Dashboard for Prometheus Redis Exporter](../images/grafana/middleware-redis.png)
+
+
+
+### 2.4 告警全家桶
+
+推荐[prometheus-alert-center](https://github.com/feiyu563/PrometheusAlert)
+
+
+
+以下是个人调试的笔记，可以忽视
 
 ```dockerfile
-ARG IMAGE_TAG=1.18-buster
-FROM golang:${IMAGE_TAG}
+#ARG IMAGE_TAG=3.15.4
+#FROM hub.8ops.top/third/alpine:${IMAGE_TAG}
+#FROM hub.8ops.top/build/golang:1.18-bullseye
+FROM ubuntu:22.04
 
-ADD linux /opt
+ENV TZ="Asia/Shanghai"
+WORKDIR /opt
+ADD . /opt
 
 RUN set -ex && \
     chmod +x /opt/PrometheusAlert && \
-    ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
-    echo "Asia/Shanghai" > /etc/timezone
+    ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 ENTRYPOINT ["/opt/PrometheusAlert"]
 ```
@@ -186,18 +237,29 @@ ENTRYPOINT ["/opt/PrometheusAlert"]
 # 官方镜像不能发群通知
 docker run --rm -d \
 	-p 8070:8080 \
-	-v /opt/prometheusalert/conf:/app/conf \
-	registry.wuxingdev.cn/prometheus/prometheus-alert:v4.8 
+	-v /opt/data/prometheusalert/conf:/app/conf \
+	hub.8ops.top/prometheus/prometheus-alert:v4.8 
 
 # 基于官方二进制可以发
-docker build . -t registry.wuxingdev.cn/prometheus/prometheus-alert-center:v4.8
+docker build . -t hub.8ops.top/prometheus/prometheus-alert:v4.8-manual
 docker run --rm -d \
-	-p 8080:8080 \
-	-v /opt/prometheusalert/conf:/app/conf \
-	registry.wuxingdev.cn/prometheus/prometheus-alert-center:v4.8
-	
-# 基于二进帛直接运行
-8090
+	-p 8090:8080 \
+	-v /opt/data/prometheusalert/conf:/app/conf \
+	hub.8ops.top/prometheus/prometheus-alert:v4.8-manual
+
+## debug
+docker run --rm -w /opt \
+	--entrypoint ls \
+	hub.8ops.top/prometheus/prometheus-alert:v4.8-manual \
+	"-lt"
+docker run -d -w /opt \
+	--entrypoint sleep \
+	hub.8ops.top/prometheus/prometheus-alert:v4.8-manual \
+	"3600"
+
+docker run --rm -w /opt -it --entrypoint ls 
+
+# 基于二进制直接运行
 ```
 
 
@@ -209,7 +271,11 @@ docker run --rm -d \
 多业务集群下独立存在prometheus场景
 
 
-![single](../images/kubernetes/prometheus-integrate.png)
+![integrate](../images/prometheus/integrate.png)
 
 
 
+> 意义 
+
+- 集中查看数据
+- 备份采集数据
