@@ -18,6 +18,10 @@ master:
       cpu: 50m
       memory: 64Mi
 
+  extraEnvVars:
+    - name: TZ
+      value: Asia/Shanghai
+
   persistence:
     enabled: true
     storageClass: "redis-sentinel"
@@ -33,6 +37,10 @@ replica:
     requests:
       cpu: 50m
       memory: 64Mi
+
+  extraEnvVars:
+    - name: TZ
+      value: Asia/Shanghai
 
   persistence:
     enabled: true

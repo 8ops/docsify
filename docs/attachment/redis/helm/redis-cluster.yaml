@@ -20,6 +20,10 @@ redis:
        cpu: 50m
        memory: 64Mi
 
+  extraEnvVars:
+    - name: TZ
+      value: Asia/Shanghai
+
 cluster:
   init: true
   nodes: 6

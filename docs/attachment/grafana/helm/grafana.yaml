@@ -7,7 +7,7 @@ autoscaling:
   - type: Resource
     resource:
       name: cpu
-      targetAverageUtilization: 90
+      targetAverageUtilization: 70
   - type: Resource
     resource:
       name: memory
@@ -64,6 +64,9 @@ datasources:
       url: http://prometheus-server:9090
       access: proxy
       isDefault: true
+
+env:
+  TZ: "Asia/Shanghai"
 
 grafana.ini:
   paths:

@@ -181,9 +181,9 @@ alertmanagerFiles:
       group_by:
       - 'instance'
       - 'severity'
-      group_wait: 10m
+      group_wait: 5m
       group_interval: 10s
-      repeat_interval: 1d
+      repeat_interval: 5m
       receiver: 'prometheusalert'
       routes:
       - receiver: 'email'
@@ -208,15 +208,15 @@ alertmanagerFiles:
       - send_resolved: true
         api_url: 'https://qyapi.weixin.qq.com/cgi-bin/'
         corp_id: 'ww8249717441913c51'
-        agent_id: '1000002'
-        api_secret: 'KVZZuC1CvWKssY8qZSW3eSxXR4EgGuNx02l1buQmbnQ'
+        agent_id: '1000004'
+        api_secret: 'secret'
         to_user: '@all'
         to_party: '1'
         message: '{{ template "wechat.default.message" . }}'
     - name: 'prometheusalert'
       webhook_configs:
       - send_resolved: true
-        url: 'http://prometheus-alert-center/prometheus/alert?type=wx&tpl=prometheus-wx&wxurl=https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=d38f3a90-2b86-4d48-a9c7-228e1e89d416&at=@all'
+        url: 'http://prometheus-alert-center:8090/prometheus/alert?type=wx&tpl=prometheus-wx&wxurl=https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=d38f3a90-2b86-4d48-a9c7-228e1e89d416&at=@all'
     templates:
     - '/etc/config/templates.tmpl'
   templates.tmpl: |

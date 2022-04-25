@@ -1,3 +1,7 @@
+
+extraEnv:
+  TZ: "Asia/Shanghai"
+
 image:
   repository: hub.8ops.top/prometheus/blackbox-exporter
   tag: v0.19.0
@@ -26,5 +30,4 @@ ingress:
     - secretName: tls-8ops.top
       hosts:
         - alertmanager.8ops.top
-
 

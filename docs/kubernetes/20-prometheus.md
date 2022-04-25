@@ -175,7 +175,7 @@ ADD linux /opt
 RUN set -ex && \
     chmod +x /opt/PrometheusAlert && \
     ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
-    echo "$TZ" > /etc/timezone
+    echo "Asia/Shanghai" > /etc/timezone
 
 ENTRYPOINT ["/opt/PrometheusAlert"]
 ```

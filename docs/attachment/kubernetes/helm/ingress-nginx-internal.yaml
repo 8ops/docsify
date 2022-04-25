@@ -6,6 +6,10 @@ controller:
     tag: "v1.1.0"
     digest:
 
+  extraEnvs:
+    - name: TZ
+      value: Asia/Shanghai
+
   hostNetwork: true
   hostPort:
     enabled: true
