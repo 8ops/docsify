@@ -1,10 +1,8 @@
 # 实战 | Kubernetes Cluster 升级版本
 
-![upgrade](../images/kubernetes/cover/06-cluster-upgrade.png)
+Kubernetes Cluster 升级是一件必要的事情。
 
-Kubernetes Cluster升级是一件必要的事情，因为kubernetes更新实在太频繁了。
-
-一旦落下太多版本，很多新特性就会使用不上，同时很多及时的补丁也无法享用。
+由于 kubernetes 更新实在太频繁了，一旦落后太多版本，很多新特性就会使用不上，同时很多的补丁也无法及时享用。
 
 这里演示我的一次升级过程。
 

@@ -15,7 +15,11 @@ _book
 *.mobi
 *.pdf
 
+# other file
 *.bak
 .DS_Store
 *.swp
+
+# directory
+video/
 

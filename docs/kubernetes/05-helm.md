@@ -1,7 +1,5 @@
 # 实战 | Helm的使用
 
-![helm](../images/kubernetes/cover/05-helm-usage.png)
-
 Helm 是 Kubernetes 的包管理器，从CNCF毕业。
 
 使用Helm安装Kubernetes中的插件将会变得是一件容易的事情。

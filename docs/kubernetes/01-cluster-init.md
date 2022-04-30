@@ -1,7 +1,5 @@
 # 实战 | Kubernetes Cluster 快速搭建
 
-![init](../images/kubernetes/cover/01-cluster-init.png)
-
 Kubernetes 是一个开源的容器编排引擎，用来对容器化应用进行自动化部署、 扩缩和管理。
 
 从CNCF毕业，Kubernetes是当下最火热的技术各大中小互联网公司都在积极推进他的落地。
@@ -9,33 +7,6 @@ Kubernetes 是一个开源的容器编排引擎，用来对容器化应用进行
 
 
 *接下来跟着我的笔记一步一步操作简单快速搭建 kubernetes cluster吧*。
-
-
-
-> 目录
-
-一、背景描述
-
-- 1.1 机器准备
-- 1.2 软件版本
-- 1.3 部署架构
-- 1.4 环境说明
-
-二、前期准备
-
-- 2.1 一键优化
-
-三、实施部署
-
-- 3.1 容器运行时
-- 3.2 初始kubeadm环境
-- 3.3 初始cluster环境
-- 3.4 join节点
-- 3.5 验收集群
-
-
-
-------
 
 
 
@@ -47,7 +18,7 @@ Kubernetes 是一个开源的容器编排引擎，用来对容器化应用进行
 
 ### 1.1 机器准备
 
-VIP：`10.101.11.110`
+VIP：`10.101.11.110`，用于解决apiserver的高可用均衡负载到3台master节点。
 
 | 主机名称      | 主机IP        | 操作系统           | 角色分配             |
 | ------------- | ------------- | ------------------ | -------------------- |
@@ -63,9 +34,9 @@ VIP：`10.101.11.110`
 
 ### 1.2 软件版本
 
-示例匹配版本
+匹配版本
 
-| 软件名称   | 当前最新               |
+| 软件名称   | 当前最新版本           |
 | ---------- | ---------------------- |
 | kubeadm    | v1.23.0                |
 | kubelet    | v1.23.0                |
@@ -100,14 +71,27 @@ VIP：`10.101.11.110`
 
 > 部署套件
 
-![部署套件](../images/kubernetes/addon.png)
+| 所属范畴      | 组件名称                 | 部署方式 | 运行方式   |
+| ------------- | ------------------------ | -------- | ---------- |
+| 控制平台/节点 | kubelet                  | 二进制   | binary     |
+| 控制平台      | etcd                     | kubeadm  | static pod |
+| 控制平台      | kube-apiserver           | kubeadm  | static pod |
+| 控制平台      | kube-controller-manager  | kubeadm  | static pod |
+| 控制平台      | kube-scheduler           | kubeadm  | static pod |
+| 控制平台/节点 | kube-proxy               | kubeadm  | daemonset  |
+| 控制平台/节点 | kube-flannel             | kubectl  | daemonset  |
+| 节点          | kube-coredns             | kubeadm  | deployment |
+| 节点          | kube-dahboard            | helm     | deployment |
+| 节点          | ingress-nginx-controller | helm     | deployment |
+| 节点          | prometheus               | helm     | deployment |
+| 节点          | alertmanager             | helm     | deployment |
 
 
 
 ### 1.4 环境说明
 
 - 国内私有云网络环境
-- 镜像提前下载到私有环境harbor（可以从阿里云镜像中转下载）
+- 镜像提前下载到私有环境harbor（可以从阿里云镜像中转下载）[加速访问镜像](kubernetes/10-access-image.md)
 
 
 
@@ -143,6 +127,8 @@ curl -s https://books.8ops.top/attachment/kubernetes/01-init.sh | bash
 
 **在所有节点需要执行的操作**
 
+
+
 > 使用containerd做为容器运行时
 
 ```bash
@@ -151,9 +137,12 @@ apt install -y containerd=${CONTAINERD_VERSION}
 
 apt-mark hold containerd
 apt-mark showhold
+dpkg -l | grep containerd
 ```
 
-更多[容器运行时](https://kubernetes.io/zh/docs/setup/production-environment/container-runtimes/)
+Reference
+
+- [容器运行时](https://kubernetes.io/zh/docs/setup/production-environment/container-runtimes/)
 
 
 
@@ -165,32 +154,35 @@ mkdir -p /etc/containerd
 containerd config default > /etc/containerd/config.toml-default
 cp /etc/containerd/config.toml-default /etc/containerd/config.toml
 
+#
+# Example 
+#   https://books.8ops.top/attachment/kubernetes/10-config.toml
+#
+
 sed -i 's#sandbox_image.*$#sandbox_image = "hub.8ops.top/google_containers/pause:3.5"#' /etc/containerd/config.toml  
 sed -i 's#SystemdCgroup = false#SystemdCgroup = true#' /etc/containerd/config.toml 
 grep -P 'sandbox_image|SystemdCgroup' /etc/containerd/config.toml  
 systemctl restart containerd
 systemctl status containerd
-
-# 支持私有Harbor，当使用私有CA签名时需要系统受信根CA或者采用非安全模式见编辑config.toml
-apt install -y ca-certificates
-cp CERTIFICATE.crt /usr/local/share/ca-certificates
-update-ca-certificates
-
-## deprecated 直接替换
-# curl -s https://books.8ops.top/attachment/kubernetes/10-config.toml \
-#  -o /etc/containerd/config.toml
 ```
 
 
 
-> vim /etc/containerd/config.toml
+> 受信私有CA
 
-```toml
+```bash
+# 方式一，操作系统受信私有CA
+apt install -y ca-certificates
+cp CERTIFICATE.crt /usr/local/share/ca-certificates/CERTIFICATE.crt
+update-ca-certificates
+
+# 方式二，编辑/etc/containerd/config.toml
+# 支持私有Harbor，当使用私有CA签名时需要系统受信根CA或者采用非安全模式见编辑config.toml
 ……
 
-[plugins]
+[plugins] # relative
 	……
-  [plugins."io.containerd.grpc.v1.cri"]
+  [plugins."io.containerd.grpc.v1.cri"] # relative
  		……
  		# sandbox_image
     sandbox_image = "hub.8ops.top/google_containers/pause:3.6"
@@ -217,13 +209,16 @@ update-ca-certificates
 
 来源于配置文件`/etc/containerd/config.toml`
 
-`/var/lib/containerd`需要指向到磁盘性能相对好的位置，空间、性能
+`/var/lib/containerd`需要指向到磁盘综合属性较好的位置
+
+- 存储空间足够大
+- IO读写性能较好
 
 ```bash
 systemctl stop containerd
 
 mkdir -p /data1/lib/containerd && \
-    mv /var/lib/containerd{,-$(date +%Y%m%d)} && \
+    ([ -e /var/lib/containerd ] && mv /var/lib/containerd{,-$(date +%Y%m%d)}) && \
     ln -s /data1/lib/containerd /var/lib/containerd
 
 systemctl start containerd
@@ -236,18 +231,16 @@ systemctl start containerd
 `/var/lib/etcd`
 
 ```bash
-
 mkdir -p /data1/lib/etcd && \
-    mv /var/lib/etcd{,-$(date +%Y%m%d)} && \
+    ([ -e /var/lib/etcd ] && mv /var/lib/etcd{,-$(date +%Y%m%d)}) && \
     ln -s /data1/lib/etcd /var/lib/etcd
-
 ```
 
 
 
 ### 3.2 初始kubeadm环境
 
-> 配置文件
+> Reference
 
 - [InitConfiguration](https://pkg.go.dev/k8s.io/kubernetes/cmd/kubeadm/app/apis/kubeadm/v1beta2?utm_source=godoc#InitConfiguration)
 
@@ -293,11 +286,14 @@ systemctl restart containerd
 crictl images
 crictl ps -a
 
+#
 # 不配置指定时会默认依次按顺序使用：docker--> containerd --> cri-o，缺省默认使用docker
+# 常见输出警告如下
 # WARN[0000] image connect using default endpoints: [unix:///var/run/dockershim.sock unix:///run/containerd/containerd.sock unix:///run/crio/crio.sock]
-
-# 若容器运行时没有则报错，如下
+#
+# 若不存在容器运行时则报错如下
 # FATA[0010] failed to connect: failed to connect: context deadline exceeded
+#
 ```
 
 
@@ -312,9 +308,8 @@ crictl ps -a
 # 默认配置
 kubeadm config print init-defaults > kubeadm-init.yaml-default
 
-# vim kubeadm-init.yaml
-# curl -s https://books.8ops.top/attachment/kubernetes/20-kubeadmin-init.yaml \
-#  -o kubeadm-init.yaml
+# Example 
+#   https://books.8ops.top/attachment/kubernetes/20-kubeadmin-init.yaml 
 
 # 默认镜像
 kubeadm config images list -v 5
@@ -328,7 +323,7 @@ kubeadm config images pull --config kubeadm-init.yaml -v 5
 
 
 
-> vim kubeadm-init.yaml
+> 编辑 kubeadm-init.yaml
 
 ```yaml
 apiVersion: kubeadm.k8s.io/v1beta3
@@ -447,7 +442,7 @@ kubectl -n kube-system edit cm kubelet-config-1.23
     cgroupDriver: systemd
     maxPods: 200
     resolvConf: /etc/resolv.conf
-kind: ConfigMap
+kind: ConfigMap # relative
 ……
 
 # kube-proxy 
@@ -473,13 +468,13 @@ kubectl -n kube-system edit cm kube-proxy
 
 
 
-**方式一**
+**方式一**，在初始完集群会打印Join的命令
 
-> 在初始化集群成功时输出的信息中有打印出来，参考上面Output内容
+在初始化集群成功时输出的信息中有打印出来，参考上面Output内容
 
 
 
-**方式二**
+**方式二**，构建Join命令
 
 > **上传certs**
 
@@ -487,10 +482,12 @@ kubectl -n kube-system edit cm kube-proxy
 # 上传 cert
 kubeadm init phase upload-certs --upload-certs
 
+#
 ## 或者获取已经上传的certs
-#openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | \
-#   openssl rsa -pubin -outform der 2>/dev/null | \
-#   openssl dgst -sha256 -hex | sed 's/^.* //'
+# openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | \
+#    openssl rsa -pubin -outform der 2>/dev/null | \
+#    openssl dgst -sha256 -hex | sed 's/^.* //'
+#
 
 # 生成 token
 kubeadm token generate
@@ -534,7 +531,55 @@ kubeadm join 10.101.11.110:6443 --token abcdef.0123456789abcdef \
 
 
 
-### 3.5 验收集群
+### 3.5 部署网络
+
+此外选型`flannel`
+
+> 部署
+
+```bash
+#
+## Reference 
+# https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+# kubectl apply -f https://books.8ops.top/attachment/kubernetes/30-kube-flannel.yaml
+#
+# Example
+#   https://books.8ops.top/attachment/kubernetes/30-kube-flannel.yaml 
+#
+
+kubectl apply -f kube-flannel.yaml
+```
+
+
+
+> 编辑 kube-flannel.yaml
+
+```yaml
+……
+  net-conf.json: | # relative
+    {
+      "Network": "172.20.0.0/16",
+      "Backend": {
+        "Type": "host-gw"
+      }
+    }
+……
+	# 镜像替换为私有地址
+      initContainers:
+      - name: install-cni-plugin
+        image: hub.8ops.top/google_containers/mirrored-flannelcni-flannel-cni-plugin:v1.0.0
+        ……
+      - name: install-cni
+        image: hub.8ops.top/google_containers/flannel:v0.15.1
+        ……
+      containers:
+      - name: kube-flannel
+        image: hub.8ops.top/google_containers/flannel:v0.15.1
+```
+
+
+
+### 3.6 验收集群
 
 > 查看cluster-info
 
@@ -565,7 +610,7 @@ sed -i '/--port/d' /etc/kubernetes/manifests/kube-scheduler.yaml
 
 
 
-><optional> etcd运行情况
+><optional> etcd运行信息
 
 ```bash
 etcdctl member list \
@@ -577,45 +622,7 @@ etcdctl member list \
 
 
 
-> 部署flannel
-
-```bash
-## 引用官方 
-# https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
-# kubectl apply -f https://books.8ops.top/attachment/kubernetes/30-kube-flannel.yaml
-
-kubectl apply -f kube-flannel.yaml
-```
-
-
-
-> vim kube-flannel.yaml
-
-```yaml
-……
-  net-conf.json: |
-    {
-      "Network": "172.20.0.0/16",
-      "Backend": {
-        "Type": "host-gw"
-      }
-    }
-……
-      initContainers:
-      - name: install-cni-plugin
-        image: hub.8ops.top/google_containers/mirrored-flannelcni-flannel-cni-plugin:v1.0.0
-        ……
-      - name: install-cni
-        image: hub.8ops.top/google_containers/flannel:v0.15.1
-        ……
-      containers:
-      - name: kube-flannel
-        image: hub.8ops.top/google_containers/flannel:v0.15.1
-```
-
-
-
-> 查看应用
+> 查看初始静态应用
 
 ```bash
 kubectl get all -A
@@ -625,7 +632,27 @@ kubectl get all -A
 
 
 
-> coredns未就位手动修复（ v1.22.0后已经修复）
+> 查看节点
+
+```bash
+kubectl get no
+```
+
+![Success](../images/kubernetes/screen/01-17.png)
+
+
+
+### 3.7 常见问题
+
+> 节点未就位
+
+缺少集群网络或集群网络存在问题
+
+
+
+> coredns未就位
+
+权限问题需要手动修复（ v1.22.0后已经修复）
 
 ```bash
 kubectl edit clusterrole system:coredns
@@ -651,29 +678,43 @@ kubectl -n kube-system delete pod/coredns-55866688ff-hwp4m pod/coredns-55866688f
 
 
 
-> 查看节点
+> dns寻址失败
 
 ```bash
-kubectl get no
-```
-
-![Success](../images/kubernetes/screen/01-17.png)
-
-
-
-> 试运行容器
-
-```bash
+#
+# 方式一，启动busybox
 ## 建议使用1.28.0，新版本会有nslookup的BUG
-# kubectl apply -f https://books.8ops.top/attachment/kubernetes/app/50-nginx-deployment.yaml
+# 
 kubectl run busybox --image hub.8ops.top/third/busybox:1.28.0 --command -- sh -c "while true;do sleep 60;date;done"
 
 # kubectl apply -f https://books.8ops.top/attachment/kubernetes/app/51-busybox-daemonset.yaml
 kubectl run nginx --image hub.8ops.top/third/nginx:1.21.3
 
+#
+# 方式二，启动jessie-dnsutils:1.3
+## 自带dns检测工具
 ```
 
 ![Usage](../images/kubernetes/screen/01-20.png)
+
+
+
+> 容器运行失败
+
+```bash
+# 
+# Case by case 看报什么错
+# e.g. kubectl apply -f https://books.8ops.top/attachment/kubernetes/app/51-nginx-deployment.yaml
+#
+
+# 
+# Example
+#   https://books.8ops.top/attachment/kubernetes/app/50-busybox-daemonset.yaml
+#   https://books.8ops.top/attachment/kubernetes/app/51-nginx-deployment.yaml
+#   https://books.8ops.top/attachment/kubernetes/app/52-echoserver.yaml
+#
+```
+
 
 
 至此 kubernetes cluster 搭建完成了。

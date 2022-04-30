@@ -1,9 +1,5 @@
 # 实战 | Kubernetes Cluster 重置环境
 
-![reset](../images/kubernetes/cover/02-cluster-reset.png)
-
-
-
 在搭建kubernetes cluster时很多时候需要快速重置一个节点，避免第二次搭建或重新将节点加入集群时被干扰，故整理了一键重置操作方便快速复用。
 
 
@@ -93,7 +89,7 @@ systemctl stop kubelet
 systemctl stop docker
 systemctl stop containerd
 
-# 6, remove packages
+# 5, remove packages
 printf '\n\n6, remove packages\n'
 
 # unhold packages
@@ -128,7 +124,7 @@ printf '\n\n ---- show release packages detail ---- \n'
 dpkg -l | awk '$2~/kube|cni|cri|containerd|docker/'
 printf '  \n -------------------------------------- \n\n'
 
-# 7, release directory or files
+# 6, release directory or files
 printf '\n\n7, release directory or files\n'
 rm -rf /etc/systemd/system/kubelet.service.d /var/lib/kubelet
 rm -rf /var/lib/docker /etc/docker /run/docker /run/docker.sock /run/dockershim.sock
