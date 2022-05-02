@@ -33,7 +33,7 @@ primary:
        cpu: 1000m
        memory: 1024Mi
     requests:
-       cpu: 250m
+       cpu: 200m
        memory: 256Mi
 
   extraEnvVars:
@@ -75,8 +75,8 @@ metrics:
   resources:
     limits:
        cpu: 100m
-       memory: 256Mi
+       memory: 128Mi
     requests:
-       cpu: 100m
-       memory: 256Mi
+       cpu: 50m
+       memory: 64Mi
 

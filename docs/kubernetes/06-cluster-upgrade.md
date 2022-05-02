@@ -12,21 +12,21 @@ Kubernetes Cluster 升级是一件必要的事情。
 
 - [Upgrading kubeadm clusters | Kubernetes](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/)
 
-- [kubeadm upgrade | Kubernetes](https://kubernetes.io/zh/docs/reference/setup-tools/kubeadm/kubeadm-upgrade/)
+- [Kubeadm upgrade | Kubernetes](https://kubernetes.io/zh/docs/reference/setup-tools/kubeadm/kubeadm-upgrade/)
 
 
 
 升级前后版本对比
 
-| 软件名称   | 当前版本               | 最新版本 |
-| ---------- | ---------------------- | -------- |
-| kubeadm    | v1.22.2                | v1.23.0  |
-| kubelet    | v1.22.2                | v1.23.0  |
-| kubernetes | v1.22.2                | v1.23.0  |
-| etcd       | 3.4.13-0               | v3.5.1   |
-| flannel    | v0.15.0                | v0.15.1  |
-| coredns    | 1.8.4                  | 1.8.6    |
-| containerd | 1.5.5-0ubuntu3~20.04.1 | 1.5.8    |
+| 软件名称   | 当前版本               | 最新版本               |
+| ---------- | ---------------------- | ---------------------- |
+| kubeadm    | 1.23.0-00              | 1.23.6-00              |
+| kubelet    | 1.23.0-00              | 1.23.6-00              |
+| kubernetes | 1.23.0-00              | 1.23.6-00              |
+| etcd       | 3.4.13-0               | v3.5.1                 |
+| flannel    | v0.15.0                | v0.15.1                |
+| coredns    | 1.8.6                  | 1.8.6                  |
+| containerd | 1.5.5-0ubuntu3~20.04.1 | 1.5.9-0ubuntu1~20.04.1 |
 
 
 
@@ -37,15 +37,22 @@ Kubernetes Cluster 升级是一件必要的事情。
 ## 一、升级二进制
 
 ```bash
-# 升级二进制包
 apt update
 apt-mark showhold
-apt install kubeadm=1.23.0-00 kubectl=1.23.0-00 kubelet=1.23.0-00 
 
-# 查验二进制安装情况
-dpkg -l | grep kube && kubeadm version
+# containerd
+apt install containerd=1.5.9-0ubuntu1~20.04.1
 
-apt-mark hold kubeadm kubectl kubelet && apt-mark showhold
+# kubernetes
+apt install kubeadm=1.23.6-00 kubectl=1.23.6-00 kubelet=1.23.6-00
+
+# validate
+dpkg -l | grep -E "kube|containerd"
+containerd --version
+kubeadm version
+
+# hold
+apt-mark hold containerd kubeadm kubectl kubelet && apt-mark showhold
 ```
 
 
@@ -53,6 +60,8 @@ apt-mark hold kubeadm kubectl kubelet && apt-mark showhold
 ## 二、升级集群
 
 ```yaml
+systemctl restart containerd
+
 # 查看升级计划
 kubeadm upgrade plan 
 

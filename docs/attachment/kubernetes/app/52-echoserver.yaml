@@ -4,7 +4,7 @@ items:
     kind: Deployment
     metadata:
       labels:
-        k8s-app: echoserver
+        app: echoserver
       name: echoserver
       namespace: default
     spec:
@@ -12,7 +12,7 @@ items:
       revisionHistoryLimit: 5
       selector:
         matchLabels:
-          k8s-app: echoserver
+          app: echoserver
       strategy:
         rollingUpdate:
           maxSurge: 25%
@@ -21,7 +21,7 @@ items:
       template:
         metadata:
           labels:
-            k8s-app: echoserver
+            app: echoserver
         spec:
           containers:
           - image: hub.8ops.top/third/echoserver:1.10
@@ -32,11 +32,11 @@ items:
               protocol: TCP
             resources:
               limits:
-                cpu: 200m
-                memory: 256Mi
-              requests:
                 cpu: 100m
                 memory: 128Mi
+              requests:
+                cpu: 30m
+                memory: 32Mi
           dnsPolicy: ClusterFirst
           restartPolicy: Always
           schedulerName: default-scheduler
@@ -44,7 +44,7 @@ items:
     kind: Service
     metadata:
       labels:
-        k8s-app: echoserver
+        app: echoserver
       name: echoserver
       namespace: default
     spec:
@@ -53,7 +53,7 @@ items:
         protocol: TCP
         targetPort: 8080
       selector:
-        k8s-app: echoserver
+        app: echoserver
       sessionAffinity: None
   - apiVersion: networking.k8s.io/v1
     kind: Ingress
@@ -63,7 +63,7 @@ items:
         nginx.ingress.kubernetes.io/limit-rps: "100"
         nginx.ingress.kubernetes.io/ssl-redirect: "false"
       labels:
-        k8s-app: echoserver
+        app: echoserver
       name: echoserver
       namespace: default
     spec:

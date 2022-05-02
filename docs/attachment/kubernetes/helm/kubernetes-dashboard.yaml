@@ -3,12 +3,12 @@ image:
   tag: v2.4.0
 
 resources:
-  requests:
-    cpu: 500m
-    memory: 512Mi
   limits:
     cpu: 1
     memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
 
 ingress:
   enabled: true
@@ -38,12 +38,12 @@ metricsScraper:
     repository: hub.8ops.top/google_containers/metrics-scraper
     tag: v1.0.7
   resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
     limits:
       cpu: 100m
-      memory: 256Mi
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
 
 metrics-server:
   enabled: true
@@ -51,12 +51,12 @@ metrics-server:
     repository: hub.8ops.top/google_containers/metrics-server
     tag: v0.5.0
   resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
     limits:
       cpu: 100m
-      memory: 256Mi
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
   args:
     - --kubelet-preferred-address-types=InternalIP
     - --kubelet-insecure-tls

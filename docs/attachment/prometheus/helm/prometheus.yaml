@@ -22,7 +22,7 @@ alertmanager:
       cpu: 200m
       memory: 256Mi
     requests:
-      cpu: 10m
+      cpu: 30m
       memory: 32Mi
 
   persistentVolume:
@@ -45,10 +45,10 @@ configmapReload:
 
     resources: 
       limits:
-        cpu: 10m
+        cpu: 30m
         memory: 32Mi
       requests:
-        cpu: 10m
+        cpu: 30m
         memory: 32Mi
 
   alertmanager:
@@ -61,10 +61,10 @@ configmapReload:
 
     resources: 
       limits:
-        cpu: 10m
+        cpu: 30m
         memory: 32Mi
       requests:
-        cpu: 10m
+        cpu: 30m
         memory: 32Mi
 
 kubeStateMetrics:
@@ -78,9 +78,9 @@ kube-state-metrics:
   resources:
     limits:
      cpu: 100m
-     memory: 64Mi
+     memory: 128Mi
     requests:
-     cpu: 10m
+     cpu: 30m
      memory: 32Mi
 
 nodeExporter:
@@ -97,9 +97,9 @@ nodeExporter:
   resources: 
     limits:
       cpu: 100m
-      memory: 32Mi
+      memory: 128Mi
     requests:
-      cpu: 100m
+      cpu: 30m
       memory: 32Mi
 
 server:
@@ -157,9 +157,9 @@ pushgateway:
   resources: 
     limits:
       cpu: 100m
-      memory: 64Mi
+      memory: 128Mi
     requests:
-      cpu: 10m
+      cpu: 30m
       memory: 32Mi
 
   persistentVolume:

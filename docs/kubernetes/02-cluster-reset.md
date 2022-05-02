@@ -18,7 +18,7 @@
 6. release directory or files
 
 ```bash
-curl -s https://books.8ops.top/attachment/kubernetes/99-reset.sh | bash
+curl -s https://books.8ops.top/attachment/kubernetes/bin/99-reset.sh | bash
 ```
 
 

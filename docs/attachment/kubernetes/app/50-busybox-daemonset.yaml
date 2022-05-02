@@ -2,18 +2,18 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
-    k8s-app: busybox
+    app: busybox
   name: busybox
   namespace: default
 spec:
   revisionHistoryLimit: 5
   selector:
     matchLabels:
-      name: busybox
+      app: busybox
   template:
     metadata:
       labels:
-        name: busybox
+        app: busybox
     spec:
       containers:
       - args:
@@ -25,11 +25,11 @@ spec:
         name: busybox
         resources:
           limits:
-            cpu: 200m
-            memory: 100Mi
+            cpu: 50m
+            memory: 64Mi
           requests:
-            cpu: 100m
-            memory: 50Mi
+            cpu: 30m
+            memory: 32Mi
   updateStrategy:
     rollingUpdate:
       maxSurge: 0

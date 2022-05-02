@@ -37,7 +37,7 @@
 
 ### 2.1 手动
 
-将外部镜像产物拉到私有环境缓存起来[下载脚本](https://books.8ops.top/attachment/kubernetes/02-pull-image-to-local.sh)
+将外部镜像产物拉到私有环境缓存起来[下载脚本](https://books.8ops.top/attachment/kubernetes/bin/02-pull-image-to-local.sh)
 
 ```bash
 #!/bin/bash

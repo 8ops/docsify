@@ -4,15 +4,15 @@ items:
   kind: Deployment
   metadata:
     labels:
-      k8s-app: nginx
+      app: nginx
     name: nginx
     namespace: default
   spec:
-    replicas: 4
+    replicas: 2
     revisionHistoryLimit: 5
     selector:
       matchLabels:
-        k8s-app: nginx
+        app: nginx
     strategy:
       rollingUpdate:
         maxSurge: 25%
@@ -21,7 +21,7 @@ items:
     template:
       metadata:
         labels:
-          k8s-app: nginx
+          app: nginx
       spec:
         containers:
         - image: hub.8ops.top/third/nginx:1.21.3
@@ -29,16 +29,16 @@ items:
           name: nginx
           resources:
             limits:
-              cpu: 200m
-              memory: 100Mi
-            requests:
               cpu: 100m
-              memory: 50Mi
+              memory: 128Mi
+            requests:
+              cpu: 30m
+              memory: 32Mi
 - apiVersion: v1
   kind: Service
   metadata:
     labels:
-      k8s-app: nginx
+      app: nginx
     name: nginx
     namespace: default
   spec:
@@ -47,21 +47,17 @@ items:
       protocol: TCP
       targetPort: 80
     selector:
-      k8s-app: nginx
+      app: nginx
     type: ClusterIP
 - apiVersion: networking.k8s.io/v1
   kind: Ingress
   metadata:
     labels:
-      k8s-app: nginx
+      app: nginx
     name: nginx
     namespace: default
   spec:
     ingressClassName: external
-    tls:
-      - hosts:
-          - nginx.8ops.top
-        secretName: tls-8ops.top
     rules:
     - host: nginx.8ops.top
       http:
@@ -73,7 +69,8 @@ items:
                 number: 80
           path: /
           pathType: Prefix
+    tls:
+      - hosts:
+          - nginx.8ops.top
+        secretName: tls-8ops.top
 kind: List
-metadata:
-  resourceVersion: ""
-  selfLink: ""

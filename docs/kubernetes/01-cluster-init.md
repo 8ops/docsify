@@ -26,7 +26,8 @@ VIP：`10.101.11.110`，用于解决apiserver的高可用均衡负载到3台mast
 | K-KUBE-LAB-02 | 10.101.11.146 | Ubuntu 20.04.2 LTS | control-plane,master |
 | K-KUBE-LAB-03 | 10.101.11.154 | Ubuntu 20.04.2 LTS | control-plane,master |
 | K-KUBE-LAB-08 | 10.101.11.196 | Ubuntu 20.04.2 LTS | node                 |
-| K-KUBE-LAB-09 | 10.101.11.182 | Ubuntu 20.04.2 LTS | node                 |
+| K-KUBE-LAB-11 | 10.101.11.157 | Ubuntu 20.04.2 LTS | node                 |
+| K-KUBE-LAB-12 | 10.101.11.250 | Ubuntu 20.04.2 LTS | node                 |
 
 机器参考官方最小配置指导，采用**2**核CPU/**8**G内存/**100**G磁盘，私有化虚拟机部署。
 
@@ -38,9 +39,9 @@ VIP：`10.101.11.110`，用于解决apiserver的高可用均衡负载到3台mast
 
 | 软件名称   | 当前最新版本           |
 | ---------- | ---------------------- |
-| kubeadm    | v1.23.0                |
-| kubelet    | v1.23.0                |
-| kubernetes | v1.23.0                |
+| kubeadm    | 1.23.0-00              |
+| kubelet    | 1.23.0-00              |
+| kubernetes | 1.23.0-00              |
 | etcd       | v3.5.1                 |
 | flannel    | v0.15.1                |
 | coredns    | 1.8.6                  |
@@ -114,8 +115,54 @@ VIP：`10.101.11.110`，用于解决apiserver的高可用均衡负载到3台mast
 7. kubectl的bash补全
 
 ```bash
-curl -s https://books.8ops.top/attachment/kubernetes/01-init.sh | bash
+curl -s https://books.8ops.top/attachment/kubernetes/bin/01-init.sh | bash
 ```
+
+
+
+### 2.2 数据目录
+
+> `/var/lib/containerd`
+
+来源于配置文件`/etc/containerd/config.toml`
+
+`/var/lib/containerd`需要指向到磁盘综合属性较好的位置
+
+- 存储空间足够大
+- IO读写性能较好
+
+```bash
+mkdir -p /data1/lib/containerd && \
+    ([ -e /var/lib/containerd ] && mv /var/lib/containerd{,-$(date +%Y%m%d)} || /bin/true) && \
+    ln -s /data1/lib/containerd /var/lib/containerd
+ls -l /var/lib/containerd
+```
+
+
+
+> `/var/lib/kubelet`
+
+```bash
+mkdir -p /data1/lib/kubelet && \
+    ([ -e /var/lib/kubelet ] && mv /var/lib/kubelet{,-$(date +%Y%m%d)} || /bin/true) && \
+    ln -s /data1/lib/kubelet /var/lib/kubelet
+ls -l /var/lib/kubelet		
+```
+
+
+
+> `/var/lib/etcd`
+
+来源于配置文件`/etc/kubernetes/manifests/etcd.yaml`
+
+```bash
+mkdir -p /data1/lib/etcd && \
+    ([ -e /var/lib/etcd ] && mv /var/lib/etcd{,-$(date +%Y%m%d)} || /bin/true) && \
+    ln -s /data1/lib/etcd /var/lib/etcd
+ls -l /var/lib/etcd
+```
+
+
 
 
 
@@ -206,41 +253,6 @@ update-ca-certificates
       [plugins."io.containerd.grpc.v1.cri".registry.configs]
         [plugins."io.containerd.grpc.v1.cri".registry.configs."hub.8ops.top".tls]
           insecure_skip_verify = true    
-```
-
-
-
-> lib存储目录变更
-
-来源于配置文件`/etc/containerd/config.toml`
-
-`/var/lib/containerd`需要指向到磁盘综合属性较好的位置
-
-- 存储空间足够大
-- IO读写性能较好
-
-```bash
-systemctl stop containerd
-
-mkdir -p /data1/lib/containerd && \
-    ([ -e /var/lib/containerd ] && mv /var/lib/containerd{,-$(date +%Y%m%d)} || /bin/true) && \
-    ln -s /data1/lib/containerd /var/lib/containerd
-
-systemctl start containerd
-ls -l /var/lib/containerd
-```
-
-
-
-来源于配置文件`/etc/kubernetes/manifests/etcd.yaml`
-
-`/var/lib/etcd`
-
-```bash
-mkdir -p /data1/lib/etcd && \
-    ([ -e /var/lib/etcd ] && mv /var/lib/etcd{,-$(date +%Y%m%d)} || /bin/true) && \
-    ln -s /data1/lib/etcd /var/lib/etcd
-ls -l /var/lib/etcd
 ```
 
 

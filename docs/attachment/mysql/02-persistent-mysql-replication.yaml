@@ -24,7 +24,7 @@ items:
           - key: kubernetes.io/hostname
             operator: In
             values:
-            - k-kube-lab-09
+            - k-kube-lab-12
     persistentVolumeReclaimPolicy: Retain
     storageClassName: mysql-replication-primary
     volumeMode: Filesystem
@@ -52,7 +52,7 @@ items:
           - key: kubernetes.io/hostname
             operator: In
             values:
-            - k-kube-lab-09
+            - k-kube-lab-12
     persistentVolumeReclaimPolicy: Retain
     storageClassName: mysql-replication-secondary
     volumeMode: Filesystem

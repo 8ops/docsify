@@ -41,6 +41,8 @@ done
 
 ### 2.2 展示源码
 
+[下载脚本](https://books.8ops.top/attachment/kubernetes/bin/60-migrate.sh)
+
 ```bash
 #!/bin/bash
 

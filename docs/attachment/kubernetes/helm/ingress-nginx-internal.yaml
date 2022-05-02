@@ -42,11 +42,11 @@ controller:
 
   resources:
     limits:
-      cpu: 1
-      memory: 1Gi
+      cpu: 500m
+      memory: 512Mi
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 30m
+      memory: 32Mi
 
   extraVolumeMounts:
     - name: log

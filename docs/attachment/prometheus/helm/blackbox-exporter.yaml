@@ -9,10 +9,10 @@ image:
 resources: 
   limits:
     cpu: 100m
-    memory: 100Mi
+    memory: 128Mi
   requests:
-    cpu: 100m
-    memory: 100Mi
+    cpu: 50m
+    memory: 64Mi
 
 service:
   annotations: 
@@ -29,5 +29,5 @@ ingress:
   tls:
     - secretName: tls-8ops.top
       hosts:
-        - alertmanager.8ops.top
+        - blackbox.8ops.top
 

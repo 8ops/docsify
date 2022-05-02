@@ -44,11 +44,11 @@ controller:
 
   resources:
     limits:
-      cpu: 1
-      memory: 1Gi
+      cpu: 500m
+      memory: 512Mi
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 50m
+      memory: 64Mi
 
   extraArgs:
     default-ssl-certificate: "kube-server/tls-8ops.top"

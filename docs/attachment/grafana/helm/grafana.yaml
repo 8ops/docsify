@@ -80,7 +80,8 @@ grafana.ini:
     mode: console
   database:
     type: mysql
-    host: mysql-replication-primary
+    # host: mysql-replication-primary
+    host: mysql-standalone
     name: grafana
     user: grafana
     password: grafana
