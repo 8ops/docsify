@@ -1,4 +1,4 @@
-# 实战 | Kubernetes Cluster 重置环境
+# 实战 | Kubernetes Cluster 快速重置
 
 在搭建kubernetes cluster时很多时候需要快速重置一个节点，避免第二次搭建或重新将节点加入集群时被干扰，故整理了一键重置操作方便快速复用。
 
@@ -126,6 +126,7 @@ printf '  \n -------------------------------------- \n\n'
 
 # 6, release directory or files
 printf '\n\n7, release directory or files\n'
+mv /data1/lib{,-$(date +%Y%m%d)}
 rm -rf /etc/systemd/system/kubelet.service.d /var/lib/kubelet
 rm -rf /var/lib/docker /etc/docker /run/docker /run/docker.sock /run/dockershim.sock
 rm -rf /opt/containerd /etc/containerd /run/containerd /var/lib/containerd

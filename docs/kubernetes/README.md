@@ -4,7 +4,7 @@
 > 文章清单
 
 - [实战 | Kubernetes Cluster 快速搭建](kubernetes/01-cluster-init.md)
-- [实战 | Kubernetes Cluster 重置环境](kubernetes/02-cluster-reset.md)
+- [实战 | Kubernetes Cluster 快速重置](kubernetes/02-cluster-reset.md)
 - [实战 | Kubernetes 常用组件-Dashboard](kubernetes/03-addon-dashboard.md)
 - [实战 | Kubernetes 常用组件-Ingress-Controller](kubernetes/04-addon-ingress-controller.md)
 - [实战 | Helm的使用](kubernetes/05-helm.md)

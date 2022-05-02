@@ -71,20 +71,20 @@ VIP：`10.101.11.110`，用于解决apiserver的高可用均衡负载到3台mast
 
 > 部署套件
 
-| 所属范畴      | 组件名称                 | 部署方式 | 运行方式   |
-| ------------- | ------------------------ | -------- | ---------- |
-| 控制平台/节点 | kubelet                  | 二进制   | binary     |
-| 控制平台      | etcd                     | kubeadm  | static pod |
-| 控制平台      | kube-apiserver           | kubeadm  | static pod |
-| 控制平台      | kube-controller-manager  | kubeadm  | static pod |
-| 控制平台      | kube-scheduler           | kubeadm  | static pod |
-| 控制平台/节点 | kube-proxy               | kubeadm  | daemonset  |
-| 控制平台/节点 | kube-flannel             | kubectl  | daemonset  |
-| 节点          | kube-coredns             | kubeadm  | deployment |
-| 节点          | kube-dahboard            | helm     | deployment |
-| 节点          | ingress-nginx-controller | helm     | deployment |
-| 节点          | prometheus               | helm     | deployment |
-| 节点          | alertmanager             | helm     | deployment |
+| 所属范畴          | 组件名称                 | 部署方式 | 运行方式   |
+| ----------------- | ------------------------ | -------- | ---------- |
+| 控制平面/Node节点 | kubelet                  | systemd  | binary     |
+| 控制平面          | etcd                     | kubeadm  | static pod |
+| 控制平面          | kube-apiserver           | kubeadm  | static pod |
+| 控制平面          | kube-controller-manager  | kubeadm  | static pod |
+| 控制平面          | kube-scheduler           | kubeadm  | static pod |
+| 控制平面/Node节点 | kube-proxy               | kubeadm  | daemonset  |
+| 控制平面/Node节点 | kube-flannel             | kubectl  | daemonset  |
+| Node节点          | kube-coredns             | kubeadm  | deployment |
+| Node节点          | kube-dahboard            | helm     | deployment |
+| Node节点          | ingress-nginx-controller | helm     | deployment |
+| Node节点          | prometheus               | helm     | deployment |
+| Node节点          | alertmanager             | helm     | deployment |
 
 
 
@@ -159,7 +159,7 @@ cp /etc/containerd/config.toml-default /etc/containerd/config.toml
 #   https://books.8ops.top/attachment/kubernetes/10-config.toml
 #
 
-sed -i 's#sandbox_image.*$#sandbox_image = "hub.8ops.top/google_containers/pause:3.5"#' /etc/containerd/config.toml  
+sed -i 's#sandbox_image.*$#sandbox_image = "hub.8ops.top/google_containers/pause:3.6"#' /etc/containerd/config.toml  
 sed -i 's#SystemdCgroup = false#SystemdCgroup = true#' /etc/containerd/config.toml 
 grep -P 'sandbox_image|SystemdCgroup' /etc/containerd/config.toml  
 systemctl restart containerd
@@ -171,6 +171,11 @@ systemctl status containerd
 > 受信私有CA
 
 ```bash
+#
+# Example
+#   https://books.8ops.top/attachment/kubernetes/10-config.toml
+#
+
 # 方式一，操作系统受信私有CA
 apt install -y ca-certificates
 cp CERTIFICATE.crt /usr/local/share/ca-certificates/CERTIFICATE.crt
@@ -218,10 +223,11 @@ update-ca-certificates
 systemctl stop containerd
 
 mkdir -p /data1/lib/containerd && \
-    ([ -e /var/lib/containerd ] && mv /var/lib/containerd{,-$(date +%Y%m%d)}) && \
+    ([ -e /var/lib/containerd ] && mv /var/lib/containerd{,-$(date +%Y%m%d)} || /bin/true) && \
     ln -s /data1/lib/containerd /var/lib/containerd
 
 systemctl start containerd
+ls -l /var/lib/containerd
 ```
 
 
@@ -232,8 +238,9 @@ systemctl start containerd
 
 ```bash
 mkdir -p /data1/lib/etcd && \
-    ([ -e /var/lib/etcd ] && mv /var/lib/etcd{,-$(date +%Y%m%d)}) && \
+    ([ -e /var/lib/etcd ] && mv /var/lib/etcd{,-$(date +%Y%m%d)} || /bin/true) && \
     ln -s /data1/lib/etcd /var/lib/etcd
+ls -l /var/lib/etcd
 ```
 
 
@@ -308,8 +315,10 @@ crictl ps -a
 # 默认配置
 kubeadm config print init-defaults > kubeadm-init.yaml-default
 
+#
 # Example 
 #   https://books.8ops.top/attachment/kubernetes/20-kubeadmin-init.yaml 
+#
 
 # 默认镜像
 kubeadm config images list -v 5
@@ -396,7 +405,7 @@ kubeadm init --config kubeadm-init.yaml --upload-certs -v 5
 
 
 
-> 配置缺省时kubeconfig文件
+> 配置缺省时 kubeconfig 文件
 
 ```bash
 mkdir -p ~/.kube && ln -s /etc/kubernetes/admin.conf ~/.kube/config 
@@ -539,9 +548,8 @@ kubeadm join 10.101.11.110:6443 --token abcdef.0123456789abcdef \
 
 ```bash
 #
-## Reference 
-# https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
-# kubectl apply -f https://books.8ops.top/attachment/kubernetes/30-kube-flannel.yaml
+# Reference 
+#   https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
 #
 # Example
 #   https://books.8ops.top/attachment/kubernetes/30-kube-flannel.yaml 
@@ -597,17 +605,6 @@ kubectl get cs
 
 ![cs](../images/kubernetes/screen/01-15.png)
 
-controller-manager和scheduler未健康就位，修复此问题
-
-```bash
-sed -i '/--port/d' /etc/kubernetes/manifests/kube-controller-manager.yaml
-sed -i '/--port/d' /etc/kubernetes/manifests/kube-scheduler.yaml
-```
-
-即时自动生效
-
-![cs](../images/kubernetes/screen/01-16.png)
-
 
 
 ><optional> etcd运行信息
@@ -642,6 +639,18 @@ kubectl get no
 
 
 
+> 查看节点路由
+
+```bash
+apt install -y ipvsadm
+
+ipvsadm -ln
+```
+
+
+
+
+
 ### 3.7 常见问题
 
 > 节点未就位
@@ -650,17 +659,27 @@ kubectl get no
 
 
 
-> coredns未就位
+> coredns 未就位
 
-权限问题需要手动修复（ v1.22.0后已经修复）
+第一种，安装插件时机
 
 ```bash
-kubectl edit clusterrole system:coredns
+# 偶尔出现 coredns 不就位情况是因为加 Node 之前装网络插件 flannel 
+kubectl get pod -A -o wide
+
+# 亦或 coredns 在 control plane 节点上
+# 重置后重新初始化集群，先安装 flannel，再 Join 其他节点
+# 可以解决此现象
 ```
 
-append
+
+
+第二种，权限问题需要手动修复（ v1.22.0后已经修复）
 
 ```bash
+~ # kubectl edit clusterrole system:coredns
+……
+# append
 - apiGroups:
   - discovery.k8s.io
   resources:
@@ -670,7 +689,7 @@ append
   - watch
 ```
 
-删除原有pod/coredns-xx
+删除原有 pod/coredns-xx
 
 ```bash
 kubectl -n kube-system delete pod/coredns-55866688ff-hwp4m pod/coredns-55866688ff-tn8sj
@@ -678,7 +697,22 @@ kubectl -n kube-system delete pod/coredns-55866688ff-hwp4m pod/coredns-55866688f
 
 
 
-> dns寻址失败
+> controller-manager 和scheduler 未健康就位
+
+修复此问题
+
+```bash
+sed -i '/--port/d' /etc/kubernetes/manifests/kube-controller-manager.yaml
+sed -i '/--port/d' /etc/kubernetes/manifests/kube-scheduler.yaml
+```
+
+即时自动生效
+
+![cs](../images/kubernetes/screen/01-16.png)
+
+
+
+> dns 寻址失败
 
 ```bash
 #
@@ -714,6 +748,10 @@ kubectl run nginx --image hub.8ops.top/third/nginx:1.21.3
 #   https://books.8ops.top/attachment/kubernetes/app/52-echoserver.yaml
 #
 ```
+
+
+
+> core
 
 
 

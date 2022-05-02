@@ -15,11 +15,13 @@ ip link set dev kube-ipvs0 down || /bin/true
 ip link delete flannel.1 || /bin/true
 ip link delete cni0 || /bin/true
 ip link delete kube-ipvs0 || /bin/true
+ip route | awk '$0!~/proto/{printf("ip r del %s\n", $1)}'
 
 # show network device
 printf '\n\n ---- show network device ---- \n'
-# ip link show
+#ip link show
 ip address show
+ip route show
 printf '  \n ----------------------------- \n\n'
 
 # 3, release fireward
@@ -80,6 +82,7 @@ printf '  \n -------------------------------------- \n\n'
 
 # 7, release directory or files
 printf '\n\n7, release directory or files\n'
+[ -e /data1/lib ] && mv /data1/lib{,-$(date +%Y%m%d)}
 rm -rf /etc/systemd/system/kubelet.service.d /var/lib/kubelet
 rm -rf /var/lib/docker /etc/docker /run/docker /run/docker.sock /run/dockershim.sock
 rm -rf /opt/containerd /etc/containerd /run/containerd /var/lib/containerd
