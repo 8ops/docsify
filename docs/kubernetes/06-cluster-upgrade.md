@@ -41,10 +41,10 @@ apt update
 apt-mark showhold
 
 # containerd
-apt install containerd=1.5.9-0ubuntu1~20.04.1
+apt install -y --allow-change-held-packages containerd=1.5.9-0ubuntu1~20.04.1
 
 # kubernetes
-apt install kubeadm=1.23.6-00 kubectl=1.23.6-00 kubelet=1.23.6-00
+apt install -y --allow-change-held-packages kubeadm=1.23.6-00 kubectl=1.23.6-00 kubelet=1.23.6-00
 
 # validate
 dpkg -l | grep -E "kube|containerd"
@@ -53,6 +53,9 @@ kubeadm version
 
 # hold
 apt-mark hold containerd kubeadm kubectl kubelet && apt-mark showhold
+
+# lib
+ls -l /var/lib/{containerd,etcd,kubelet}
 ```
 
 
@@ -66,7 +69,7 @@ systemctl restart containerd
 kubeadm upgrade plan 
 
 # 升级集群 <仅需要在一台master节点执行一次>
-kubeadm upgrade apply v1.23.0 -v 5
+kubeadm upgrade apply v1.23.6 -v 5
 
 # 重启kubelet <配置未随kubernetes升级>
 sed -i 's/pause:3.5/pause:3.6/' /var/lib/kubelet/kubeadm-flags.env

@@ -1,7 +1,0 @@
-apiVersion: v1
-data:
-  x-ssl-protocol: $ssl_protocol
-kind: ConfigMap
-metadata:
-  name: ingress-nginx-custom-headers
-  namespace: kube-server

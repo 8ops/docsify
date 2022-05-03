@@ -24,7 +24,7 @@ clusterName: kubernetes
 controllerManager: {}
 dns:
   imageRepository: hub.8ops.top/google_containers
-  imageTag: 1.8.6
+  imageTag: v1.8.6
 etcd:
   local:
     dataDir: /var/lib/etcd

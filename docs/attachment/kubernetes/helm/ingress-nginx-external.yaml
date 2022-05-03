@@ -36,6 +36,14 @@ controller:
     variables-hash-bucket-size: "1024"
     worker-processes: "2"
 
+  proxySetHeaders:
+    x-ssl-protocol: "$ssl_protocol"
+
+  addHeaders:
+    x-env-name: lab
+    x-env-release: "20220505"
+    x-env-class: external
+
   ingressClassResource:
     name: external
     enabled: true
