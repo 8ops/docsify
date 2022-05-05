@@ -30,7 +30,7 @@ etcd:
     dataDir: /var/lib/etcd
 imageRepository: hub.8ops.top/google_containers
 kind: ClusterConfiguration
-kubernetesVersion: 1.23.0
+kubernetesVersion: 1.23.6
 controlPlaneEndpoint: 10.101.11.110:6443
 networking:
   dnsDomain: cluster.local

@@ -24,7 +24,7 @@ items:
             app: echoserver
         spec:
           containers:
-          - image: hub.8ops.top/third/echoserver:1.10
+          - image: hub.8ops.top/google_containers/echoserver:1.10.2
             imagePullPolicy: IfNotPresent
             name: echoserver
             ports:
