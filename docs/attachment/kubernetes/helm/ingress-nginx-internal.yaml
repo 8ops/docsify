@@ -3,7 +3,7 @@ controller:
   image:
     registry: hub.8ops.top
     image: google_containers/nginx-ingress-controller
-    tag: "v1.1.0"
+    tag: "v1.2.0"
     digest:
 
   extraEnvs:
@@ -93,11 +93,6 @@ controller:
         prometheus.io/port: "10254"
       servicePort: 10254
       type: ClusterIP
-
-    serviceMonitor:
-      enabled: true
-      scrapeInterval: 1m
-      honorLabels: true
 
   lifecycle:
   admissionWebhooks:

@@ -99,11 +99,6 @@ controller:
       servicePort: 10254
       type: ClusterIP
 
-    serviceMonitor:
-      enabled: true
-      scrapeInterval: 1m
-      honorLabels: true
-
   lifecycle:
   admissionWebhooks:
     enabled: false
