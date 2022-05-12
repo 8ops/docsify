@@ -18,14 +18,14 @@
 # ERROR: The Python ssl extension was not compiled. Missing the OpenSSL lib?
 
 # 1.下贼openssl
-wget https://www.openssl.org/source/openssl-1.1.1a.tar.gz
-tar -zxvf openssl-1.1.1a.tar.gz
-cd openssl-1.1.1a
+OPENSSL_VERSION=1.1.1o
+wget https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
+tar -zxvf openssl-${OPENSSL_VERSION}.tar.gz
+cd openssl-${OPENSSL_VERSION}
 
 # 2.编译安装
 ./config --prefix=/usr/local/openssl no-zlib #不需要zlib
-make
-make install
+make && make install
 
 # 3.备份原配置
 mv /usr/bin/openssl /usr/bin/openssl.bak
@@ -50,7 +50,7 @@ LD_RUN_PATH="/usr/local/openssl/lib" \
 LDFLAGS="-L/usr/local/openssl/lib" \
 CPPFLAGS="-I/usr/local/openssl/include" \
 CFLAGS="-I/usr/local/openssl/include" \
-CONFIGURE_OPTS="--with-openssl=/usr/local/openssl" \
+CONFIGURE_OPTS="--with-openssl=/usr/local/openssl" 
 ```
 
 

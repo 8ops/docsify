@@ -1,5 +1,25 @@
 # 证书管理
 
+## 系统受信证书
+
+```bash
+# ubuntu
+apt install -y ca-certificates
+curl -s -o /usr/local/share/ca-certificates/xx.crt http://m.8ops.top/cert/xx.crt
+md5sum /usr/local/share/ca-certificates/xx.crt
+update-ca-certificates
+
+# centos
+yum install -y ca-certificates
+curl -s -o /etc/pki/ca-trust/source/anchors/xx.crt http://m.8ops.top/cert/xx.crt
+md5sum /etc/pki/ca-trust/source/anchors/xx.crt
+update-ca-trust
+```
+
+
+
+
+
 ## 查看
 
 > 查看`pem`信息

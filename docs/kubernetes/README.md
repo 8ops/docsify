@@ -18,4 +18,5 @@
 - [实战 | 通过Helm搭建Grafana](kubernetes/23-grafana.md)
 - [实战 | 通过Helm搭建Redis](kubernetes/24-redis.md)
 - [实战 | 通过Helm搭建Elastic](kubernetes/25-elastic.md)
+- [实战 | Harbor使用](kubernetes/26-harbor.md)
 
