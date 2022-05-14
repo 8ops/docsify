@@ -5,11 +5,11 @@ alertmanager:
     repository: hub.8ops.top/prometheus/alertmanager
     tag: v0.23.0
 
-  extraConfigmapMounts: 
-    - name: template-files
-      mountPath: /etc/config/templates.d
-      configMap: alertmanager-template-files
-      readOnly: true
+  # extraConfigmapMounts: 
+  #   - name: template-files
+  #     mountPath: /etc/config/templates.d
+  #     configMap: alertmanager-template-files
+  #     readOnly: true
 
   ingress:
     enabled: true

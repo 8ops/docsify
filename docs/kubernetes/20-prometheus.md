@@ -99,7 +99,7 @@ nodeExporter:
 > 采集外部exporter的metrics
 
 ```yaml
-# 基于helm中extraScrapeConfigs
+# 基于 helm 中 extraScrapeConfigs
 extraScrapeConfigs: |
     - job_name: 'blackbox'
       metrics_path: /probe
