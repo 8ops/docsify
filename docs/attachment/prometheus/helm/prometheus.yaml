@@ -91,7 +91,7 @@ nodeExporter:
     tag: v1.3.0
 
   tolerations:
-    - key: "node-role.kubernetes.io/master"
+    - key: "node-role.kubernetes.io/control-plane"
       operator: "Exists"
 
   resources: 
@@ -174,7 +174,7 @@ alertmanagerFiles:
       smtp_from: 'AlertManager<m@8ops.top>'
       smtp_smarthost: 'smtp.exmail.qq.com:465'
       smtp_auth_username: 'm@8ops.top'
-      smtp_auth_password: 'password'
+      smtp_auth_password: 'mypassword'
       smtp_auth_identity: 'm@8ops.top'
       smtp_require_tls: false
     route:
@@ -183,7 +183,7 @@ alertmanagerFiles:
       - 'severity'
       group_wait: 10m
       group_interval: 10s
-      repeat_interval: 12h
+      repeat_interval: 1h
       receiver: 'prometheusalert'
       routes:
       - receiver: 'email'
@@ -209,7 +209,7 @@ alertmanagerFiles:
         api_url: 'https://qyapi.weixin.qq.com/cgi-bin/'
         corp_id: 'ww8249717441913c51'
         agent_id: '1000004'
-        api_secret: 'secret'
+        api_secret: 'mysecret'
         to_user: '@all'
         to_party: '1'
         message: '{{ template "wechat.default.message" . }}'
@@ -804,34 +804,33 @@ serverFiles:
   ## Ref: https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/
   recording_rules.yml: {}
 
-extraScrapeConfigs: 
-#- job_name: 'blackbox-exporter'
-#  metrics_path: /probe
-#  scheme: http
-#  params:
-#    module: [http_2xx]
-#  static_configs:
-#    - targets:
-#      - http://blackbox-exporter-prometheus-blackbox-exporter:9115
-#  relabel_configs:
-#    - source_labels: [__address__]
-#      target_label: __param_target
-#    - source_labels: [__param_target]
-#      target_label: instance
-#    - target_label: __address__
-#      replacement: blackbox-exporter-prometheus-blackbox-exporter:9115
+extraScrapeConfigs: | 
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    scheme: http
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - http://blackbox-exporter-prometheus-blackbox-exporter:9115
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter-prometheus-blackbox-exporter:9115
 
-
-#- job_name: node-instance
-#  honor_timestamps: true
-#  scrape_interval: 1m
-#  scrape_timeout: 10s
-#  metrics_path: /metrics
-#  scheme: http
-#  static_configs:
-#    - targets:
-#      - 10.101.11.197:19100
-#      - 10.101.11.147:19100
-#      - 10.101.11.188:19100
-#      - 10.101.11.168:19100
+  - job_name: node
+    honor_timestamps: true
+    scrape_interval: 1m
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      - targets:
+        - 10.101.11.197:19100
+        - 10.101.11.147:19100
+        - 10.101.11.188:19100
+        - 10.101.11.168:19100
 

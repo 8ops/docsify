@@ -42,13 +42,13 @@ helm install prometheus prometheus-community/prometheus \
     -f prometheus.yaml \
     -n kube-server \
     --create-namespace \
-    --version 15.8.0 --debug
+    --version 15.8.5 --debug
     
 helm upgrade --install prometheus prometheus-community/prometheus \
     -f prometheus.yaml \
     -n kube-server \
     --create-namespace \
-    --version 15.8.0 --debug
+    --version 15.8.5 --debug
 
 helm -n kube-server uninstall prometheus 
 ```
@@ -98,24 +98,10 @@ nodeExporter:
 
 > 采集外部exporter的metrics
 
-```bash
-#helm中extraScrapeConfigs未成功
-~ $ kubectl -n kube-server edit cm prometheus-server
-...
-    - job_name: node-instance
-      honor_timestamps: true
-      scrape_interval: 1m
-      scrape_timeout: 10s
-      metrics_path: /metrics
-      scheme: http
-      static_configs:
-        - targets:
-          - 10.101.11.168:19100
-          - 10.101.11.188:19100
-          - 10.101.11.197:19100
-          - 10.101.11.209:19100
-          - 10.101.11.236:19100
-    - job_name: 'blackbox-instance'
+```yaml
+# 基于helm中extraScrapeConfigs
+extraScrapeConfigs: |
+    - job_name: 'blackbox'
       metrics_path: /probe
       scheme: http
       params:
@@ -130,8 +116,19 @@ nodeExporter:
           target_label: instance
         - target_label: __address__
           replacement: blackbox-exporter-prometheus-blackbox-exporter:9115
-    alerting: # relative
-...          
+    - job_name: 'node'
+      honor_timestamps: true
+      scrape_interval: 1m
+      scrape_timeout: 10s
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets:
+          - 10.101.11.168:19100
+          - 10.101.11.188:19100
+          - 10.101.11.197:19100
+          - 10.101.11.209:19100
+          - 10.101.11.236:19100
 ```
 
 
@@ -279,3 +276,23 @@ docker run --rm -w /opt -it --entrypoint ls
 
 - 集中查看数据
 - 备份采集数据
+
+
+
+## 三、常见问题
+
+### 3.1 TSDB被锁
+
+常出现在升级prometheus，或重启prometheus
+
+```bash
+~$ kubectl -n kube-server get po
+ 
+prometheus-server-8697db8cc8-4hdpc                                1/2     CrashLoopBackOff   282 (3m27s ago)   23h
+
+~$ kubectl -n kube-server logs -f prometheus-server-8697db8cc8-4hdpc prometheus-server
+……
+ts=2022-05-13T23:29:02.926Z caller=main.go:1077 level=error err="opening storage failed: lock DB directory: resource temporarily unavailable"
+```
+
+进入 `/opt/data/prometheus/server`删除文件`lock`
