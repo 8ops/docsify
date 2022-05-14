@@ -97,8 +97,7 @@ nodeExporter:
     tag: v1.3.0
 
   tolerations:
-    - key: "node-role.kubernetes.io/control-plane"
-      operator: "Exists"
+    - operator: "Exists"
 
   resources: 
     limits:
@@ -115,13 +114,11 @@ server:
 
   extraConfigmapMounts: 
     - name: metadata-rules
-      mountPath: /etc/metadata/rules.d
-      subPath: ""
+      mountPath: /etc/config/rules.d
       configMap: prometheus-metadata-rules
       readOnly: true
     - name: metadata-hosts
-      mountPath: /etc/metadata/hosts.d
-      subPath: ""
+      mountPath: /etc/config/hosts.d
       configMap: prometheus-metadata-hosts
       readOnly: true
 
@@ -846,6 +843,6 @@ extraScrapeConfigs: |
     scheme: http
     file_sd_configs:
     - files:
-      - /etc/metadata/hosts.d/node-*.yml
+      - /etc/config/hosts.d/node-*.yml
       refresh_interval: 1m
 
