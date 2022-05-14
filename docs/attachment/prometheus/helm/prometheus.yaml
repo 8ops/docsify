@@ -5,6 +5,12 @@ alertmanager:
     repository: hub.8ops.top/prometheus/alertmanager
     tag: v0.23.0
 
+  extraConfigmapMounts: 
+    - name: template-files
+      mountPath: /etc/config/templates.d
+      configMap: alertmanager-template-files
+      readOnly: true
+
   ingress:
     enabled: true
     ingressClassName: external
@@ -106,6 +112,18 @@ server:
   image:
     repository: hub.8ops.top/prometheus/prometheus
     tag: v2.34.0
+
+  extraConfigmapMounts: 
+    - name: metadata-rules
+      mountPath: /etc/metadata/rules.d
+      subPath: ""
+      configMap: prometheus-metadata-rules
+      readOnly: true
+    - name: metadata-hosts
+      mountPath: /etc/metadata/hosts.d
+      subPath: ""
+      configMap: prometheus-metadata-hosts
+      readOnly: true
 
   ingress:
     enabled: true
@@ -820,17 +838,14 @@ extraScrapeConfigs: |
         target_label: instance
       - target_label: __address__
         replacement: blackbox-exporter-prometheus-blackbox-exporter:9115
-
-  - job_name: node
+  - job_name: node-sd
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
     metrics_path: /metrics
     scheme: http
-    static_configs:
-      - targets:
-        - 10.101.11.197:19100
-        - 10.101.11.147:19100
-        - 10.101.11.188:19100
-        - 10.101.11.168:19100
+    file_sd_configs:
+    - files:
+      - /etc/metadata/hosts.d/node-*.yml
+      refresh_interval: 1m
 
