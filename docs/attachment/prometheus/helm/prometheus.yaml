@@ -7,7 +7,7 @@ alertmanager:
 
   # extraConfigmapMounts: 
   #   - name: template-files
-  #     mountPath: /etc/config/templates.d
+  #     mountPath: /opt/metadata/templates.d
   #     configMap: alertmanager-template-files
   #     readOnly: true
 
@@ -114,11 +114,11 @@ server:
 
   extraConfigmapMounts: 
     - name: metadata-rules
-      mountPath: /etc/config/rules.d
+      mountPath: /opt/metadata/rules.d
       configMap: prometheus-metadata-rules
       readOnly: true
     - name: metadata-hosts
-      mountPath: /etc/config/hosts.d
+      mountPath: /opt/metadata/hosts.d
       configMap: prometheus-metadata-hosts
       readOnly: true
 
@@ -835,7 +835,7 @@ extraScrapeConfigs: |
         target_label: instance
       - target_label: __address__
         replacement: blackbox-exporter-prometheus-blackbox-exporter:9115
-  - job_name: node-sd
+  - job_name: node-file-sd
     honor_timestamps: true
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -843,6 +843,12 @@ extraScrapeConfigs: |
     scheme: http
     file_sd_configs:
     - files:
-      - /etc/config/hosts.d/node-*.yml
+      - /opt/metadata/hosts.d/node_*.yml
       refresh_interval: 1m
-
+  - job_name: node-http-sd
+    honor_timestamps: true
+    scrape_interval: 1m
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    http_sd_configs:
+    - url: http://10.101.11.236:8888/node.json
