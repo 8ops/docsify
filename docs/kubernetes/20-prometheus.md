@@ -39,18 +39,24 @@ helm search repo prometheus
 helm show values prometheus-community/prometheus > prometheus.yaml-default
 
 helm install prometheus prometheus-community/prometheus \
-    -f prometheus.yaml \
+    -f prometheus.yaml -f prometheus-extra.yaml -f prometheus-alertmanager.yaml \
     -n kube-server \
     --create-namespace \
     --version 15.8.5 --debug
-    
+
+kubectl -n kube-server scale --replicas=0 deploy prometheus-server
 helm upgrade --install prometheus prometheus-community/prometheus \
-    -f prometheus.yaml \
+    -f prometheus.yaml -f prometheus-extra.yaml -f prometheus-alertmanager.yaml \
     -n kube-server \
     --create-namespace \
     --version 15.8.5 --debug
 
 helm -n kube-server uninstall prometheus 
+
+helm -n kube-server uninstall prometheus && \
+    kubectl delete -f ../01-persistent-prometheus.yaml && \
+    kubectl apply -f ../01-persistent-prometheus.yaml && \
+    kubectl get pv,pvc -A
 ```
 
 
