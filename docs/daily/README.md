@@ -17,5 +17,6 @@
 - [网络操作](daily/11-network.md)
 - [HTML](daily/12-html.md)
 - [Python](daily/13-python.md)
+- [心理学效应](daily/90-effect.md)
 - [文章管理](daily/99-article.md)
 
