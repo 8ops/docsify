@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  labels:
+    app: demo-acme
+  name: demo-acme
+  namespace: default
+spec:
+  ingressClassName: external
+  rules:
+  - host: demo.acme.8ops.top
+    http:
+      paths:
+      - backend:
+          service:
+            name: echoserver
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - demo.acme.8ops.top
+    secretName: tls-acme.8ops.top

@@ -4,8 +4,6 @@ Helm 是 Kubernetes 的包管理器，从CNCF毕业。
 
 使用Helm安装Kubernetes中的插件将会变得是一件容易的事情。
 
-
-
 > Reference
 
 - [docs](https://helm.sh/zh/docs/)
@@ -16,24 +14,18 @@ Helm 是 Kubernetes 的包管理器，从CNCF毕业。
 
 Helm是个很意思的工具，简化了kubernetes上常用组件的管理。
 
-
-
 [优化访问镜像](kubernetes/10-access-image.md)
-
-
 
 使用Helm后会生成相应的缓存文件，使用过程中必要时可以主动清空。目录如下
 
 - ~/.config/helm
 - ~/.cache/helm
 
-
-
 > 常用源
 
 ```bash
 # helm repo list
-NAME       						URL
+NAME                               URL
 azure                 https://mirror.azure.cn/kubernetes/charts
 aliyun                https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
 elastic               https://helm.elastic.co
@@ -54,8 +46,6 @@ kubernetes-dashboard  https://kubernetes.github.io/dashboard/
 export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
 ```
 
-
-
 ## 一、Ingress-nginx
 
 > 宿主机kernel优化
@@ -63,8 +53,6 @@ export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_pr
 ```bash
 sysctl -w net.core.somaxconn=32768; sysctl -w net.ipv4.ip_local_port_range='1024 65000'
 ```
-
-
 
 ```bash
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -113,8 +101,6 @@ helm upgrade ingress-nginx-internal-controller ingress-nginx/ingress-nginx \
 helm -n kube-server uninstall ingress-nginx-external-controller
 ```
 
-
-
 > vim [ingress-nginx-external.yaml](https://books.8ops.top/attachment/kubernetes/helm/ingress-nginx-external.yaml)
 
 ```yaml
@@ -162,13 +148,55 @@ controller:
     enabled: false
 ```
 
-
-
 > 演示效果
 
 ![查看应用效果](../images/kubernetes/screen/05-20.png)
 
+> 切割日志
 
+```bash
+
+```
+
+```bash
+# /etc/logrotate.d/nginx
+/var/log/nginx/access.log
+ {
+    su systemd-resolve nginx-ingress
+    hourly
+    rotate 180
+    dateext
+    missingok
+    notifempty
+    compress
+    delaycompress
+    nomail
+    sharedscripts
+    postrotate
+        for pid in `/bin/pidof nginx `;do
+            kill -USR1 ${pid}
+        done
+    endscript
+}
+/var/log/nginx/error.log
+ {
+    su systemd-resolve nginx-ingress
+    daily
+    rotate 7
+    dateext
+    missingok
+    notifempty
+    compress
+    delaycompress
+    nomail
+    sharedscripts
+    postrotate
+        for pid in `/bin/pidof nginx `;do
+            kill -USR1 ${pid}
+        done
+    endscript
+}
+```
 
 ## 二、Dashboard
 
@@ -223,8 +251,6 @@ kubectl create clusterrolebinding dashboard-ops \
 kubectl describe secrets \
   -n kube-server $(kubectl -n kube-server get secret | awk '/dashboard-ops/{print $1}')
 ```
-
-
 
 > vim kubernetes-dashboard.yaml
 
@@ -296,14 +322,9 @@ metrics-server:
 
 ```
 
-
-
 > 演示效果
 
-
 ![打开Dashboard](../images/kubernetes/screen/05-21.png)
-
-
 
 ![登录Dashboard](../images/kubernetes/screen/05-22.png)
 
@@ -321,37 +342,35 @@ helm install logstash elastic/logstash \
     -n kube-server \
     --create-namespace \
     --version 7.16.2 --debug
-    
+
 helm upgrade logstash elastic/logstash \
     -f elastic_logstash.yaml \
     -n kube-server \
     --version 7.16.2 --debug
-    
+
 #------------------------------------------#
 helm search repo elastic
 
 helm show values elastic/eck-operator > elastic_eck.yaml-default
 
 helm install elastic-operator elastic/eck-operator \
-		-f elastic_eck.yaml \
-		-n kube-server \
-		--create-namespace \
-		--version 1.9.1 --debug
-		
+        -f elastic_eck.yaml \
+        -n kube-server \
+        --create-namespace \
+        --version 1.9.1 --debug
+
 helm upgrade elastic-operator elastic/eck-operator \
-		-f elastic_eck.yaml \
-		-n kube-server \
-		--create-namespace \
-		--version 1.9.1 --debug
-		
+        -f elastic_eck.yaml \
+        -n kube-server \
+        --create-namespace \
+        --version 1.9.1 --debug
+
 #------------------------------------------#
 kubectl create -f https://download.elastic.co/downloads/eck/1.9.1/crds.yaml
 kubectl apply -f https://download.elastic.co/downloads/eck/1.9.1/operator.yaml
 
 kubectl -n elastic-system logs -f statefulset.apps/elastic-operator
 ```
-
-
 
 ## 四、Prometheus
 
@@ -368,7 +387,7 @@ helm install prometheus prometheus-community/prometheus \
     -n kube-server \
     --create-namespace \
     --version 15.8.0 --debug
-    
+
 helm upgrade --install prometheus prometheus-community/prometheus \
     -f prometheus.yaml \
     -n kube-server \
@@ -376,7 +395,54 @@ helm upgrade --install prometheus prometheus-community/prometheus \
     --version 15.8.0 --debug
 ```
 
+## 五、Cert-Manager
 
+```bash
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+helm search repo cert-manager
+
+# cert-manager
+helm show values jetstack/cert-manager > cert-manager.yaml-default
+
+helm install cert-manager jetstack/cert-manager \
+    -f cert-manager.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version v1.8.0 --debug
+
+helm upgrade --install cert-manager jetstack/cert-manager \
+    -f cert-manager.yaml \
+    -n kube-server \
+    --create-namespace \
+    --version v1.8.0 --debug
+
+helm -n kube-server uninstall cert-manager
+
+# cert-manager-webhook-dnspod
+helm repo add roc https://charts.imroc.cc
+helm repo update
+helm search repo cert-manager-webhook-dnspod
+
+helm show values roc/cert-manager-webhook-dnspod > cert-manager-webhook-dnspod.yaml-default
+
+# helm upgrade -i  cert-manager-webhook-dnspod roc/cert-manager-webhook-dnspod \
+#     --namespace cert-manager \
+#     --set clusterIssuer.secretId=<SECRET_ID> \
+#     --set clusterIssuer.secretKey=<SECRET_KEY> 
+
+helm install cert-manager-webhook-dnspod  \
+    -f cert-manager-webhook-dnspod.yaml roc/cert-manager-webhook-dnspod \
+    -n kube-server \
+    --create-namespace \
+    --version 1.2.0 --debug
+
+helm upgrade --install cert-manager-webhook-dnspod  \
+    -f cert-manager-webhook-dnspod.yaml roc/cert-manager-webhook-dnspod \
+    -n kube-server \
+    --create-namespace \
+    --version 1.2.0 --debug
+```
 
 ## ~~Zadig~~
 
@@ -445,8 +511,6 @@ dex:
         secret: ZXhhbXBsZS1hcHAtc2VjcmV0
 ```
 
-
-
 ## ~~Banzai~~
 
 `UnSuccess`
@@ -466,4 +530,3 @@ helm install banzaicloud banzaicloud-stable/logging-operator-logging \
     --version 3.16.0 --debug
 
 ```
-
