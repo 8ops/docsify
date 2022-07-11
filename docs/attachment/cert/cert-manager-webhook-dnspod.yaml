@@ -14,8 +14,8 @@ clusterIssuer:
   name: dnspod
   ttl: 600
   staging: false
-  secretId: 'AKID2tUord8NL2ScV6QUGlzwc18yXpqa4GBp'
-  secretKey: 'NUJr89tMXS6TYMt98pFOGqACxRdaGfmg'
+  secretId: 'secretId'
+  secretKey: 'secretKey'
 
 resources: 
   limits:
