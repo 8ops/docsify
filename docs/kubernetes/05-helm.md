@@ -155,6 +155,17 @@ controller:
 > 切割日志
 
 ```bash
+# 确保uid=101,gid=82的用户和组存在
+groupadd -g 82 nginx-ingress
+cd /data1/log/nginx
+
+chown 101.82 * && ls -l 
+
+systemctl start logrotate && ls -l && sleep 5 && systemctl status logrotate
+
+# 调整定时器为小时
+sed -i 's/OnCalendar=daily/OnCalendar=hourly/' /lib/systemd/system/logrotate.timer
+systemctl daemon-reload && sleep 5 && systemctl status logrotate.timer
 
 ```
 
