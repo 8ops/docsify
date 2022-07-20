@@ -455,6 +455,25 @@ helm upgrade --install cert-manager-webhook-dnspod  \
     --version 1.2.0 --debug
 ```
 
+## 六、Nginx
+
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm search repo nginx
+
+helm show values bitnami/nginx > nginx.yaml-default
+
+helm install prometheus-sd  \
+    -f nginx.yaml bitnami/nginx \
+    -n kube-server \
+    --create-namespace \
+    --version 12.0.6 --debug
+
+
+helm -n kube-server uninstall prometheus-sd
+```
+
 ## ~~Zadig~~
 
 `UnSuccess`

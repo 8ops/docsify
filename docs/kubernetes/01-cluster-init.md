@@ -481,6 +481,41 @@ kubectl -n kube-system edit cm kube-proxy
 
 ```
 
+> 自举Pod's QoS
+
+```bash
+# kube-proxy
+kubectl -n kube-system edit daemonset kube-proxy
+……
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+……
+
+# coredns
+kubectl -n kube-system edit deployment coredns
+……
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+……
+
+# kube-flannel-ds
+kubectl -n kube-system edit daemonset kube-flannel-ds
+……
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+……
+
+# kube-apiserver - [Burstable]
+# kube-controller-manager - [Burstable]
+# kube-scheduler - [Burstable]
+```
+
 
 
 ### 3.4 Join 节点
@@ -663,7 +698,7 @@ ipvsadm -ln
 
 
 
-### 3.7 常见问题
+## 四、常见问题
 
 > 节点未就位
 
