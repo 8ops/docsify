@@ -25,6 +25,7 @@
   - [实战 | 通过Helm搭建Grafana](kubernetes/23-grafana.md)
   - [实战 | 通过Helm搭建Redis](kubernetes/24-redis.md)
   - [实战 | 通过Helm搭建Elastic](kubernetes/25-elastic.md)
+  - [实战 | KubeConfig的使用](kubernetes/30-kubeconfig.md)
 - [运维开发](dev/)
   - [golang](dev/01-golang.md)
 - [数据处理](data/)
@@ -32,4 +33,4 @@
   - [neo4j](data/02-neo4j.md)
 - [生活随记](note/)
   - [日常随记](note/00-daily.md)
-  - [海信电视](note/03-hls-repair.md)
+  - # [海信电视](note/03-hls-repair.md)
