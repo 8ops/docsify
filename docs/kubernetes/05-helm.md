@@ -344,8 +344,8 @@ metrics-server:
 ```bash
 helm repo add elastic https://helm.elastic.co
 
+# logstash
 helm search repo logstash
-
 helm show values elastic/logstash > elastic_logstash.yaml-default
 
 helm install logstash elastic/logstash \
@@ -359,9 +359,19 @@ helm upgrade logstash elastic/logstash \
     -n kube-server \
     --version 7.16.2 --debug
 
-#------------------------------------------#
+# elastic [failure]
 helm search repo elastic
+helm show values elastic/elasticsearch > elasticsearch.yaml-default
 
+helm install elasticsearch-ops elastic/elasticsearch \
+        -f elasticsearch.yaml \
+        -n kube-server \
+        --create-namespace \
+        --version 7.17.3 --debug
+
+helm -n kube-server uninstall elasticsearch-ops        
+
+# elastic_eck
 helm show values elastic/eck-operator > elastic_eck.yaml-default
 
 helm install elastic-operator elastic/eck-operator \
@@ -376,7 +386,7 @@ helm upgrade elastic-operator elastic/eck-operator \
         --create-namespace \
         --version 1.9.1 --debug
 
-#------------------------------------------#
+# origin
 kubectl create -f https://download.elastic.co/downloads/eck/1.9.1/crds.yaml
 kubectl apply -f https://download.elastic.co/downloads/eck/1.9.1/operator.yaml
 
