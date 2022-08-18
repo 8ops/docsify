@@ -53,9 +53,17 @@ kubectl config use-context ${USER}@kubernetes --kubeconfig=${USER}.kubeconfig
 # 创建ClusterRole
 kubectl create clusterrole cluster-reader-for-guest \
     --verb=get,list,watch \
-    --resource=namespaces,nodes,pods,deployments,replicasets,daemonsets,services,ingresses,endpoints,events,configmaps,statefulsets,secrets,jobs,cronjobs,replicationcontrollers,horizontalpodautoscalers \
+    --resource=namespaces,nodes,pods,pods/log,deployments,replicasets,daemonsets,services,ingresses,endpoints,events,configmaps,statefulsets,secrets,jobs,cronjobs,replicationcontrollers,horizontalpodautoscalers \
     --dry-run=client -o yaml 
     # | kubectl apply -f -
+
+# add rule: 连接容器
+#- apiGroups:
+#  - ""
+#  resources:
+#  - pods/exec
+#  verbs:
+#  - create
 
 # 绑定ClusterRoleBinding
 kubectl create clusterrolebinding cluster-reader-for-guest-binding \
