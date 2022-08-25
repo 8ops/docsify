@@ -26,7 +26,7 @@ prometheus是目前人气较高的一款监控软件，活跃的社区吸引了�
 
 
 
-### 2.1 安装
+### 1.1 安装
 
 通过helm安装prometheus
 
@@ -139,7 +139,7 @@ extraScrapeConfigs: |
 
 
 
-### 2.2 blackbox
+### 1.2 blackbox
 
 blackbox-exporter 常用的一个黑盒
 
@@ -163,7 +163,7 @@ helm -n kube-server uninstall blackbox-exporter
 
 
 
-### 2.3 grafana
+### 1.3 grafana
 
 [官方模板](https://grafana.com/grafana/dashboards/)
 
@@ -209,63 +209,132 @@ Redis Dashboard for Prometheus Redis Exporter
 
 
 
-### 2.4 告警全家桶
+### 1.4 告警全家桶
 
-推荐[prometheus-alert-center](https://github.com/feiyu563/PrometheusAlert)
+推荐 [prometheus-alert-center](https://github.com/feiyu563/PrometheusAlert)
 
+**第一步，准备**
 
-
-以下是个人调试的笔记，可以忽视
-
-```dockerfile
-#ARG IMAGE_TAG=3.15.4
-#FROM hub.8ops.top/third/alpine:${IMAGE_TAG}
-#FROM hub.8ops.top/build/golang:1.18-bullseye
-FROM ubuntu:22.04
-
-ENV TZ="Asia/Shanghai"
-WORKDIR /opt
-ADD . /opt
-
-RUN set -ex && \
-    chmod +x /opt/PrometheusAlert && \
-    ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-
-ENTRYPOINT ["/opt/PrometheusAlert"]
-```
-
-
+> 企业微信机器人回调地址
 
 ```bash
-# 官方镜像不能发群通知
-docker run --rm -d \
-	-p 8070:8080 \
-	-v /opt/data/prometheusalert/conf:/app/conf \
-	hub.8ops.top/prometheus/prometheus-alert:v4.8 
-
-# 基于官方二进制可以发
-docker build . -t hub.8ops.top/prometheus/prometheus-alert:v4.8-manual
-docker run --rm -d \
-	-p 8090:8080 \
-	-v /opt/data/prometheusalert/conf:/app/conf \
-	hub.8ops.top/prometheus/prometheus-alert:v4.8-manual
-
-## debug
-docker run --rm -w /opt \
-	--entrypoint ls \
-	hub.8ops.top/prometheus/prometheus-alert:v4.8-manual \
-	"-lt"
-docker run -d -w /opt \
-	--entrypoint sleep \
-	hub.8ops.top/prometheus/prometheus-alert:v4.8-manual \
-	"3600"
-
-docker run --rm -w /opt -it --entrypoint ls 
-
-# 基于二进制直接运行
+https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxxx-xx-xx-xxxx
 ```
 
 
+
+> 创建数据库
+
+```bash
+# MySQL 8
+
+create database prometheus_alert;
+create user 'prometheus_alert'@'%' identified by 'prometheus_alert';
+grant all privileges on prometheus_alert.* to `prometheus_alert`@`%`;
+flush privileges;
+```
+
+
+
+**第二步，启动**
+
+[配置Yaml](https://m.8ops.top/attachment/prometheus/95-prometheus-alert-center.yaml)
+
+```bash
+kubectl apply -f 95-prometheus-alert-center.yaml
+```
+
+
+
+**第三步，初始数据**
+
+```bash
+mysql -uprometheus_alert -pprometheus_alert -Dprometheus_alert < prometheusalert.sql
+```
+
+
+
+**第四步，添加模板**
+
+```bash
+# 模版名称：prometheus-wx-v2
+
+# 模版类型：企业微信
+
+# 模版内容
+{{$var:=.commonLabels}}{{ range $k,$v:=.alerts }}{{if  eq $v.status "resolved"}}<font color="comment">**【恢复】**</font>**{{$v.labels.alertname}}**
+> <font color="comment">告警级别：</font> {{$v.labels.severity}}
+> <font color="comment">开始时间：</font> {{$v.startsAt}}
+> <font color="comment">结束时间：</font> {{$v.endsAt}}
+> <font color="comment">故障实例：</font> {{$v.labels.instance}}
+> {{$v.annotations.description}}{{else}}<font color="warning">**【告警】**</font>** {{$v.labels.alertname}} **
+> <font color="warning">告警级别：</font> {{$v.labels.severity}}
+> <font color="warning">开始时间：</font> {{$v.startsAt}}
+> <font color="warning">结束时间：</font> {{$v.endsAt}}
+> <font color="warning">故障实例：</font> {{$v.labels.instance}}
+> {{$v.annotations.description}}
+> {{ $urimsg:=""}}{{ range $key,$value:=$var }}{{$urimsg =  print $urimsg $key "%3D%22" $value "%22%2C" }}{{end}}[☞点我屏蔽该告警☜](https://alertmanager.8ops.top/#/silences/new?filter=%7B{{SplitString $urimsg 0 -3}}%7D){{end}}{{end}}
+```
+
+
+
+**第五步，联动AlertManager**
+
+```bash
+# kubectl -n kube-server edit cm prometheus-alertmanager
+
+global:
+  resolve_timeout: 5m
+route:
+  receiver: discard
+  group_by:
+  - alertname
+  - severity
+  continue: false
+  routes:
+  - receiver: prometheusalertcenter
+    match_re:
+      severity: critical
+    continue: true
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+inhibit_rules:
+- source_match:
+    severity: critical
+  target_match_re:
+    severity: critical
+  equal:
+  - node
+  - instance
+  - alertname
+- source_match:
+    severity: critical
+  target_match_re:
+    severity: warning
+  equal:
+  - node
+  - instance
+  - alertname
+receivers:
+- name: discard
+- name: prometheusalertcenter
+  webhook_configs:
+  - send_resolved: true
+    http_config:
+      follow_redirects: true
+    url: http://prometheus-alert-center:8080/prometheusalert?type=wx&tpl=prometheus-wx-v2
+    max_alerts: 0
+templates:
+- /opt/metadata/templates.d/*.tmpl
+```
+
+
+
+> 企业微信 Alert 效果
+
+
+![alert](../images/prometheus/alert.png)
 
 
 
