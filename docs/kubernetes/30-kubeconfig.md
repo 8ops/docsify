@@ -1,4 +1,4 @@
-# KubeConfig 的综合使用
+# 实战 | KubeConfig 的综合使用
 
 ## 多集群管理
 

@@ -1,8 +1,8 @@
 # 实战 | Kubernetes Cluster 快速搭建
 
-Kubernetes 是一个开源的容器编排引擎，用来对容器化应用进行自动化部署、 扩缩和管理。
+`Kubernetes` 是一个开源的容器编排引擎，用来对容器化应用进行自动化部署、 扩缩和管理。
 
-从CNCF毕业，Kubernetes是当下最火热的技术各大中小互联网公司都在积极推进他的落地。
+从 `CNCF` 毕业，`Kubernetes` 是当下最火热的技术各大中小互联网公司都在积极推进他的落地。
 
 
 
@@ -12,13 +12,13 @@ Kubernetes 是一个开源的容器编排引擎，用来对容器化应用进行
 
 ## 一、背景描述
 
-采用**[kubeadm](https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/)**方式安装
+采用 **[kubeadm](https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/)** 方式安装
 
 ![kubeadm](../images/kubernetes/kubeadm-stacked.png)
 
 ### 1.1 机器准备
 
-VIP：`10.101.11.110`，用于解决apiserver的高可用均衡负载到3台master节点。
+VIP：`10.101.11.110`，用于解决apiserver的高可用均衡负载到 3 台 master 节点。
 
 | 主机名称      | 主机IP        | 操作系统           | 角色分配             |
 | ------------- | ------------- | ------------------ | -------------------- |
@@ -35,7 +35,7 @@ VIP：`10.101.11.110`，用于解决apiserver的高可用均衡负载到3台mast
 
 ### 1.2 软件版本
 
-匹配版本
+> 匹配版本
 
 | 软件名称   | 当前最新版本           |
 | ---------- | ---------------------- |
@@ -98,7 +98,7 @@ VIP：`10.101.11.110`，用于解决apiserver的高可用均衡负载到3台mast
 
 ## 二、前期准备
 
-进行必要的操作让每个节点符合kubernetes安装的要求
+进行必要的操作让每个节点符合 kubernetes 安装的要求
 
 
 
@@ -112,7 +112,7 @@ VIP：`10.101.11.110`，用于解决apiserver的高可用均衡负载到3台mast
 4. 优化内核
 5. 优化软件源
 6. 安装必要软件
-7. kubectl的bash补全
+7. kubectl 的 bash 补全
 
 ```bash
 curl -s https://books.8ops.top/attachment/kubernetes/bin/01-init.sh | bash
@@ -124,9 +124,9 @@ curl -s https://books.8ops.top/attachment/kubernetes/bin/01-init.sh | bash
 
 > `/var/lib/containerd`
 
-来源于配置文件`/etc/containerd/config.toml`
+来源于配置文件 `/etc/containerd/config.toml`
 
-`/var/lib/containerd`需要指向到磁盘综合属性较好的位置
+`/var/lib/containerd` 需要指向到磁盘综合属性较好的位置
 
 - 存储空间足够大
 - IO读写性能较好
@@ -164,8 +164,6 @@ ls -l /var/lib/etcd
 
 
 
-
-
 ## 三、实施部署
 
 
@@ -176,7 +174,7 @@ ls -l /var/lib/etcd
 
 
 
-> 使用containerd做为容器运行时
+> 使用 containerd 做为容器运行时
 
 ```bash
 CONTAINERD_VERSION=1.5.5-0ubuntu3~20.04.2
@@ -196,7 +194,7 @@ Reference
 > 默认配置
 
 ```bash
-# 替换ctr运行时
+# 替换 ctr 运行时
 mkdir -p /etc/containerd
 containerd config default > /etc/containerd/config.toml-default
 cp /etc/containerd/config.toml-default /etc/containerd/config.toml
@@ -215,7 +213,7 @@ systemctl status containerd
 
 
 
-> 受信私有CA
+> 受信私有 CA
 
 ```bash
 #
@@ -257,7 +255,7 @@ update-ca-certificates
 
 
 
-### 3.2 初始kubeadm环境
+### 3.2 初始 kubeadm 环境
 
 > Reference
 
@@ -284,7 +282,7 @@ dpkg -l | grep kube
 
 
 
-> 完善crictl执行配置
+> 完善 crictl 执行配置
 
 ```bash
 # deprecated
