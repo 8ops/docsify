@@ -9,13 +9,21 @@ command -v kubeadm && kubeadm reset --force --cri-socket /run/containerd/contain
 
 # 2, release network
 printf '\n\n2, release network\n'
+ip link set dev docker0 down || /bin/true
 ip link set dev flannel.1 down || /bin/true
 ip link set dev cni0 down || /bin/true
 ip link set dev kube-ipvs0 down || /bin/true
+ip link set dev cilium_net down || /bin/true
+ip link set dev cilium_host down || /bin/true
+ip link set dev cilium_vxlan down || /bin/true
+ip link delete docker0 || /bin/true
 ip link delete flannel.1 || /bin/true
 ip link delete cni0 || /bin/true
 ip link delete kube-ipvs0 || /bin/true
-ip route | awk '$0!~/proto/{printf("ip r del %s\n", $1)}'
+ip link delete cilium_net || /bin/true
+ip link delete cilium_host || /bin/true
+ip link delete cilium_vxlan || /bin/true
+ip route | awk '$0!~/proto/{printf("ip r del %s\n", $1)}' | sh
 
 # show network device
 printf '\n\n ---- show network device ---- \n'
@@ -87,7 +95,7 @@ rm -rf /etc/systemd/system/kubelet.service.d /var/lib/kubelet
 rm -rf /var/lib/docker /etc/docker /run/docker /run/docker.sock /run/dockershim.sock
 rm -rf /opt/containerd /etc/containerd /run/containerd /var/lib/containerd
 rm -rf /etc/crio/ /etc/crictl.yaml
-rm -rf /opt/cni /etc/cni /var/lib/cni /run/flannel
+rm -rf /opt/cni /etc/cni /var/lib/cni /run/flannel #/run/cilium
 rm -rf ~/.kube /etc/kubernetes
 rm -rf ~/.cache/helm ~/.config/helm
 

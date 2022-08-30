@@ -201,7 +201,7 @@ cp /etc/containerd/config.toml-default /etc/containerd/config.toml
 
 #
 # Example 
-#   https://books.8ops.top/attachment/kubernetes/10-config.toml
+#   https://books.8ops.top/attachment/kubernetes/containerd-config.toml
 #
 
 sed -i 's#sandbox_image.*$#sandbox_image = "hub.8ops.top/google_containers/pause:3.6"#' /etc/containerd/config.toml  
@@ -218,7 +218,7 @@ systemctl status containerd
 ```bash
 #
 # Example
-#   https://books.8ops.top/attachment/kubernetes/10-config.toml
+#   https://books.8ops.top/attachment/kubernetes/containerd-config.toml
 #
 
 # 方式一，操作系统受信私有CA
@@ -327,7 +327,7 @@ kubeadm config print init-defaults > kubeadm-init.yaml-default
 
 #
 # Example 
-#   https://books.8ops.top/attachment/kubernetes/20-kubeadmin-init.yaml 
+#   https://books.8ops.top/attachment/kubernetes/kubeadm-init.yaml-v1.23.0
 #
 
 # 默认镜像
@@ -456,12 +456,12 @@ kubectl -n kube-system edit cm kubelet-config-1.23
       cpu: 500m
       memory: 500m
     evictionPressureTransitionPeriod: 300s # upgrade
-    nodeStatusReportFrequency: 10s # upgrade
-    nodeStatusUpdateFrequency: 10s # upgrade
+    nodeStatusReportFrequency: 10s         # upgrade
+    nodeStatusUpdateFrequency: 10s         # upgrade
     cgroupDriver: systemd
     maxPods: 200
     resolvConf: /etc/resolv.conf
-kind: ConfigMap # relative
+kind: ConfigMap                            # relative
 ……
 
 # kube-proxy 
@@ -470,11 +470,11 @@ kubectl -n kube-system edit cm kube-proxy
 
 ……
     configSyncPeriod: 5s # upgrade
-    mode: "ipvs" # upgrade
-    ipvs:
-      tcpTimeout: 900s
-      syncPeriod: 5s
-      minSyncPeriod: 5s
+    mode: "ipvs"         # upgrade
+    ipvs:                # relative
+      tcpTimeout: 900s   # upgrade
+      syncPeriod: 5s     # upgrade
+      minSyncPeriod: 5s  # upgrade
 ……
 
 ```
@@ -597,7 +597,7 @@ kubeadm join 10.101.11.110:6443 --token abcdef.0123456789abcdef \
 #   https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
 #
 # Example
-#   https://books.8ops.top/attachment/kubernetes/30-kube-flannel.yaml 
+#   https://books.8ops.top/attachment/kubernetes/kube-flannel.yaml-v0.15.1
 #
 
 kubectl apply -f kube-flannel.yaml
@@ -620,7 +620,7 @@ kubectl apply -f kube-flannel.yaml
 	# 镜像替换为私有地址
       initContainers:
       - name: install-cni-plugin
-        image: hub.8ops.top/google_containers/mirrored-flannelcni-flannel-cni-plugin:v1.0.0
+        image: hub.8ops.top/google_containers/flannel-cni-plugin:v1.0.0
         ……
       - name: install-cni
         image: hub.8ops.top/google_containers/flannel:v0.15.1

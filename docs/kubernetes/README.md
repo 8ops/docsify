@@ -4,6 +4,7 @@
 > 文章清单
 
 - [实战 | Kubernetes Cluster 快速搭建](kubernetes/01-cluster-init.md)
+  - [flannel](kubernetes/01-cluster-init-flannel.md)
   - [cilium](kubernetes/01-cluster-init-cilium.md)
 - [实战 | Kubernetes Cluster 快速重置](kubernetes/02-cluster-reset.md)
 - [实战 | Kubernetes 常用组件-Dashboard](kubernetes/03-addon-dashboard.md)
@@ -29,5 +30,4 @@
   - [实战 | DaemonSet](kubernetes/31-daemonset.md)
   - [实战 | StatefulSet](kubernetes/32-statefulset.md)
   - [实战 | Rancher 初识](kubernetes/40-rancher.md)
-
 

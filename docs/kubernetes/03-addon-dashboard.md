@@ -1,6 +1,6 @@
 # 实战 | Kubernetes 常用组件-Dashboard
 
-推荐使用helm安装，参考[实战 | Helm的使用](https://books.8ops.top/#/kubernetes/05-helm-usage)
+推荐使用helm安装，参考[实战 | Helm的使用](kubernetes/05-helm.md)
 
 
 

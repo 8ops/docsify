@@ -1,6 +1,6 @@
 # 实战 | Kubernetes 常用组件-Ingress-Controller
 
-推荐使用helm安装，参考[实战 | Helm的使用](https://books.8ops.top/#/kubernetes/05-helm-usage)
+推荐使用helm安装，参考[实战 | Helm的使用](kubernetes/05-helm.md)
 
 
 
@@ -65,7 +65,7 @@ kubectl label node k-kube-lab-02 edge=external
 kubectl label node k-kube-lab-03 edge=internal
 
 # 快速创建ingress-nginx-controller
-kubectl apply -f https://books.8ops.top/attachment/kubernetes/02-ingress-controller.yaml
+kubectl apply -f https://books.8ops.top/attachment/kubernetes/addon/02-ingress-controller.yaml
 
 # 移除admission and job
 kubectl -n kube-server delete ValidatingWebhookConfiguration/ingress-nginx-admission job.batch/ingress-nginx-admission-create job.batch/ingress-nginx-admission-patch service/ingress-nginx-controller-admission
@@ -105,13 +105,13 @@ kubectl apply -f https://books.8ops.top/attachment/kubernetes/addon/02-ingress-c
 kubectl apply -f https://books.8ops.top/attachment/kubernetes/addon/02-ingress-controller/02-app-nginx.yaml
 
 # 暴露流量：方式一（nginx）
-kubectl apply -f https://books.8ops.top/attachment/kubernetes/addmon/02-ingress-controller/03-ing-default.yaml
+kubectl apply -f https://books.8ops.top/attachment/kubernetes/addon/02-ingress-controller/03-ing-default.yaml
 
 # 暴露流量：方式二（external）
 kubectl apply -f https://books.8ops.top/attachment/kubernetes/addon/02-ingress-controller/04-ing-external.yaml
 
 # 暴露流量：方式三（internal）
-kubectl apply -f https://books.8ops.top/attachment/kubernetes/addmon/02-ingress-controller/05-ing-internal.yaml
+kubectl apply -f https://books.8ops.top/attachment/kubernetes/addon/02-ingress-controller/05-ing-internal.yaml
 ```
 
 
