@@ -311,7 +311,13 @@ helm install ingress-nginx-external-controller ingress-nginx/ingress-nginx \
     -n kube-server \
     --create-namespace \
     --version 4.2.3
-
+    
+helm upgrade --install ingress-nginx-external-controller ingress-nginx/ingress-nginx \
+    -f ingress-nginx-external.yaml-v4.2.3 \
+    -n kube-server \
+    --create-namespace \
+    --version 4.2.3
+    
 # intrnal
 # vim ingress-nginx-internal.yaml-v4.2.3
 # e.g. https://books.8ops.top/attachment/kubernetes/helm/ingress-nginx-internal.yaml-v4.2.3
@@ -397,6 +403,12 @@ helm install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard \
     -n kube-server \
     --create-namespace \
     --version 5.10.0
+
+helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard \
+    -f kubernetes-dashboard.yaml-v5.10.0 \
+    -n kube-server \
+    --create-namespace \
+    --version 5.10.0
     
 # create sa for guest
 kubectl create serviceaccount dashboard-guest -n kube-server
@@ -406,9 +418,27 @@ kubectl create clusterrolebinding dashboard-guest \
   --clusterrole=view \
   --serviceaccount=kube-server:dashboard-guest
 
+# create token
+# kubernetes v1.24.0+ newst 需要主动创建 secret
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dashboard-guest-secret
+  namespace: kube-server
+  annotations:
+    kubernetes.io/service-account.name: dashboard-guest
+type: kubernetes.io/service-account-token
+EOF
+
 # output token
-kubectl describe secrets \
-  -n kube-server $(kubectl -n kube-server get secret | awk '/dashboard-guest/{print $1}')
+kubectl -n kube-server describe secrets dashboard-guest-secret
+# 
+# kubectl -n kube-server get secrets dashboard-guest-secret -o=jsonpath={.data.token} | \
+#   base64 -d
+#
+# kubectl describe secrets \
+#   -n kube-server $(kubectl -n kube-server get secret | awk '/dashboard-guest/{print $1}')
 
 #----
 # create sa for ops
@@ -419,9 +449,21 @@ kubectl create clusterrolebinding dashboard-ops \
   --clusterrole=cluster-admin \
   --serviceaccount=kube-server:dashboard-ops
 
+# create token
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dashboard-ops-secret
+  namespace: kube-server
+  annotations:
+    kubernetes.io/service-account.name: dashboard-ops
+type: kubernetes.io/service-account-token
+EOF
+
 # output token
-kubectl describe secrets \
-  -n kube-server $(kubectl -n kube-server get secret | awk '/dashboard-ops/{print $1}')
+kubectl -n kube-server describe secrets dashboard-ops-secret
+
 ```
 
 

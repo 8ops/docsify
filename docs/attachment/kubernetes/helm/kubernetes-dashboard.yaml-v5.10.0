@@ -18,11 +18,11 @@ ingress:
   className: "external"
 
   hosts:
-    - dashboard-k8s.wuxingdev.cn
+    - dashboard-k8s.8ops.top
   tls:
-    - secretName: tls-wuxingdev.cn
+    - secretName: tls-8ops.top
       hosts:
-        - dashboard-k8s.wuxingdev.cn
+        - dashboard-k8s.8ops.top
 
 extraArgs: 
   - --token-ttl=86400

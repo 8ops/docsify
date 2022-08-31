@@ -474,11 +474,11 @@ hubble:
       enabled: true
       className: "external"
       hosts:
-        - hubble.dev.wuxingdev.cn
+        - hubble.8ops.top
       tls:
-        - secretName: tls-wuxingdev.cn
+        - secretName: tls-8ops.top
           hosts:
-            - hubble.dev.wuxingdev.cn
+            - hubble.8ops.top
 
 ipam:
   mode: "cluster-pool"
