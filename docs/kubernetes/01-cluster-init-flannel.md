@@ -135,6 +135,7 @@ systemctl restart containerd
 crictl images
 crictl ps -a
 
+# 初始集群（仅需要在其中一台 control-plane 节点操作）
 # config
 kubeadm config print init-defaults > kubeadm-init.yaml-default
 
@@ -142,7 +143,6 @@ kubeadm config images list
 kubeadm config images list --config kubeadm-init.yaml
 kubeadm config images pull --config kubeadm-init.yaml
 
-# 初始集群（仅需要在其中一台 control-plane 节点操作）
 kubeadm init --config kubeadm-init.yaml --upload-certs
 
 mkdir -p ~/.kube && ln -s /etc/kubernetes/admin.conf ~/.kube/config 
