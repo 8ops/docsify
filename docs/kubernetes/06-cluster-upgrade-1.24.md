@@ -1,24 +1,12 @@
-# 实战 | Kubernetes Cluster 升级版本
+# 实战 | Kubernetes Cluster 升级版本-v1.24.0
 
-Kubernetes Cluster 升级是一件必要的事情。
-
-由于 kubernetes 更新实在太频繁了，一旦落后太多版本，很多新特性就会使用不上，同时很多的补丁也无法及时享用。
-
-这里演示我的一次升级过程。
+[Reference](kubernetes/06-cluster-upgrade.md)
 
 
 
-> Reference
+> 升级前后版本对比
 
-- [Upgrading kubeadm clusters | Kubernetes](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/)
-
-- [Kubeadm upgrade | Kubernetes](https://kubernetes.io/zh/docs/reference/setup-tools/kubeadm/kubeadm-upgrade/)
-
-
-
-升级前后版本对比
-
-| 软件名称   | 当前版本               | 最新版本               |
+| 软件名称   | 当前版本               | 升级版本               |
 | ---------- | ---------------------- | ---------------------- |
 | kubeadm    | 1.23.6-00              | 1.24.0-00              |
 | kubelet    | 1.23.6-00              | 1.24.0-00              |

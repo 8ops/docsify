@@ -1,4 +1,4 @@
-# 实战 | Kubernetes Cluster 快速搭建-Flannel
+# 实战 | Kubernetes Cluster 快速搭建-Calico
 
 [Reference](kubernetes/01-cluster-init.md)
 
@@ -10,7 +10,7 @@
 | ---------- | ------- |
 | ubuntu     | v22.04  |
 | kubernetes | v1.25.0 |
-| flannel    | v0.19.1 |
+| calico     | v3.24.1 |
 
 - 这里操作系统选择 `20.04`
 
@@ -22,20 +22,20 @@
 
 通过 `haproxy` 代理 `apiserver` 多节点
 
-**10.101.9.111**
+**10.101.11.110**
 
 
 
 ### 1.2 服务器
 
-| 角色          | 服务器地址   |
-| ------------- | ------------ |
-| control-plane | 10.101.9.183 |
-| control-plane | 10.101.9.53  |
-| control-plane | 10.101.9.79  |
-| work-node     | 10.101.9.37  |
-| work-node     | 10.101.9.1   |
-| work-node     | 10.101.9.38  |
+| 角色          | 服务器地址    |
+| ------------- | ------------- |
+| control-plane | 10.101.11.240 |
+| control-plane | 10.101.11.114 |
+| control-plane | 10.101.11.154 |
+| work-node     | 10.101.11.196 |
+| work-node     | 10.101.11.157 |
+| work-node     | 10.101.11.250 |
 
 
 
@@ -256,7 +256,18 @@ kubectl -n kube-system edit cm kube-proxy
 
 
 
-## 三、应用 Flannel
+## 三、应用 Calico
+
+### 3.1 Helm
+
+```bash
+helm repo add projectcalico https://projectcalico.docs.tigera.io/charts
+
+```
+
+
+
+### 3.2 原生
 
 ```bash
 #

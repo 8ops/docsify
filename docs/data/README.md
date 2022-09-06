@@ -6,3 +6,4 @@
 
 - [mysql](data/01-mysql.md)
 - [neo4j](data/02-neo4j.md)
+- [redis](data/03-redis.md)

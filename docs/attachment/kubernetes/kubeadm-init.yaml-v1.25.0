@@ -14,7 +14,7 @@ localAPIEndpoint:
 nodeRegistration:
   criSocket: unix:///var/run/containerd/containerd.sock
   imagePullPolicy: IfNotPresent
-  name: GAT-LAB-K8S-MASTER-01
+  name: K-LAB-K8S-MASTER-01
   taints: null
 ---
 apiServer:

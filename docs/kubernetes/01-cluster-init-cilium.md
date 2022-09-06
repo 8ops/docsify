@@ -1,6 +1,10 @@
 # 实战 | Kubernetes Cluster 快速搭建-Cilium
 
-当前各软件版本
+[Reference](kubernetes/01-cluster-init.md)
+
+
+
+> 当前各软件版本
 
 | 名称       | 版本    |
 | ---------- | ------- |
@@ -116,8 +120,8 @@ systemctl status containerd
 
 ```bash
 # kubeadm
-KUBENETES_VERSION=1.25.0-00
-apt install -y -q kubeadm=${KUBENETES_VERSION} kubectl=${KUBENETES_VERSION} kubelet=${KUBENETES_VERSION}
+KUBERNETES_VERSION=1.25.0-00
+apt install -y -q kubeadm=${KUBERNETES_VERSION} kubectl=${KUBERNETES_VERSION} kubelet=${KUBERNETES_VERSION}
 apt-mark hold kubeadm kubectl kubelet
 apt-mark showhold
 dpkg -l | grep kube
@@ -175,7 +179,7 @@ localAPIEndpoint:
 nodeRegistration:
   criSocket: unix:///var/run/containerd/containerd.sock
   imagePullPolicy: IfNotPresent
-  name: GAT-LAB-K8S-MASTER-01
+  name: K-LAB-K8S-MASTER-01
   taints: null
 ---
 apiServer:
@@ -291,7 +295,7 @@ cilium hubble ui &
 >Output
 
 ```bash
-root@GAT-LAB-K8S-MASTER-01:~# cilium status
+root@K-LAB-K8S-MASTER-01:~# cilium status
     /¯¯\
  /¯¯\__/¯¯\    Cilium:         OK
  \__/¯¯\__/    Operator:       OK
@@ -314,7 +318,7 @@ Image versions    cilium             quay.io/cilium/cilium:v1.12.1@sha256:ea2db1
                   hubble-ui          quay.io/cilium/hubble-ui:v0.9.1@sha256:baff611b975cb12307a163c0e547e648da211384eabdafd327707ff2ec31cc24: 1
                   hubble-ui          quay.io/cilium/hubble-ui-backend:v0.9.1@sha256:c4b86e0d7a38d52c6ea3d9d7b17809e5212efd97494e8bd37c8466ddd68d42d0: 1
                   
-root@GAT-LAB-K8S-MASTER-01:~# kubectl -n kube-system get all
+root@K-LAB-K8S-MASTER-01:~# kubectl -n kube-system get all
 NAME                                                READY   STATUS    RESTARTS   AGE
 pod/cilium-dwq2w                                    1/1     Running   0          137m
 pod/cilium-hlwl6                                    1/1     Running   0          137m

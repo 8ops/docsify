@@ -23,7 +23,7 @@ VIP：`10.101.11.110`，用于解决apiserver的高可用均衡负载到 3 台 m
 | 主机名称      | 主机IP        | 操作系统           | 角色分配             |
 | ------------- | ------------- | ------------------ | -------------------- |
 | K-KUBE-LAB-01 | 10.101.11.240 | Ubuntu 20.04.2 LTS | control-plane,master |
-| K-KUBE-LAB-02 | 10.101.11.146 | Ubuntu 20.04.2 LTS | control-plane,master |
+| K-KUBE-LAB-02 | 10.101.11.114 | Ubuntu 20.04.2 LTS | control-plane,master |
 | K-KUBE-LAB-03 | 10.101.11.154 | Ubuntu 20.04.2 LTS | control-plane,master |
 | K-KUBE-LAB-08 | 10.101.11.196 | Ubuntu 20.04.2 LTS | node                 |
 | K-KUBE-LAB-11 | 10.101.11.157 | Ubuntu 20.04.2 LTS | node                 |
@@ -272,8 +272,8 @@ update-ca-certificates
 > 安装kubeadm必要软件包
 
 ```bash
-KUBENETES_VERSION=1.23.0-00
-apt install -y -q kubeadm=${KUBENETES_VERSION} kubectl=${KUBENETES_VERSION} kubelet=${KUBENETES_VERSION}
+KUBERNETES_VERSION=1.23.0-00
+apt install -y -q kubeadm=${KUBERNETES_VERSION} kubectl=${KUBERNETES_VERSION} kubelet=${KUBERNETES_VERSION}
 
 apt-mark hold kubeadm kubectl kubelet
 apt-mark showhold

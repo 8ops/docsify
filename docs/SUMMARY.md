@@ -29,6 +29,7 @@
 - [数据处理](data/)
   - [mysql](data/01-mysql.md)
   - [neo4j](data/02-neo4j.md)
+  - [redis](data/03-redis.md)
 - [生活随记](note/)
   - [日常随记](note/00-daily.md)
   - [海信电视](note/03-hls-repair.md)
