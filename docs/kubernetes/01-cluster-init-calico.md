@@ -106,7 +106,7 @@ mkdir -p /etc/containerd
 containerd config default > /etc/containerd/config.toml-default
 cp /etc/containerd/config.toml-default /etc/containerd/config.toml
 
-sed -i 's#sandbox_image.*$#sandbox_image = "hub.8ops.top/google_containers/pause:3.6"#' /etc/containerd/config.toml  
+sed -i 's#sandbox_image.*$#sandbox_image = "hub.8ops.top/google_containers/pause:3.8"#' /etc/containerd/config.toml  
 sed -i 's#SystemdCgroup = false#SystemdCgroup = true#' /etc/containerd/config.toml 
 grep -P 'sandbox_image|SystemdCgroup' /etc/containerd/config.toml  
 systemctl restart containerd
@@ -140,13 +140,13 @@ crictl ps -a
 
 # 初始集群（仅需要在其中一台 control-plane 节点操作）
 # config
-kubeadm config print init-defaults > kubeadm-init.yaml-default
+kubeadm config print init-defaults > kubeadm-init.yaml-v1.25.0-default
 
 kubeadm config images list
-kubeadm config images list --config kubeadm-init.yaml
-kubeadm config images pull --config kubeadm-init.yaml
+kubeadm config images list --config kubeadm-init.yaml-v1.25.0
+kubeadm config images pull --config kubeadm-init.yaml-v1.25.0
 
-kubeadm init --config kubeadm-init.yaml --upload-certs
+kubeadm init --config kubeadm-init.yaml-v1.25.0 --upload-certs
 
 mkdir -p ~/.kube && ln -s /etc/kubernetes/admin.conf ~/.kube/config 
 
@@ -160,7 +160,7 @@ kubeadm join 10.101.9.111:6443 --token abcdef.0123456789abcdef \
     --discovery-token-ca-cert-hash sha256:b214dc5d30387ad52c40bcd6ffa0e4bc29d15b488752af6a6ee66996914b8659    
 ```
 
-> 编辑 kubeadm-init.yaml
+> 编辑 kubeadm-init.yaml-v1.25.0
 
 ```bash
 apiVersion: kubeadm.k8s.io/v1beta3
@@ -174,12 +174,12 @@ bootstrapTokens:
   - authentication
 kind: InitConfiguration
 localAPIEndpoint:
-  advertiseAddress: 10.101.9.183
+  advertiseAddress: 10.101.11.240
   bindPort: 6443
 nodeRegistration:
   criSocket: unix:///var/run/containerd/containerd.sock
   imagePullPolicy: IfNotPresent
-  name: K-LAB-K8S-MASTER-01
+  name: K-KUBE-LAB-01
   taints: null
 ---
 apiServer:
@@ -197,10 +197,10 @@ etcd:
 imageRepository: hub.8ops.top/google_containers
 kind: ClusterConfiguration
 kubernetesVersion: 1.25.0
-controlPlaneEndpoint: 10.101.9.111:6443
+controlPlaneEndpoint: 10.101.11.110:6443
 networking:
   dnsDomain: cluster.local
-  podSubnet: 172.20.0.0/16
+  podSubnet: 172.19.0.0/16
   serviceSubnet: 192.168.0.0/16
 scheduler: {}
 ---
@@ -260,87 +260,111 @@ kubectl -n kube-system edit cm kube-proxy
 
 ### 3.1 Helm
 
+[Reference](https://projectcalico.docs.tigera.io/getting-started/kubernetes/helm)
+
 ```bash
 helm repo add projectcalico https://projectcalico.docs.tigera.io/charts
+helm repo update
+helm search repo tigera-operator
+helm show values projectcalico/tigera-operator > calico-tigera-operator.yaml-v3.24.1-default
 
-```
+helm install calico projectcalico/tigera-operator \
+    -f calico-tigera-operator.yaml-v3.24.1 \
+    -n kube-system \
+    --create-namespace \
+    --version v3.24.1
 
-
-
-### 3.2 原生
-
-```bash
-#
-# Example
-#   https://books.8ops.top/attachment/kubernetes/kube-flannel.yaml-v0.19.1
-#
-
-kubectl apply -f kube-flannel.yaml
+helm upgrade --install calico projectcalico/tigera-operator \
+    -f calico-tigera-operator.yaml-v3.24.1 \
+    -n kube-cni \
+    --create-namespace \
+    --version v3.24.1
 ```
 
 > 编辑配置
 
 ```bash
-……
-  net-conf.json: | # relative
-    {
-      "Network": "172.20.0.0/16",
-      "Backend": {
-        "Type": "host-gw"
-      }
-    }
-……
-    # 镜像替换为私有地址
-      initContainers:
-      - name: install-cni-plugin
-        image: hub.8ops.top/google_containers/flannel-cni-plugin:v1.1.0
-        ……
-      - name: install-cni
-        image: hub.8ops.top/google_containers/flannel:v0.19.1
-        ……
-      containers:
-      - name: kube-flannel
-        image: hub.8ops.top/google_containers/flannel:v0.19.1
+# vim calico-tigera-operator.yaml-v3.24.1
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+tigeraOperator:
+  image: google_containers/calico-tigera-operator
+  version: v1.28.1
+  registry: registry.wuxingdev.cn
+calicoctl:
+  image: registry.wuxingdev.cn/google_containers/calico-ctl
+  tag: v3.24.1
+```
+
+<u>遗留问题</u>
+
+1. calico 命名空间 `calico-apiserver` & `calico-system` 不能替换
+2. calico 依赖镜像 `calico/cni` 等5个无法替换成内部地址
+
+
+
+### 3.2 原生
+
+[Reference](https://projectcalico.docs.tigera.io/getting-started/kubernetes/quickstart)
+
+```bash
+#
+# Example
+#   https://books.8ops.top/attachment/kubernetes/calico-tigera-operator.yaml-v3.24.1
+#   https://books.8ops.top/attachment/kubernetes/calico-custom-resources.yaml-v3.24.1
+#
+
+kubectl apply -f calico-tigera-operator.yaml
+kubectl apply -f calico-custom-resources.yaml
+```
+
+> 编辑配置
+
+```bash
+
 ```
 
 
 
 ## 四、Addon
 
-### 4.1 Ingress-Nginx
+### 4.1 OpenELB
+
+> Porter
+
+
+
+### 4.2 Ingress-Nginx
 
 ```bash
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 helm search repo ingress-nginx
-helm show values ingress-nginx/ingress-nginx > ingress-nginx.yaml-v4.2.3-default
+helm show values ingress-nginx/ingress-nginx > ingress-nginx.yaml-v4.2.5-default
 
 # external
-# vim ingress-nginx-external.yaml-v4.2.3
-# e.g. https://books.8ops.top/attachment/kubernetes/helm/ingress-nginx-external.yaml-v4.2.3
+# vim ingress-nginx-external.yaml-v4.2.5
+# e.g. https://books.8ops.top/attachment/kubernetes/helm/ingress-nginx-external.yaml-v4.2.5
 #
-kubectl label node gat-gslab-k8s-node-01 edge=external
+kubectl label node k-kube-lab-11 edge=external
 helm install ingress-nginx-external-controller ingress-nginx/ingress-nginx \
-    -f ingress-nginx-external.yaml-v4.2.3 \
+    -f ingress-nginx-external.yaml-v4.2.5 \
     -n kube-server \
     --create-namespace \
-    --version 4.2.3
+    --version 4.2.5
     
 helm upgrade --install ingress-nginx-external-controller ingress-nginx/ingress-nginx \
-    -f ingress-nginx-external.yaml-v4.2.3 \
+    -f ingress-nginx-external.yaml-v4.2.5 \
     -n kube-server \
     --create-namespace \
-    --version 4.2.3
-    
-# intrnal
-# vim ingress-nginx-internal.yaml-v4.2.3
-# e.g. https://books.8ops.top/attachment/kubernetes/helm/ingress-nginx-internal.yaml-v4.2.3
-#
-kubectl label node gat-gslab-k8s-node-02 edge=internal
-helm install ingress-nginx-internal-controller ingress-nginx/ingress-nginx \
-    -f ingress-nginx-internal.yaml-v4.2.3 \
-    -n kube-server \
-    --version 4.2.3
+    --version 4.2.5
 
 ```
 
@@ -400,7 +424,7 @@ systemctl daemon-reload && sleep 5 && systemctl status logrotate.timer
 
 
 
-### 4.2 Dashboard
+### 4.3 Dashboard
 
 ```bash
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
@@ -424,36 +448,6 @@ helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dash
     --create-namespace \
     --version 5.10.0
     
-# create sa for guest
-kubectl create serviceaccount dashboard-guest -n kube-server
-
-# binding clusterrole
-kubectl create clusterrolebinding dashboard-guest \
-  --clusterrole=view \
-  --serviceaccount=kube-server:dashboard-guest
-
-# create token
-# kubernetes v1.24.0+ newst 需要主动创建 secret
-kubectl apply -f - <<EOF
-apiVersion: v1
-kind: Secret
-metadata:
-  name: dashboard-guest-secret
-  namespace: kube-server
-  annotations:
-    kubernetes.io/service-account.name: dashboard-guest
-type: kubernetes.io/service-account-token
-EOF
-
-# output token
-kubectl -n kube-server describe secrets dashboard-guest-secret
-# 
-# kubectl -n kube-server get secrets dashboard-guest-secret -o=jsonpath={.data.token} | \
-#   base64 -d
-#
-# kubectl describe secrets \
-#   -n kube-server $(kubectl -n kube-server get secret | awk '/dashboard-guest/{print $1}')
-
 #----
 # create sa for ops
 kubectl create serviceaccount dashboard-ops -n kube-server

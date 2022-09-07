@@ -22,4 +22,5 @@ _book
 
 # directory
 video/
-
+#app/lib/
+docs/attachment/kubernetes/app/lib/

@@ -245,12 +245,18 @@ update-ca-certificates
 		……
     # insecure
     [plugins."io.containerd.grpc.v1.cri".registry]
-      [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors] # relative
         [plugins."io.containerd.grpc.v1.cri".registry.mirrors."hub.8ops.top"]
           endpoint = ["https://hub.8ops.top"]
-      [plugins."io.containerd.grpc.v1.cri".registry.configs]
+      [plugins."io.containerd.grpc.v1.cri".registry.configs] # relative
         [plugins."io.containerd.grpc.v1.cri".registry.configs."hub.8ops.top".tls]
-          insecure_skip_verify = true    
+          insecure_skip_verify = true  
+
+# QuickStart Usage
+sed -i '/.registry.mirrors/a \        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."hub.8ops.top"]\n          endpoint = ["https://hub.8ops.top"]' /etc/containerd/config.toml
+sed -i '/.registry.configs/a \         [plugins."io.containerd.grpc.v1.cri".registry.configs."hub.8ops.top".tls]\n          insecure_skip_verify = true ' /etc/containerd/config.toml
+systemctl restart containerd
+crictl pull hub.8ops.top/google_containers/pause:3.6
 ```
 
 

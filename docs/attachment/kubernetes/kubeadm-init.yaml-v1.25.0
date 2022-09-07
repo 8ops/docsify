@@ -9,12 +9,12 @@ bootstrapTokens:
   - authentication
 kind: InitConfiguration
 localAPIEndpoint:
-  advertiseAddress: 10.101.9.183
+  advertiseAddress: 10.101.11.240
   bindPort: 6443
 nodeRegistration:
   criSocket: unix:///var/run/containerd/containerd.sock
   imagePullPolicy: IfNotPresent
-  name: K-LAB-K8S-MASTER-01
+  name: K-KUBE-LAB-01
   taints: null
 ---
 apiServer:
@@ -32,10 +32,10 @@ etcd:
 imageRepository: hub.8ops.top/google_containers
 kind: ClusterConfiguration
 kubernetesVersion: 1.25.0
-controlPlaneEndpoint: 10.101.9.111:6443
+controlPlaneEndpoint: 10.101.11.110:6443
 networking:
   dnsDomain: cluster.local
-  podSubnet: 172.20.0.0/16
+  podSubnet: 172.19.0.0/16
   serviceSubnet: 192.168.0.0/16
 scheduler: {}
 ---
@@ -46,4 +46,3 @@ cgroupDriver: systemd
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
 mode: ipvs
-
