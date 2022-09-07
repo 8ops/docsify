@@ -93,9 +93,10 @@ printf '\n\n7, release directory or files\n'
 [ -e /data1/lib ] && mv /data1/lib{,-$(date +%Y%m%d)}
 rm -rf /etc/systemd/system/kubelet.service.d /var/lib/kubelet
 rm -rf /var/lib/docker /etc/docker /run/docker /run/docker.sock /run/dockershim.sock
+rm -rf /var/lib/etcd /var/lib/calico
 rm -rf /opt/containerd /etc/containerd /run/containerd /var/lib/containerd
 rm -rf /etc/crio/ /etc/crictl.yaml
-rm -rf /opt/cni /etc/cni /var/lib/cni /run/flannel #/run/cilium
+rm -rf /opt/cni /etc/cni /var/lib/cni /run/flannel /run/cilium
 rm -rf ~/.kube /etc/kubernetes
 rm -rf ~/.cache/helm ~/.config/helm
 

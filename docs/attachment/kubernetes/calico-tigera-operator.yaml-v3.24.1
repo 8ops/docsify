@@ -3,7 +3,7 @@ kind: Namespace
 metadata:
   name: kube-calico
   labels:
-    name: kbue-calico
+    name: tigera-operator
 ---
 # Source: crds/calico/crd.projectcalico.org_bgpconfigurations.yaml
 apiVersion: apiextensions.k8s.io/v1
@@ -17807,7 +17807,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: tigera-operator
-  namespace: tigera-operator
+  namespace: kube-calico
 ---
 # Source: tigera-operator/templates/tigera-operator/02-role-tigera-operator.yaml
 # Permissions required when running the operator for a Calico cluster.
@@ -18040,7 +18040,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: tigera-operator
-  namespace: tigera-operator
+  namespace: kube-calico
 roleRef:
   kind: ClusterRole
   name: tigera-operator
@@ -18051,7 +18051,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tigera-operator
-  namespace: tigera-operator
+  namespace: kube-calico
   labels:
     k8s-app: tigera-operator
 spec:

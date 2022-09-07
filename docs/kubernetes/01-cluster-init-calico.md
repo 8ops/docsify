@@ -321,8 +321,8 @@ calicoctl:
 #   https://books.8ops.top/attachment/kubernetes/calico-custom-resources.yaml-v3.24.1
 #
 
-kubectl apply -f calico-tigera-operator.yaml
-kubectl apply -f calico-custom-resources.yaml
+kubectl create -f calico-tigera-operator.yaml
+kubectl create -f calico-custom-resources.yaml
 ```
 
 > 编辑配置
