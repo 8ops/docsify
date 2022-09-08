@@ -28,7 +28,7 @@ helm install metallb metallb/metallb \
     --namespace=kube-server \
     --version 0.13.5
 
-curl -i -k -H Host:echoserver.lab.wuxingdev.cn https://10.101.9.112
+curl -i -k -H Host:echoserver.8ops.top https://10.101.9.112
 ```
 
 

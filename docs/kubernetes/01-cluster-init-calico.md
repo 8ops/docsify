@@ -297,9 +297,9 @@ resources:
 tigeraOperator:
   image: google_containers/calico-tigera-operator
   version: v1.28.1
-  registry: registry.wuxingdev.cn
+  registry: hub.8ops.top
 calicoctl:
-  image: registry.wuxingdev.cn/google_containers/calico-ctl
+  image: hub.8ops.top/google_containers/calico-ctl
   tag: v3.24.1
 ```
 
