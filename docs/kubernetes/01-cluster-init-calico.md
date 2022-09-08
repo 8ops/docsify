@@ -315,14 +315,28 @@ calicoctl:
 [Reference](https://projectcalico.docs.tigera.io/getting-started/kubernetes/quickstart)
 
 ```bash
+# #1 
 #
 # Example
+#   https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/tigera-operator.yaml
+#   https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/custom-resources.yaml
+#   EDIT AFTER
 #   https://books.8ops.top/attachment/kubernetes/calico-tigera-operator.yaml-v3.24.1
 #   https://books.8ops.top/attachment/kubernetes/calico-custom-resources.yaml-v3.24.1
 #
 
 kubectl create -f calico-tigera-operator.yaml
 kubectl create -f calico-custom-resources.yaml
+
+# Failure
+# --- 
+
+# #2
+# Example
+#   https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/calico.yaml
+#   EDIT AFTER
+#   https://books.8ops.top/attachment/kubernetes/calico.yaml-v3.24.1
+# 
 ```
 
 > 编辑配置

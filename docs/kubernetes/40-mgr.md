@@ -16,6 +16,7 @@
 | [calico](https://projectcalico.docs.tigera.io/getting-started/kubernetes/) | Calico is an open source networking and network security solution for containers, virtual machines, and native host-based workloads. Calico supports a broad range of platforms including Kubernetes, OpenShift, Mirantis Kubernetes Engine (MKE), OpenStack, and bare metal services. |
 | [cillium](https://github.com/cilium/cilium)                  | eBPF-based Networking, Security, and Observability           |
 | [weave](https://github.com/weaveworks/weave)                 | Simple, resilient multi-host containers networking and more. |
+| [argocd](https://argoproj.github.io/cd/)                     | Declarative continuous delivery with a fully-loaded UI.      |
 
 
 
