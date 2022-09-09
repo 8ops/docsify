@@ -40,6 +40,14 @@ helm install metallb metallb/metallb \
     --create-namespace \
     --version 0.13.5
 
+helm upgrade --install metallb metallb/metallb \
+    -f metallb.yaml-0.13.5 \
+    --namespace=kube-server \
+    --create-namespace \
+    --version 0.13.5
+
+helm -n kube-server uninstall metallb
+
 kubectl apply -f 10-metallb-ipaddresspool.yaml
 kubectl apply -f 10-metallb-l2advertisement.yaml
 
