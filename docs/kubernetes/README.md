@@ -34,5 +34,5 @@
 - [日常管理](kubernetes/40-mgr.md)
   - [实战 | Rancher 初识](kubernetes/41-rancher.md)
   - [实战 | MetalLB 使用](kubernetes/42-metallb.md)
-  - [实战 | ArgoCD 使用](kubernetes/42-argocd.md)
+  - [实战 | ArgoCD 使用](kubernetes/43-argocd.md)
 

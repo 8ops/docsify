@@ -49,7 +49,6 @@ controller:
     upstream-keepalive-timeout: "900"
     use-gzip: "true"
     use-http2: "true"
-    use-proxy-protocol: "true"
     variables-hash-bucket-size: "1024"
     worker-cpu-affinity: auto
     worker-processes: "2"
@@ -59,8 +58,8 @@ controller:
 
   addHeaders:
     x-env-name: lab
-    x-env-release: "20220907"
-    x-env-upgrade: "20220907"
+    x-env-release: "20220909"
+    x-env-upgrade: "20220909"
     x-env-class: external
     x-env-mode: safe
     x-env-type: protocol
@@ -101,13 +100,14 @@ controller:
       - name: log
         mountPath: /var/log/nginx
  
-  kind: DaemonSet
-  nodeSelector:
-    kubernetes.io/os: linux
-    edge: external
+  kind: Deployment
+  replicaCount: 2
 
   service:
     enabled: true
+    loadBalancerIP: "10.101.11.216"
+    externalTrafficPolicy: Local
+    type: LoadBalancer
 
   metrics:
     port: 10254

@@ -315,47 +315,43 @@ calicoctl:
 [Reference](https://projectcalico.docs.tigera.io/getting-started/kubernetes/quickstart)
 
 ```bash
-# #1 
-#
-# Example
-#   https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/tigera-operator.yaml
-#   https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/custom-resources.yaml
-#   EDIT AFTER
-#   https://books.8ops.top/attachment/kubernetes/calico-tigera-operator.yaml-v3.24.1
-#   https://books.8ops.top/attachment/kubernetes/calico-custom-resources.yaml-v3.24.1
-#
-
-kubectl create -f calico-tigera-operator.yaml
-kubectl create -f calico-custom-resources.yaml
-
-# Failure
-# --- 
-
-# #2
 # Example
 #   https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/calico.yaml
 #   EDIT AFTER
 #   https://books.8ops.top/attachment/kubernetes/calico.yaml-v3.24.1
 # 
+kubectl apply -f calico.yaml-v3.24.1
 ```
 
 > 编辑配置
 
 ```bash
+……
+            - name: CALICO_IPV4POOL_CIDR
+              value: "172.19.0.0/16"
+……
 
+# 镜像替换
+          image: hub.8ops.top/google_containers/calico-cni:v3.24.1
+          image: hub.8ops.top/google_containers/calico-cni:v3.24.1
+          image: hub.8ops.top/google_containers/calico-node:v3.24.1
+          image: hub.8ops.top/google_containers/calico-node:v3.24.1
+          image: hub.8ops.top/google_containers/calico-kube-controllers:v3.24.1
 ```
 
 
 
 ## 四、Addon
 
-### 4.1 OpenELB
+### 4.1 MetalLB
 
-> Porter
+[Reference](kubernetes/42-metallb.md)
 
 
 
 ### 4.2 Ingress-Nginx
+
+采用 <u>Deployment</u> 资源类型部署，结合 <u>LoadBalancer</u> 方式暴露流量
 
 ```bash
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -367,7 +363,7 @@ helm show values ingress-nginx/ingress-nginx > ingress-nginx.yaml-v4.2.5-default
 # vim ingress-nginx-external.yaml-v4.2.5
 # e.g. https://books.8ops.top/attachment/kubernetes/helm/ingress-nginx-external.yaml-v4.2.5
 #
-kubectl label node k-kube-lab-11 edge=external
+
 helm install ingress-nginx-external-controller ingress-nginx/ingress-nginx \
     -f ingress-nginx-external.yaml-v4.2.5 \
     -n kube-server \

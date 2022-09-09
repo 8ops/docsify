@@ -4385,7 +4385,7 @@ spec:
         # It can be deleted if this is a fresh installation, or if you have already
         # upgraded to use calico-ipam.
         - name: upgrade-ipam
-          image: hub.8ops.top/google_containers/calico-ctl:v3.24.1
+          image: hub.8ops.top/google_containers/calico-cni:v3.24.1
           imagePullPolicy: IfNotPresent
           command: ["/opt/cni/bin/calico-ipam", "-upgrade"]
           envFrom:
@@ -4406,14 +4406,14 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/cni/networks
               name: host-local-net-dir
-            - mountPath: /opt/cni/bin
+            - mountPath: /host/opt/cni/bin
               name: cni-bin-dir
           securityContext:
             privileged: true
         # This container installs the CNI binaries
         # and CNI network config file on each node.
         - name: install-cni
-          image: hub.8ops.top/google_containers/calico-ctl:v3.24.1
+          image: hub.8ops.top/google_containers/calico-cni:v3.24.1
           imagePullPolicy: IfNotPresent
           command: ["/opt/cni/bin/install"]
           envFrom:
@@ -4446,9 +4446,9 @@ spec:
             - name: SLEEP
               value: "false"
           volumeMounts:
-            - mountPath: /opt/cni/bin
+            - mountPath: /host/opt/cni/bin
               name: cni-bin-dir
-            - mountPath: /etc/cni/net.d
+            - mountPath: /host/etc/cni/net.d
               name: cni-net-dir
           securityContext:
             privileged: true
@@ -4587,7 +4587,7 @@ spec:
             timeoutSeconds: 10
           volumeMounts:
             # For maintaining CNI plugin API credentials.
-            - mountPath: /etc/cni/net.d
+            - mountPath: /host/etc/cni/net.d
               name: cni-net-dir
               readOnly: false
             - mountPath: /lib/modules
