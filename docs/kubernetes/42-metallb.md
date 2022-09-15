@@ -26,6 +26,8 @@ kubectl -n kube-system rollout restart ds kube-proxy
 ## 二、安装 metallb
 
 ```bash
+helm repo add metallb https://metallb.github.io/metallb
+helm search repo metallb
 helm show values metallb/metallb > metallb.yaml-0.13.5-default
 
 # Example

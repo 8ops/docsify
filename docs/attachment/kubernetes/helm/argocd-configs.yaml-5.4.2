@@ -51,20 +51,20 @@ server:
     enabled: true
     ingressClassName: external
     hosts:
-      - argo.8ops.top
+      - argo-cd.8ops.top
     tls:
       - secretName: tls-8ops.top
         hosts:
-          - argo.8ops.top
+          - argo-cd.8ops.top
   ingressGrpc:
     enabled: true
     ingressClassName: external
     hosts:
-      - argo-grpc.8ops.top
+      - argo-cd-grpc.8ops.top
     tls:
       - secretName: tls-8ops.top
         hosts:
-          - argo-grpc.8ops.top
+          - argo-cd-grpc.8ops.top
 
 repoServer:
   resources:
