@@ -36,7 +36,7 @@ helm repo update
 helm search repo prometheus
 
 # prometheus
-helm show values prometheus-community/prometheus > prometheus.yaml-default
+helm show values prometheus-community/prometheus > prometheus.yaml-15.8.5-default
 
 helm install prometheus prometheus-community/prometheus \
     -f prometheus.yaml -f prometheus-extra.yaml -f prometheus-alertmanager.yaml \
@@ -144,19 +144,21 @@ extraScrapeConfigs: |
 blackbox-exporter 常用的一个黑盒
 
 ```bash
-helm show values prometheus-community/prometheus-blackbox-exporter > blackbox-exporter.yaml-default
+
+helm search repo prometheus-blackbox-exporter
+helm show values prometheus-community/prometheus-blackbox-exporter > blackbox-exporter.yaml-7.0.0-default
 
 helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
     -f blackbox-exporter.yaml \
     -n kube-server \
     --create-namespace \
-    --version 5.6.0 --debug
+    --version 7.0.0 --debug
     
 helm upgrade --install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
     -f blackbox-exporter.yaml \
     -n kube-server \
     --create-namespace \
-    --version 5.6.0 --debug
+    --version 7.0.0 --debug
 
 helm -n kube-server uninstall blackbox-exporter 
 ```

@@ -12,7 +12,7 @@ items:
       #---------------------↓全局配置-----------------------
       appname = PrometheusAlert
       #登录用户名
-      login_user=ops
+      login_user=admin
       #登录密码
       login_password=ops
       #监听地址

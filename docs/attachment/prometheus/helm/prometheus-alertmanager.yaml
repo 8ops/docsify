@@ -12,9 +12,9 @@ alertmanagerFiles:
       group_by:
       - 'instance'
       - 'severity'
-      group_wait: 10m
+      group_wait: 30m
       group_interval: 10s
-      repeat_interval: 1h
+      repeat_interval: 4h
       receiver: 'prometheusalert'
       routes:
       - receiver: 'email'

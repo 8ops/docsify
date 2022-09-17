@@ -10,17 +10,17 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 helm search repo mysql
 
-helm show values bitnami/mysql > mysql.yaml-default
+helm show values bitnami/mysql > mysql.yaml-8.9.2-default
 
 # - mysql-standalone.yaml
 helm install mysql-standalone bitnami/mysql \
-    -f mysql-standalone.yaml \
+    -f mysql-standalone.yaml-8.9.2 \
     -n kube-server \
     --create-namespace \
     --version 8.9.2 --debug
 
 helm upgrade --install mysql-standalone bitnami/mysql \
-    -f mysql-standalone.yaml \
+    -f mysql-standalone.yaml-8.9.2 \
     -n kube-server \
     --create-namespace \
     --version 8.9.2 --debug    
@@ -29,13 +29,13 @@ helm -n kube-server uninstall mysql-standalone
 
 # - mysql-replication.yaml
 helm install mysql-replication bitnami/mysql \
-    -f mysql-replication.yaml \
+    -f mysql-replication.yaml-8.9.2 \
     -n kube-server \
     --create-namespace \
     --version 8.9.2 --debug
 
 helm upgrade --install mysql-replication bitnami/mysql \
-    -f mysql-replication.yaml \
+    -f mysql-replication.yaml-8.9.2 \
     -n kube-server \
     --create-namespace \
     --version 8.9.2 --debug 
