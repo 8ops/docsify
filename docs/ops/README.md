@@ -7,3 +7,4 @@
 - [devops](ops/01-devops.md)
 - [aiops](ops/02-aiops.md)
 - [dataops](ops/03-dataops.md)
+- [xops](ops/04-xops.md)

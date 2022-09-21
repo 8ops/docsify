@@ -4,6 +4,7 @@
 > 文章清单
 
 - [日常随记](note/00-daily.md)
+- [心理学效应](note/10-effect.md)
 - [上海福彩](note/01-swlc.md)
 - [企业微信](note/02-qywx.md)
 - [海信电视](note/03-hls-repair.md)
