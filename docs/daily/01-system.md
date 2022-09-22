@@ -90,6 +90,8 @@ virt-install --name UAT-BIGDATA-000 \
     --console=pty,target_type=serial \
     --extra-args="console=tty0 console=ttyS0"
 
+virsh autostart UAT-BIGDATA-000
+
 # MAC 地址生成策略
 echo 10.1.2.50 | \
     awk -F'.' '{
@@ -154,12 +156,11 @@ virsh attach-disk UAT-BIGDATA-000 \
     --live \
     --config 
     
-mkfs.xfs /dev/sda && blkid /dev/sdb
+mkfs.xfs /dev/sdb && blkid /dev/sdb
 
-echo 'UUID=ad1798f1-52ec-498d-a793-acd82bea5d51 /data xfs     defaults        0 0' >> /etc/fstab
+echo 'UUID=903a6ade-c1ab-4593-9ac2-293afdb1ed55 /data xfs     defaults        0 0' >> /etc/fstab
 
 mkdir -p /data && mount -a
-
 
 ```
 
