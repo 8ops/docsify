@@ -1,5 +1,5 @@
 - [日常实践](daily/ "Common operation")
-  - [系统操作](daily/01-system-structure.md)
+  - [系统操作](daily/01-system.md)
   - [常用命令](daily/02-command.md)
   - [CURL测时](daily/03-curl-test-time.md)
   - [GIT操作](daily/06-git.md)

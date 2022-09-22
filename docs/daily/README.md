@@ -4,7 +4,7 @@
 
 - [特效](daily/00-impact.md)
 - [随记](daily/00-miscellany.md)
-- [系统操作](daily/01-system-structure.md)
+- [系统操作](daily/01-system.md)
 - [常用命令](daily/02-command.md)
 - [CURL测时](daily/03-curl-test-time.md)
 - [dnsmasq](daily/04-dnsmasq.md)

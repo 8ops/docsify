@@ -7,8 +7,10 @@
 ### 1.1 安装
 
 ```bash
-# CentOS Linux release 7.5.1804 (Core)
-yum install qemu-kvm qemu-img virt-manager libvirt libvirt-python python-virtinst libvirt- client virt-install virt-viewer
+# CentOS Linux release 7.5.1804 (Core
+egrep 'vmx|svm' /proc/cpuinfo
+
+yum install qemu-kvm qemu-img virt-manager libvirt libvirt-python virt-install virt-viewer
 
 lsmod | grep -i kvm
 
@@ -47,9 +49,10 @@ systemctl restart network
 # 释放多余的桥接
 ip l set dev virbr0-nic down
 brctl delif virbr0 virbr0-nic
-brctl virbr0 down
 brctl delbr virbr0
+
 ip l set dev virbr0 down
+ip l del virbr0-nic
 
 # METHOD VNC
 virt-install --name UAT-BIGDATA-000 \
@@ -75,7 +78,7 @@ virt-install --name UAT-BIGDATA-000 \
  
 # METHOD Console
 mkdir -p /data/lib/kvm/UAT-BIGDATA-000
-qemu-img create -f raw /data/lib/kvm/UAT-BIGDATA-000-SDA.img 50G
+qemu-img create -f qcow2 /data/lib/kvm/UAT-BIGDATA-000-SDA.img 50G
 
 virt-install --name UAT-BIGDATA-000 \
     --ram=8192 \
@@ -136,24 +139,24 @@ virsh start new-vm-server
 
 ### 1.3 扩容磁盘
 
-磁盘类型有 `qcow2` 和 `raw`
+磁盘类型有 `qcow2` 和 `raw`，默认是`raw`
 
 ```bash
 # 创建磁盘
-qemu-img create -f raw /data/lib/kvm/UAT-BIGDATA-000-SDB.img 100G
+qemu-img create -f qcow2 /data/lib/kvm/UAT-BIGDATA-000-SDB.img 100G
 
 # 挂载磁盘（需要实例在运行中）
 virsh attach-disk UAT-BIGDATA-000 \
     /data/lib/kvm/UAT-BIGDATA-000-SDB.img sdd \
     --cache none \
     --targetbus scsi \
-    --subdriver raw \
+    --subdriver qcow2 \
     --live \
     --config 
     
 mkfs.xfs /dev/sda && blkid /dev/sdb
 
-echo 'UUID=29a8973c-3fc3-46d3-ae9d-08d1538bf3a8 /data xfs     defaults        0 0' >> /etc/fstab
+echo 'UUID=ad1798f1-52ec-498d-a793-acd82bea5d51 /data xfs     defaults        0 0' >> /etc/fstab
 
 mkdir -p /data && mount -a
 
@@ -177,6 +180,56 @@ ip r add default via 10.1.2.109
 ```
 
 
+
+## 二、BOND后桥接
+
+```bash
+# cat  ifcfg-bond0 
+TYPE=Ethernet
+BOOTPROTO=none
+IPV6INIT=no
+DEVICE=bond0
+NAME=bond0
+DEVICE=bond0
+ONBOOT=yes
+BRIDGE=virbr0
+
+# cat ifcfg-em1
+DEVICE=em1
+BOOTPROTO=none
+MASTER=bond0
+SLAVE=yes
+ONBOOT=yes
+
+# cat ifcfg-em2
+DEVICE=em2
+BOOTPROTO=none
+MASTER=bond0
+SLAVE=yes
+ONBOOT=yes
+
+# cat ifcfg-virbr0 
+DEVICE=virbr0
+BOOTPROTO=static
+ONBOOT=yes
+TYPE=Bridge
+IPADDR=10.10.54.11
+NETMASK=255.255.255.0
+GATEWAY=10.10.54.1
+DEFROUTE=yes
+PV4_FAILURE_FATAL=yes
+IPV6INIT=no
+DELAY=0
+USERCTL=no
+
+# cat /etc/modprobe.d/bonding.conf 
+alias bond0 bonding
+options bond0 miimon=100 mode=0
+
+# modeprobe bonding (设置随开机启动)
+ifenslave bond0 em1 em
+
+```
 
 
 
