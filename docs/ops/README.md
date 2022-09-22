@@ -5,6 +5,6 @@
 > 文章清单
 
 - [devops](ops/01-devops.md)
-- [aiops](ops/02-aiops.md)
-- [dataops](ops/03-dataops.md)
+- [dataops](ops/02-dataops.md)
+- [aiops](ops/03-aiops.md)
 - [xops](ops/04-xops.md)

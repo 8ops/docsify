@@ -7,10 +7,14 @@
 ### 1.1 安装
 
 ```bash
-# CentOS Linux release 7.5.1804 (Core
+# CentOS Linux release 7.5.1804 (Core)
+
 egrep 'vmx|svm' /proc/cpuinfo
 
-yum install qemu-kvm qemu-img virt-manager libvirt libvirt-python virt-install virt-viewer
+yum install -y -q \
+    qemu-kvm qemu-img \
+    virt-manager libvirt libvirt-python python-virtinst libvirt-client \
+    virt-install virt-viewer
 
 lsmod | grep -i kvm
 
@@ -23,7 +27,7 @@ systemctl enable libvirtd
 systemctl is-enabled libvirtd
 
 cd /etc/sysconfig/network-scripts/
-# vim ifcfg-em2 & ifcfg-br0
+# 编辑 ifcfg-em2 & ifcfg-br0
 cat > ifcfg-br0 <<EOF
 TYPE=Bridge
 BOOTPROTO=static
@@ -43,10 +47,14 @@ ONBOOT=yes
 BRIDGE=br0
 EOF
 
+# 激活网卡
+ip l set br0 up # ifup br0
+ip l set em2 up # ifup em2
+
 # systemctl restart NetworkManager
 systemctl restart network
 
-# 释放多余的桥接
+# 释放多余的桥接和网络接口
 ip l set dev virbr0-nic down
 brctl delif virbr0 virbr0-nic
 brctl delbr virbr0
@@ -88,7 +96,7 @@ virt-install --name UAT-BIGDATA-000 \
     --network bridge=br0,mac=52:54:0A:01:02:32 \
     --graphics=none \
     --console=pty,target_type=serial \
-    --extra-args="console=tty0 console=ttyS0"
+    --extra-args="console=ttyS0"
 
 virsh autostart UAT-BIGDATA-000
 
@@ -115,31 +123,41 @@ virsh autostart --disable vm_name 取消随开机启动
 
 
 
-### 1.2 克隆
+### 1.2 扩容
+
+> CPU
 
 ```bash
-# METHOD AUTO（需要关机）
-# -o 旧虚拟机
-# -n 新虚拟机
-virt-clone --auto-clone -o old-vm-server -n new-vm-server
-# virt-clone --auto-clone -o UAT-BIGDATA-000 -n UAT-BIGDATA-001
+virsh help domain
 
-# METHOD MANUAL
-# 备份磁盘文件
-cp old-vm-server.qcow2 new-vm-server.qcow2 
-# 导出配置文件
-virsh dumpxml old-vm-server > new-vm-server.xml
-# 编辑配置文件：修改名称、移除UUID、修改磁盘文件名、删除MAC地址
-vim new-vm-server.xml
-# 导入配置文件
-virsh define new-vm-server.xml 
-# 启动虚拟机
-virsh start new-vm-server
+# 查看信息
+virsh dominfo UAT-BIGDATA-000
+# 更改CPU
+virsh setvcpus UAT-BIGDATA-000 --maximum 4 --config
+virsh setvcpus UAT-BIGDATA-000 2 --config
+# 需要重启
+virsh define UAT-BIGDATA-000.xml
+virsh reboot UAT-BIGDATA-000
 ```
 
 
 
-### 1.3 扩容磁盘
+> 内存
+
+```bash
+# 查看信息
+virsh dominfo UAT-BIGDATA-000
+# 更改内存
+virsh setmaxmem UAT-BIGDATA-000 8388608 --config
+virsh setmem UAT-BIGDATA-000 4194304
+# 需要重启
+virsh define UAT-BIGDATA-000.xml
+virsh reboot UAT-BIGDATA-000
+```
+
+
+
+> 磁盘
 
 磁盘类型有 `qcow2` 和 `raw`，默认是`raw`
 
@@ -162,9 +180,48 @@ echo 'UUID=903a6ade-c1ab-4593-9ac2-293afdb1ed55 /data xfs     defaults        0 
 
 mkdir -p /data && mount -a
 
+# 扩容原磁盘（需要停机）
+qemu-img resize /data/lib/kvm/UAT-BIGDATA-000-SDB.img +20G
+# virt-resize --expand /dev/sda1 
+vgdisplay
+lvdisplay
+lvextend -L +20G /dev/centos/root
+# ext 系统格式使用：
+resize2fs /dev/centos/root
+# xfs 系统格式使用下面命令
+xfs_growfs /dev/centos/root
 ```
 
-### 1.4 NAT上网
+
+
+### 1.3 克隆
+
+```bash
+# METHOD AUTO（需要关机）
+# -o 旧虚拟机
+# -n 新虚拟机
+virt-clone --auto-clone -o old-vm-server -n new-vm-server
+virt-clone --auto-clone -o old-vm-server -n new-vm-server \
+    -f /data/lib/kvm/UAT-BIGDATA-010-SDA.img \
+    -m 52:54:0A:01:02:33
+# virt-clone --auto-clone -o UAT-BIGDATA-000 -n UAT-BIGDATA-001
+
+# METHOD MANUAL
+# 备份磁盘文件
+cp old-vm-server.qcow2 new-vm-server.qcow2 
+# 导出配置文件
+virsh dumpxml old-vm-server > new-vm-server.xml
+# 编辑配置文件：修改名称、移除UUID、修改磁盘文件名、删除MAC地址
+vim new-vm-server.xml
+# 导入配置文件
+virsh define new-vm-server.xml 
+# 启动虚拟机
+virsh start new-vm-server
+```
+
+
+
+### 1.3 NAT上网
 
 ```bash
 # 双网卡桥接内网上网
@@ -182,10 +239,11 @@ ip r add default via 10.1.2.109
 
 
 
-## 二、BOND后桥接
+## 二、BOND+BRIDGE
 
 ```bash
-# cat  ifcfg-bond0 
+# bond0 em1 & em2
+# cat ifcfg-bond0 
 TYPE=Ethernet
 BOOTPROTO=none
 IPV6INIT=no
@@ -193,7 +251,7 @@ DEVICE=bond0
 NAME=bond0
 DEVICE=bond0
 ONBOOT=yes
-BRIDGE=virbr0
+BRIDGE=br0
 
 # cat ifcfg-em1
 DEVICE=em1
@@ -209,26 +267,24 @@ MASTER=bond0
 SLAVE=yes
 ONBOOT=yes
 
-# cat ifcfg-virbr0 
-DEVICE=virbr0
+# cat ifcfg-br0 
+DEVICE=br0
 BOOTPROTO=static
 ONBOOT=yes
 TYPE=Bridge
-IPADDR=10.10.54.11
-NETMASK=255.255.255.0
-GATEWAY=10.10.54.1
-DEFROUTE=yes
-PV4_FAILURE_FATAL=yes
-IPV6INIT=no
 DELAY=0
-USERCTL=no
+IPADDR=10.1.1.109
+PREFIX=24
+GATEWAY=10.1.1.254
+DNS1=10.1.1.2
 
 # cat /etc/modprobe.d/bonding.conf 
 alias bond0 bonding
 options bond0 miimon=100 mode=0
 
-# modeprobe bonding (设置随开机启动)
-ifenslave bond0 em1 em
+# 加载并设置随开机启动
+modeprobe bonding 
+ifenslave bond0 em1 em2
 
 ```
 

@@ -62,7 +62,7 @@ d
 
 > include
 
-[filename](../kubernetes/README.md ':include')
+[filename](../daily/README.md ':include')
 
 
 
