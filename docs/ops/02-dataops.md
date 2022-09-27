@@ -29,3 +29,19 @@ helm install opentelemetry-collector open-telemetry/opentelemetry-collector \
     
 ```
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -132,9 +132,12 @@ virsh help domain
 
 # 查看信息
 virsh dominfo UAT-BIGDATA-000
-# 更改CPU
-virsh setvcpus UAT-BIGDATA-000 --maximum 4 --config
-virsh setvcpus UAT-BIGDATA-000 2 --config
+# 更改CPU（重启生效）
+virsh setvcpus UAT-BIGDATA-000 4 --maximum --config
+virsh setvcpus UAT-BIGDATA-000 4 --config
+virsh setvcpus UAT-BIGDATA-000 4 --current
+virsh shutdown UAT-BIGDATA-000
+virsh start UAT-BIGDATA-000
 # 需要重启
 virsh define UAT-BIGDATA-000.xml
 virsh reboot UAT-BIGDATA-000
@@ -166,8 +169,10 @@ virsh reboot UAT-BIGDATA-000
 qemu-img create -f qcow2 /data/lib/kvm/UAT-BIGDATA-000-SDB.img 100G
 
 # 挂载磁盘（需要实例在运行中）
-virsh attach-disk UAT-BIGDATA-000 \
-    /data/lib/kvm/UAT-BIGDATA-000-SDB.img sdd \
+virsh attach-disk \
+    UAT-BIGDATA-000 \
+    /data/lib/kvm/UAT-BIGDATA-000-SDB.img \
+    sdb \
     --cache none \
     --targetbus scsi \
     --subdriver qcow2 \
@@ -179,6 +184,9 @@ mkfs.xfs /dev/sdb && blkid /dev/sdb
 echo 'UUID=903a6ade-c1ab-4593-9ac2-293afdb1ed55 /data xfs     defaults        0 0' >> /etc/fstab
 
 mkdir -p /data && mount -a
+
+# 分离磁盘
+virsh detach-disk UAT-BIGDATA-000 /data/lib/kvm/UAT-BIGDATA-000-SDB.img
 
 # 扩容原磁盘（需要停机）
 qemu-img resize /data/lib/kvm/UAT-BIGDATA-000-SDB.img +20G
