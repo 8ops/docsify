@@ -1,6 +1,6 @@
 # 系统结构
 
-
+ 获取 `linux` 操作系统的位数 `getconf LONG_BIT`
 
 ## 一、KVM
 
@@ -229,15 +229,17 @@ virsh start new-vm-server
 
 
 
-### 1.3 NAT上网
+### 1.3 NAT
+
+一般双网卡用于 NAT 上网
 
 ```bash
 # 双网卡桥接内网上网
 # 开启转发
 sysctl -w net.ipv4.ip_forward=1
 
-# 打开NAT（其中 eth0 为上网网卡）
-iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+# 打开NAT（其中 em1 为上网网卡）
+iptables -t nat -A POSTROUTING -o em1 -j MASQUERADE
 
 # 设置路由（内网网卡 eth1: 10.1.2.109 为内网网段路由网关）
 # 在内网网段server上替换默认路由
@@ -298,9 +300,152 @@ ifenslave bond0 em1 em2
 
 
 
+## 三、firewall-cmd
+
+```bash
+# 查看设置
+firewall-cmd --state  # 显示状态
+firewall-cmd --get-active-zones  # 查看区域信息
+firewall-cmd --get-zone-of-interface=eth0  # 查看指定接口所属区域
+firewall-cmd --panic-on  # 拒绝所有包
+firewall-cmd --panic-off  # 取消拒绝状态
+firewall-cmd --query-panic  # 查看是否拒绝
+firewall-cmd --runtime-to-permanent # 将当前防火墙的规则永久保存；
+
+firewall-cmd --reload # 更新防火墙规则
+firewall-cmd --complete-reload
+# 两者的区别就是第一个无需断开连接，就是firewalld特性之一动态添加规则，第二个需要断开连接，类似重启服务
+
+# 将接口添加到区域，默认接口都在public
+firewall-cmd --zone=public --add-interface=eth0
+# 永久生效再加上 --permanent 然后reload防火墙
+ 
+# 设置默认接口区域，立即生效无需重启
+firewall-cmd --set-default-zone=public
+
+# 查看所有打开的端口：
+firewall-cmd --zone=dmz --list-ports
+
+# 加入一个端口到区域：
+firewall-cmd --zone=dmz --add-port=8080/tcp
+# 若要永久生效方法同上
+ 
+# 打开一个服务，类似于将端口可视化，服务需要在配置文件中添加，/etc/firewalld 目录下有services文件夹，这个不详细说了，详情参考文档
+firewall-cmd --zone=work --add-service=smtp
+ 
+# 移除服务
+firewall-cmd --zone=work --remove-service=smtp
+
+# 显示支持的区域列表
+firewall-cmd --get-zones
+
+# 设置为家庭区域
+firewall-cmd --set-default-zone=home
+
+# 查看当前区域
+firewall-cmd --get-active-zones
+
+# 设置当前区域的接口
+firewall-cmd --get-zone-of-interface=enp03s
+
+# 显示所有公共区域（public）
+firewall-cmd --zone=public --list-all
+
+# 临时修改网络接口（enp0s3）为内部区域（internal）
+firewall-cmd --zone=internal --change-interface=enp03s
+
+# 永久修改网络接口enp03s为内部区域（internal）
+firewall-cmd --permanent --zone=internal --change-interface=enp03s
+
+# 显示服务列表  
+Amanda, FTP, Samba和TFTP等最重要的服务已经被FirewallD提供相应的服务，可以使用如下命令查看：
+
+firewall-cmd --get-services
+
+# 允许SSH服务通过
+firewall-cmd --new-service=ssh
+
+# 禁止SSH服务通过
+firewall-cmd --delete-service=ssh
+
+# 打开TCP的8080端口
+firewall-cmd --enable ports=8080/tcp
+
+# 临时允许Samba服务通过600秒
+firewall-cmd --enable service=samba --timeout=600
+
+# 显示当前服务
+firewall-cmd --list-services
+
+# 添加HTTP服务到内部区域（internal）
+firewall-cmd --permanent --zone=internal --add-service=http
+firewall-cmd --reload     # 在不改变状态的条件下重新加载防火墙
+
+# 打开443/TCP端口
+firewall-cmd --add-port=443/tcp
+
+# 永久打开3690/TCP端口
+firewall-cmd --permanent --add-port=3690/tcp
+
+# 永久打开端口好像需要reload一下，临时打开好像不用，如果用了reload临时打开的端口就失效了
+# 其它服务也可能是这样的，这个没有测试
+firewall-cmd --reload
+
+# 查看防火墙，添加的端口也可以看到
+firewall-cmd --list-all
+
+# FirewallD包括一种直接模式，使用它可以完成一些工作，例如打开TCP协议的9999端口
+firewall-cmd --direct -add-rule ipv4 filter INPUT 0 -p tcp --dport 9000 -j ACCEPT
+
+```
+
+> Example
+
+```bash
+firewall-cmd --zone=internal --add-source=10.1.2.0/24 --permanent
+firewall-cmd --reload
+firewall-cmd --zone=internal --list-all
+
+firewall-cmd --zone=internal --add-masquerade
+
+telnet 10.1.2.51 22
+
+```
 
 
 
+## 四、JumpServer
+
+[Reference](https://www.jumpserver.org/index.html)
+
+
+- [MySQL](/kubernetes/21-mysql.md)
+- [Redis](/kubernetes/24-redis.md)
+
+
+
+`unsucess`
+
+```bash
+helm repo add jumpserver https://jumpserver.github.io/helm-charts
+help repo update jumpserver
+helm search repo jumpserver
+helm show values jumpserver/jumpserver > jumpserver.yaml-2.26.1-default
+
+# Example
+#    https://m.8ops.top/attachment/jumpserver/helm/jumpserver.yaml-2.26.1
+# 
+
+helm install jumpserver jumpserver/jumpserver \
+    -f jumpserver.yaml-2.26.1 \
+    -n kube-server \
+    --version 2.26.1 \
+    --debug
+
+helm -n kube-server uninstall jumpserver
+
+
+```
 
 
 

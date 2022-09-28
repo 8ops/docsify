@@ -52,6 +52,18 @@ kubectl -n kube-server exec -it pod/mysql-replication-primary-0 sh
 mysql -uroot -pjesse
 
 mysql -h10.101.11.182 -P30380 -ugrafana -pgrafana
+
+# Prometheus
+create database prometheus_alert;
+create user 'prometheus_alert'@'%' identified by 'prometheus_alert';
+grant all privileges on prometheus_alert.* to `prometheus_alert`@`%`;
+flush privileges;
+
+# JumpServer
+create database jumpserver;
+create user 'jumpserver'@'%' identified by 'jumpserver';
+grant all privileges on jumpserver.* to `jumpserver`@`%`;
+flush privileges;
 ```
 
 

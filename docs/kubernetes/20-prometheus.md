@@ -38,15 +38,25 @@ helm search repo prometheus
 # prometheus
 helm show values prometheus-community/prometheus > prometheus.yaml-15.8.5-default
 
+# Example 
+#   https://books.8ops.top/attachment/prometheus/helm/prometheus.yaml
+#   https://books.8ops.top/attachment/prometheus/helm/prometheus-extra.yaml
+#   https://books.8ops.top/attachment/prometheus/helm/prometheus-alertmanager.yaml
+#
+
 helm install prometheus prometheus-community/prometheus \
-    -f prometheus.yaml -f prometheus-extra.yaml -f prometheus-alertmanager.yaml \
+    -f prometheus.yaml \
+    -f prometheus-extra.yaml \
+    -f prometheus-alertmanager.yaml \
     -n kube-server \
     --create-namespace \
     --version 15.8.5 --debug
 
 kubectl -n kube-server scale --replicas=0 deploy prometheus-server
 helm upgrade --install prometheus prometheus-community/prometheus \
-    -f prometheus.yaml -f prometheus-extra.yaml -f prometheus-alertmanager.yaml \
+    -f prometheus.yaml \
+    -f prometheus-extra.yaml \
+    -f prometheus-alertmanager.yaml \
     -n kube-server \
     --create-namespace \
     --version 15.8.5 --debug
@@ -147,6 +157,9 @@ blackbox-exporter 常用的一个黑盒
 
 helm search repo prometheus-blackbox-exporter
 helm show values prometheus-community/prometheus-blackbox-exporter > blackbox-exporter.yaml-7.0.0-default
+
+# Example 
+#   https://books.8ops.top/attachment/prometheus/helm/blackbox-exporter.yaml
 
 helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
     -f blackbox-exporter.yaml \
