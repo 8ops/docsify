@@ -418,13 +418,30 @@ telnet 10.1.2.51 22
 
 [Reference](https://www.jumpserver.org/index.html)
 
+> 浏览器管理
+
+- http://10.101.11.236
+- http://10.101.11.236/api/docs
+
+![dashboard](../images/jumpserver/console.png)
+
+> 终端登录
+
+```bash
+ssh -p2222 jesse@10.101.11.236
+```
+
+![dashboard](../images/jumpserver/shell.png)
+
+
+
+### 4.1 Helm
+
+`unsucess`
 
 - [MySQL](/kubernetes/21-mysql.md)
 - [Redis](/kubernetes/24-redis.md)
 
-
-
-`unsucess`
 
 ```bash
 helm repo add jumpserver https://jumpserver.github.io/helm-charts
@@ -443,8 +460,41 @@ helm install jumpserver jumpserver/jumpserver \
     --debug
 
 helm -n kube-server uninstall jumpserver
+```
 
 
+
+### 4.2 OneKey
+
+```bash
+# 默认会安装到 /opt/jumpserver-installer-v2.26.1 目录
+curl -sSL https://github.com/jumpserver/jumpserver/releases/download/v2.26.1/quick_start.sh | bash
+
+cd /opt/jumpserver-installer-v2.26.1
+
+# tree jumpserver/config/
+jumpserver/config/
+├── config.txt
+├── core
+│   └── config.yml
+├── koko
+│   └── config.yml
+├── mariadb
+│   └── mariadb.cnf
+├── mysql
+│   └── my.cnf
+├── nginx
+│   ├── cert
+│   │   ├── server.crt
+│   │   └── server.key
+│   └── lb_http_server.conf
+└── redis
+    └── redis.conf
+    
+# 维护
+jmsctl stop 
+jmsctl start 
+jmsctl status
 ```
 
 
