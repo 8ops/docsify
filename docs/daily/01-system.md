@@ -150,9 +150,13 @@ virsh reboot UAT-BIGDATA-000
 ```bash
 # 查看信息
 virsh dominfo UAT-BIGDATA-000
-# 更改内存
+# 更改内存（需要关机修改）
+virsh shutdown UAT-BIGDATA-000
 virsh setmaxmem UAT-BIGDATA-000 8388608 --config
-virsh setmem UAT-BIGDATA-000 4194304
+virsh dominfo UAT-BIGDATA-000
+virsh start UAT-BIGDATA-000
+# 更改内存（开机状态时生效--前提maxmem以内变更）
+virsh setmem UAT-BIGDATA-000 4194304 --live --config
 # 需要重启
 virsh define UAT-BIGDATA-000.xml
 virsh reboot UAT-BIGDATA-000
