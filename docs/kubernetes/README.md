@@ -20,6 +20,7 @@
   - [实战 | 通过Helm搭建Prometheus](kubernetes/20-prometheus.md)
   - [实战 | PromQL 基本使用](kubernetes/20-promql.md)
   - [实战 | 通过Helm搭建MySQL](kubernetes/21-mysql.md)
+  - [实战 | 通过Helm搭建 MongoDB](kubernetes/22-mongo.md)
   - [实战 | 通过Helm搭建Grafana](kubernetes/23-grafana.md)
   - [实战 | 通过Helm搭建Redis](kubernetes/24-redis.md)
   - [实战 | 通过Helm搭建Elastic](kubernetes/25-elastic.md)
@@ -35,5 +36,8 @@
   - [实战 | Rancher 初识](kubernetes/41-rancher.md)
   - [实战 | MetalLB 使用](kubernetes/42-metallb.md)
   - [实战 | ArgoCD 使用](kubernetes/43-argocd.md)
-  - [实战 | JsonPath 使用](kubernetes/44-jsonpath.md
+  - [实战 | JsonPath 使用](kubernetes/44-jsonpath.md)
+- 存储
+  - [实战 | MinIO 使用](kubernetes/51-minio.md)
+
 

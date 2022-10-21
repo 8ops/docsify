@@ -66,6 +66,8 @@ argocd cluster list
 
 ### 2.2 应用
 
+TODO
+
 ```bash
 # Create a directory app
 argocd app create guestbook \
