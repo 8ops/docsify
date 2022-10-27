@@ -39,13 +39,13 @@ helm search repo prometheus
 helm show values prometheus-community/prometheus --version 15.8.5 > prometheus.yaml-15.8.5-default
 
 # Example 
-#   https://books.8ops.top/attachment/prometheus/helm/prometheus.yaml
+#   https://books.8ops.top/attachment/prometheus/helm/prometheus.yaml-15.8.5
 #   https://books.8ops.top/attachment/prometheus/helm/prometheus-extra.yaml
 #   https://books.8ops.top/attachment/prometheus/helm/prometheus-alertmanager.yaml
 #
 
 helm install prometheus prometheus-community/prometheus \
-    -f prometheus.yaml \
+    -f prometheus.yaml-15.8.5 \
     -f prometheus-extra.yaml \
     -f prometheus-alertmanager.yaml \
     -n kube-server \
@@ -54,7 +54,7 @@ helm install prometheus prometheus-community/prometheus \
 
 kubectl -n kube-server scale --replicas=0 deploy prometheus-server
 helm upgrade --install prometheus prometheus-community/prometheus \
-    -f prometheus.yaml \
+    -f prometheus.yaml-15.8.5 \
     -f prometheus-extra.yaml \
     -f prometheus-alertmanager.yaml \
     -n kube-server \

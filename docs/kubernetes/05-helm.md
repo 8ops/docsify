@@ -60,28 +60,26 @@ helm repo update
 
 helm search repo ingress-nginx
 
-helm show values ingress-nginx/ingress-nginx --version 4.0.13 > ingress-nginx.yaml-default
+helm show values ingress-nginx/ingress-nginx --version 4.2.5 > ingress-nginx.yaml-default
 
-# vim ingress-nginx-external.yaml
+# Example
+#   https://books.8ops.top/attachment/kubernetes/helm/ingress-nginx-external.yaml-v4.2.5
+#
 
 # deprecated
 # 若不FW需要变更 ~/.cache/helm/repository/ingress-nginx-index.yaml 从私有文件站下载
 ## sed -i 's#https://github.com/kubernetes/ingress-nginx/releases/download/helm-chart-4.0.13/ingress-nginx-4.0.13.tgz#http://d.8ops.top/ops/helm/ingress-nginx-4.0.13.tgz#' ~/.cache/helm/repository/ingress-nginx-index.yaml
 
-kubectl label no k-kube-lab-11 edge=external
-# kubectl cordon k-kube-lab-11
+# deprecated
+# 使用metallb后就无须label在节点上
+# kubectl label no k-kube-lab-11 edge=external
+# kubectl cordon k-kube-lab-11 
+
 helm install ingress-nginx-external-controller ingress-nginx/ingress-nginx \
-    -f ingress-nginx-external.yaml \
+    -f ingress-nginx-external.yaml-v4.2.5 \
     -n kube-server \
     --create-namespace \
-    --version 4.0.13 --debug
-
-kubectl label no k-kube-lab-12 edge=internal
-# kubectl cordon k-kube-lab-12
-helm install ingress-nginx-internal-controller ingress-nginx/ingress-nginx \
-    -f ingress-nginx-internal.yaml \
-    -n kube-server \
-    --version 4.0.13 --debug
+    --version 4.2.5 --debug
 
 helm list -A
 
@@ -89,18 +87,13 @@ helm list -A
 helm upgrade ingress-nginx-external-controller ingress-nginx/ingress-nginx \
     -f ingress-nginx-external.yaml \
     -n kube-server \
-    --version 4.0.13 --debug
-
-helm upgrade ingress-nginx-internal-controller ingress-nginx/ingress-nginx \
-    -f ingress-nginx-internal.yaml \
-    -n kube-server \
-    --version 4.0.13 --debug
+    --version 4.2.5 --debug
 
 # uninstall     
 helm -n kube-server uninstall ingress-nginx-external-controller
 ```
 
-> vim [ingress-nginx-external.yaml](https://books.8ops.top/attachment/kubernetes/helm/ingress-nginx-external.yaml)
+> ingress-nginx-external.yaml
 
 ```yaml
 controller:
@@ -216,7 +209,7 @@ helm repo update
 
 helm search repo kubernetes-dashboard
 
-helm show values kubernetes-dashboard/kubernetes-dashboard > kubernetes-dashboard.yaml-default
+helm show values kubernetes-dashboard/kubernetes-dashboard --version 5.10.0  > kubernetes-dashboard.yaml-v5.10.0-default
 
 # vim kubernetes-dashboard.yaml
 
@@ -225,15 +218,15 @@ helm show values kubernetes-dashboard/kubernetes-dashboard > kubernetes-dashboar
 ## sed -i 's#kubernetes-dashboard-5.0.4.tgz#http://d.8ops.top/ops/helm/kubernetes-dashboard-5.0.4.tgz#' ~/.cache/helm/repository/kubernetes-dashboard-index.yaml
 
 helm install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard \
-    -f kubernetes-dashboard.yaml \
+    -f kubernetes-dashboard.yaml-v5.10.0 \
     -n kube-server \
     --create-namespace \
-    --version 5.0.4 --debug
+    --version 5.10.0 --debug
 
 helm upgrade kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard \
     -f kubernetes-dashboard.yaml \
     -n kube-server \
-    --version 5.0.4 --debug
+    --version 5.10.0 --debug
 
 #-----------------------------------------------------------
 # create sa for guest
@@ -256,6 +249,18 @@ kubectl create serviceaccount dashboard-ops -n kube-server
 kubectl create clusterrolebinding dashboard-ops \
   --clusterrole=cluster-admin \
   --serviceaccount=kube-server:dashboard-ops
+
+# create token （从kubernetes v1.24.0开始需要手动创建secrets）
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dashboard-ops-secret
+  namespace: kube-server
+  annotations:
+    kubernetes.io/service-account.name: dashboard-ops
+type: kubernetes.io/service-account-token
+EOF
 
 # output token
 kubectl describe secrets \
