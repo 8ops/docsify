@@ -10,7 +10,7 @@
 
 ```bash
 # 新用户名称
-USER=abc
+USER=guest
 
 # 创建新用户签名证书
 openssl genrsa -out ${USER}.key 2048
@@ -23,7 +23,7 @@ openssl x509 -req -in ${USER}.csr \
 kubectl config set-cluster kubernetes \
     --certificate-authority=/etc/kubernetes/pki/ca.crt \
     --embed-certs=true \
-    --server=https://10.129.4.201:6443 \
+    --server=https://10.101.11.111:6443 \
     --kubeconfig=${USER}.kubeconfig
 
 # 设置客户端认证参数
@@ -48,10 +48,10 @@ kubectl config use-context ${USER}@kubernetes --kubeconfig=${USER}.kubeconfig
 ## 授权方式有两种
 ## 1, Role+RoleBinding
 ## 2, ClusterRole+ClusterRoleBinding
-##   下面实例使用第2种
+##   下面实例使用第 2 种
 
 # 创建ClusterRole
-kubectl create clusterrole cluster-reader-for-guest \
+kubectl create clusterrole cluster-reader-for-${USER} \
     --verb=get,list,watch \
     --resource=namespaces,nodes,pods,pods/log,deployments,replicasets,daemonsets,services,ingresses,endpoints,events,configmaps,statefulsets,secrets,jobs,cronjobs,replicationcontrollers,horizontalpodautoscalers \
     --dry-run=client -o yaml 
@@ -65,19 +65,19 @@ kubectl create clusterrole cluster-reader-for-guest \
 #  verbs:
 #  - create
 
-# 绑定ClusterRoleBinding
-kubectl create clusterrolebinding cluster-reader-for-guest-binding \
-    --clusterrole=cluster-reader-for-guest \
+# 绑定 ClusterRoleBinding
+kubectl create clusterrolebinding cluster-reader-for-${USER}-binding \
+    --clusterrole=cluster-reader-for-${USER} \
     --user=${USER} \
     --dry-run=client -o yaml 
     # | kubectl apply -f -
 
-## kubectl delete clusterrole cluster-reader-for-guest
-## kubectl delete clusterrolebinding cluster-reader-for-guest-binding
+## kubectl delete clusterrole cluster-reader-for-${USER}
+## kubectl delete clusterrolebinding cluster-reader-for-${USER}-binding
 ## 关联默认查看权限
-##   kubectl create clusterrolebinding cluster-reader-for-guest-binding --clusterrole=view --user=${USER}
+##   kubectl create clusterrolebinding cluster-reader-for-${USER}-binding --clusterrole=view --user=${USER}
 ## 关联默认管理权限
-##   kubectl create clusterrolebinding cluster-reader-for-guest-binding --clusterrole=cluster-admin --user=${USER}
+##   kubectl create clusterrolebinding cluster-reader-for-${USER}-binding --clusterrole=cluster-admin --user=${USER}
 
 # 使用集锦
 kubectl --kubeconfig ${USER}.kubeconfig get pods

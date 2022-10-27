@@ -2,20 +2,28 @@
 
 > 文章清单
 
-- [特效](daily/00-impact.md)
-- [随记](daily/00-miscellany.md)
-- [系统操作](daily/01-system.md)
-- [常用命令](daily/02-command.md)
-- [CURL测时](daily/03-curl-test-time.md)
-- [dnsmasq](daily/04-dnsmasq.md)
-- [vue](daily/05-vue.md)
-- [GIT操作](daily/06-git.md)
-- [gitbook](daily/07-gitbook.md)
-- [docsify](daily/08-docsify.md)
-- [图片处理](daily/09-imagemagick.md)
-- [证书管理](daily/10-openssl.md)
-- [网络操作](daily/11-network.md)
-- [HTML](daily/12-html.md)
-- [Python](daily/13-python.md)
-- [文章管理](daily/99-article.md)
+- 系统能力
+  - [系统操作](daily/11-system.md)
+  - [常用命令](daily/12-command.md)
+  - [CURL测时](daily/13-curl-test-time.md)
+  - [图片处理](daily/14-imagemagick.md)
+  - [证书管理](daily/15-openssl.md)
+  - [网络操作](daily/16-network.md)
+  - [IO](daily/17-io.md)
+  - [GIT操作](daily/18-git.md)
+
+- 工具使用
+  - [dnsmasq](daily/41-dnsmasq.md)
+
+- 开发能力
+  - [vue](daily/51-vue.md)
+  - [gitbook](daily/52-gitbook.md)
+  - [docsify](daily/53-docsify.md)
+  - [HTML](daily/54-html.md)
+  - [Python](daily/55-python.md)
+
+- 杂记
+  - [随便记记](daily/97-miscellany.md)
+  - [特效](daily/98-impact.md)
+  - [文章管理](daily/99-article.md)
 

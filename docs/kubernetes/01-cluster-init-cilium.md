@@ -9,9 +9,10 @@
 | 名称       | 版本    |
 | ---------- | ------- |
 | ubuntu     | v22.04  |
-| kubernetes | v1.25.0 |
+| kubernetes | v1.25.3 |
 | cilium     | v0.12.2 |
 | hubble     | v0.10.0 |
+| containerd |         |
 
 - 这里操作系统选择 `20.04`
 
@@ -23,20 +24,20 @@
 
 通过 `haproxy` 代理 `apiserver` 多节点
 
-**10.101.9.111**
+**10.101.11.110**
 
 
 
 ### 1.2 服务器
 
-| 角色          | 服务器地址   |
-| ------------- | ------------ |
-| control-plane | 10.101.9.183 |
-| control-plane | 10.101.9.53  |
-| control-plane | 10.101.9.79  |
-| work-node     | 10.101.9.37  |
-| work-node     | 10.101.9.1   |
-| work-node     | 10.101.9.38  |
+| 角色          | 服务器地址    |
+| ------------- | ------------- |
+| control-plane | 10.101.11.240 |
+| control-plane | 10.101.11.114 |
+| control-plane | 10.101.11.154 |
+| work-node     | 10.101.11.196 |
+| work-node     | 10.101.11.157 |
+| work-node     | 10.101.11.250 |
 
 
 
@@ -48,10 +49,10 @@
 
 ```bash
 {
-  "registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.25.0":"hub.8ops.top/google_containers/kube-apiserver",
-  "registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.25.0":"hub.8ops.top/google_containers/kube-controller-manager",
-  "registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.25.0":"hub.8ops.top/google_containers/kube-scheduler",
-  "registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:v1.25.0":"hub.8ops.top/google_containers/kube-proxy",
+  "registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.25.2":"hub.8ops.top/google_containers/kube-apiserver",
+  "registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.25.2":"hub.8ops.top/google_containers/kube-controller-manager",
+  "registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.25.2":"hub.8ops.top/google_containers/kube-scheduler",
+  "registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:v1.25.2":"hub.8ops.top/google_containers/kube-proxy",
   "registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.8":"hub.8ops.top/google_containers/pause",
   "registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.5.4-0":"hub.8ops.top/google_containers/etcd",
   "registry.cn-hangzhou.aliyuncs.com/google_containers/coredns:v1.9.3":"hub.8ops.top/google_containers/coredns"

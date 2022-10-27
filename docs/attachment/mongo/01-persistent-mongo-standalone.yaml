@@ -24,7 +24,7 @@ items:
           - key: kubernetes.io/hostname
             operator: In
             values:
-            - k-kube-lab-12
+            - k-kube-lab-11
     persistentVolumeReclaimPolicy: Retain
     storageClassName: mongo-standalone
     volumeMode: Filesystem

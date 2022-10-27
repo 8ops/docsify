@@ -10,7 +10,7 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 helm search repo mysql
 
-helm show values bitnami/mysql > mysql.yaml-8.9.2-default
+helm show values bitnami/mysql --version 8.9.2 > mysql.yaml-8.9.2-default
 
 # - mysql-standalone.yaml
 helm install mysql-standalone bitnami/mysql \

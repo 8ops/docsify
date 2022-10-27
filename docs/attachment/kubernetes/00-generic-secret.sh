@@ -9,3 +9,7 @@ kubectl -n kube-app get secret tls-8ops.top || \
 kubectl -n kube-server get secret tls-8ops.top || \
     kubectl -n kube-server create secret tls tls-8ops.top --cert=app/lib/8ops.top.crt --key=app/lib/8ops.top.key
 
+printf "May be\n" 
+printf "  kubectl delete secret tls-8ops.top \n" 
+printf "  kubectl -n kube-app delete secret tls-8ops.top \n" 
+printf "  kubectl -n kube-server delete secret tls-8ops.top \n" 

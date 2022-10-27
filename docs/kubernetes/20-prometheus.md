@@ -36,7 +36,7 @@ helm repo update
 helm search repo prometheus
 
 # prometheus
-helm show values prometheus-community/prometheus > prometheus.yaml-15.8.5-default
+helm show values prometheus-community/prometheus --version 15.8.5 > prometheus.yaml-15.8.5-default
 
 # Example 
 #   https://books.8ops.top/attachment/prometheus/helm/prometheus.yaml

@@ -704,13 +704,15 @@ ipvsadm -ln
 
 ## 四、常见问题
 
-> 节点未就位
+[获取工具kubectl](https://kubernetes.io/docs/tasks/tools/)
+
+### 4.1 节点未就位
 
 缺少集群网络或集群网络存在问题
 
 
 
-> coredns 未就位
+### 4.2 coredns 未就位
 
 第一种，安装插件时机
 
@@ -748,7 +750,7 @@ kubectl -n kube-system delete pod/coredns-55866688ff-hwp4m pod/coredns-55866688f
 
 
 
-> controller-manager 和scheduler 未健康就位
+### 4.3 controller-manager 和scheduler 未健康就位
 
 修复此问题
 
@@ -763,7 +765,7 @@ sed -i '/--port/d' /etc/kubernetes/manifests/kube-scheduler.yaml
 
 
 
-> dns 寻址失败
+### 4.4 dns 寻址失败
 
 ```bash
 #
@@ -784,7 +786,7 @@ kubectl run nginx --image hub.8ops.top/third/nginx:1.21.3
 
 
 
-> 容器运行失败
+### 4.5 容器运行失败
 
 ```bash
 # 
@@ -802,9 +804,9 @@ kubectl run nginx --image hub.8ops.top/third/nginx:1.21.3
 
 
 
-> core
 
 
+<hr />
 
 至此 kubernetes cluster 搭建完成了。
 

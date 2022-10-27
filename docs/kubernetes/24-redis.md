@@ -4,13 +4,13 @@
 
 ## 一、Install
 
-```yaml
+```bash
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update bitnami
 helm search repo redis
 
 # sentinel
-helm show values bitnami/redis > redis-sentinel.yaml-16.8.7-default
+helm show values bitnami/redis --version 16.8.7 > redis-sentinel.yaml-16.8.7-default
 
 # Example
 #   https://books.8ops.top/attachment/redis/helm/redis-sentinel.yaml-16.8.7

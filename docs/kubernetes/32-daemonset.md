@@ -55,26 +55,31 @@ spec:
 ## rollout
 
 ```bash
-#获取是否支持滚动更新
+# 获取是否支持滚动更新
 kubectl -n kube-system get ds/node-job -o go-template='{{.spec.updateStrategy.rollingUpdate.maxUnavailable}}{{"\n"}}'
 
-kubectl -n kube-system get ds/node-job -o go-template='{{.spec.updateStrategy.type}}{{"\n"}}' #return RollingUpdate
+## return RollingUpdate
+kubectl -n kube-system get ds/node-job -o go-template='{{.spec.updateStrategy.type}}{{"\n"}}' 
 
-kubectl -n kube-system create -f node-job-daemonset.yaml --dry-run -o go-template='{{.spec.updateStrategy.type}}{{"\n"}}'#return RollingUpdate
+## return RollingUpdate
+kubectl -n kube-system create -f node-job-daemonset.yaml --dry-run -o go-template='{{.spec.updateStrategy.type}}{{"\n"}}'
 
-#命令设置支持滚动更新
+# 命令设置支持滚动更新
 kubectl -n kube-system patch ds/node-job -p '{"spec":{"updateStrategy":{"type":"RollingUpdate","rollingUpdate":{"maxUnavailable":5}}}}'
 
-#镜像升级滚动更新
+# 镜像升级滚动更新
 kubectl -n kube-system set image ds/node-job node-job=node-job:v20190909130012
 
-#json输出
+# json输出
 kubectl -n kube-system get ds/node-job -o json
 
-#根据label过滤po
+# 根据label过滤po
 kubectl -n kube-system get po -l k8s-app=node-job -o wide
 
-#watch rollout status
+# watch rollout status
 kubectl -n kube-system rollout status ds/node-job
+
+# restart 
+kubectl -n kube-system rollout restart ds/node-job
 ```
 

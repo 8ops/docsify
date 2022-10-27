@@ -60,7 +60,7 @@ helm repo update
 
 helm search repo ingress-nginx
 
-helm show values ingress-nginx/ingress-nginx > ingress-nginx.yaml-default
+helm show values ingress-nginx/ingress-nginx --version 4.0.13 > ingress-nginx.yaml-default
 
 # vim ingress-nginx-external.yaml
 
@@ -95,7 +95,6 @@ helm upgrade ingress-nginx-internal-controller ingress-nginx/ingress-nginx \
     -f ingress-nginx-internal.yaml \
     -n kube-server \
     --version 4.0.13 --debug
-
 
 # uninstall     
 helm -n kube-server uninstall ingress-nginx-external-controller

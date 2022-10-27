@@ -132,12 +132,15 @@ virsh help domain
 
 # 查看信息
 virsh dominfo UAT-BIGDATA-000
+
 # 更改CPU（重启生效）
 virsh setvcpus UAT-BIGDATA-000 4 --maximum --config
 virsh setvcpus UAT-BIGDATA-000 4 --config
-virsh setvcpus UAT-BIGDATA-000 4 --current
 virsh shutdown UAT-BIGDATA-000
+
+virsh setvcpus UAT-BIGDATA-000 4 --current
 virsh start UAT-BIGDATA-000
+
 # 需要重启
 virsh define UAT-BIGDATA-000.xml
 virsh reboot UAT-BIGDATA-000
@@ -150,13 +153,17 @@ virsh reboot UAT-BIGDATA-000
 ```bash
 # 查看信息
 virsh dominfo UAT-BIGDATA-000
+
 # 更改内存（需要关机修改）
 virsh shutdown UAT-BIGDATA-000
+
 virsh setmaxmem UAT-BIGDATA-000 8388608 --config
 virsh dominfo UAT-BIGDATA-000
 virsh start UAT-BIGDATA-000
+
 # 更改内存（开机状态时生效--前提maxmem以内变更）
 virsh setmem UAT-BIGDATA-000 4194304 --live --config
+
 # 需要重启
 virsh define UAT-BIGDATA-000.xml
 virsh reboot UAT-BIGDATA-000
@@ -229,6 +236,23 @@ vim new-vm-server.xml
 virsh define new-vm-server.xml 
 # 启动虚拟机
 virsh start new-vm-server
+```
+
+```bash
+# 批量克隆
+## 如克隆5台机器
+a=20
+b=46
+for i in {1..5}
+do
+virt-clone --auto-clone -o UAT-STUDY-020 -n UAT-STUDY-0$((i+a)) \
+    -f /data/lib/kvm/UAT-STUDY-0$((i+a))-SDA.img \
+    -m 52:54:0A:01:02:$((i+b))
+mv /data/lib/kvm/UAT-STUDY-020-SDB-clone.img /data/lib/kvm/UAT-STUDY-0$((i+a))-SDB.img
+sed -i 's/UAT-STUDY-020-SDB-clone.img/UAT-STUDY-0'$((i+a))'-SDB.img/' UAT-STUDY-0$((i+a)).xml
+virsh define UAT-STUDY-0$((i+a)).xml
+done
+
 ```
 
 

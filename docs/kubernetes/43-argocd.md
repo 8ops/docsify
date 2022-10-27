@@ -54,13 +54,98 @@ argocd login argo-cd.8ops.top --grpc-web
 argocd context
 
 # 添加 kubernetes cluster
-argocd cluster add kubernetes-guest \
+argocd cluster add kubeconfig-guest-name \
     --kubeconfig ~/.kube/config \
-    --name kubernetes-guest-from-kubeconfig
+    --name argocd-cluster-name
 # 非安全模式 - token认证
-argocd cluster add kubernetes-guest --name kubernetes-guest-from-kubeconfig
+argocd cluster add kubeconfig-guest-name --name argocd-cluster-name
 argocd cluster list
 ```
+
+
+
+#### 2.1.1 argocd添加外部kubernetes cluster步骤
+
+```bash
+# 第一步，通过ingress-nginx暴露流量
+kubectl apply -f kube-apiserver-ingress.yaml
+
+# 第二步，在kubeconfig添加context
+
+# 第三步，登录argocd
+argocd login argocd.8ops.top
+
+# 第四步，添加cluster
+argocd cluster add kube-external-insecure  --name kube-external-insecure --grpc-web
+
+# 第五步，查看cluster
+argocd cluster list --grpc-web
+```
+
+> kube-apiserver-ingress.yaml
+
+```bash
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    service.alpha.kubernetes.io/app-protocols: '{"https":"HTTPS"}'
+    nginx.ingress.kubernetes.io/whitelist-source-range: 10.1.1.0/28
+  name: kube-apiserver
+  namespace: default
+spec:
+  ingressClassName: external
+  rules:
+  - host: kube-apiserver.8ops.top
+    http:
+      paths:
+      - backend:
+          service:
+            name: kubernetes
+            port:
+              number: 443
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - kube-apiserver.8ops.top
+    secretName: tls-8ops.top
+```
+
+> kubeconfig
+
+```yaml
+apiVersion: v1
+clusters:
+- cluster:
+    insecure-skip-tls-verify: true
+    server: https://kube-apiserver.8ops.top
+  name: kube-external-insecure
+contexts:
+- context:
+    cluster: kube-external-insecure
+    user: kube-external-user
+  name: kube-external-insecure  
+current-context: kube-external-insecure 
+kind: Config
+preferences:
+  colors: true
+users:
+- name: kube-external-user
+  user:
+    token: <data>  
+```
+
+> view
+
+```bash
+SERVER                          NAME                   VERSION STATUS     MESSAGE PROJECT
+https://kube-apiserver.8ops.top kube-external-insecure 1.23    Successful
+https://kubernetes.default.svc  in-cluster             1.25    Successful
+```
+
+
 
 
 

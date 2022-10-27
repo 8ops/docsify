@@ -17,7 +17,7 @@ helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
 helm search repo grafana
  
-helm show values grafana/grafana > grafana.yaml-6.26.4-default 
+helm show values grafana/grafana --version 6.26.4 > grafana.yaml-6.26.4-default 
 
 # Example 
 #   https://books.8ops.top/attachment/grafana/helm/grafana.yaml-6.26.4

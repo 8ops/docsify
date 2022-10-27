@@ -23,15 +23,15 @@
   - [实战 | 通过Helm搭建 MongoDB](kubernetes/22-mongo.md)
   - [实战 | 通过Helm搭建Grafana](kubernetes/23-grafana.md)
   - [实战 | 通过Helm搭建Redis](kubernetes/24-redis.md)
-  - [实战 | 通过Helm搭建Elastic](kubernetes/25-elastic.md)
+  - [实战 | 快速搭建Elastic](kubernetes/25-elastic.md)
   - [实战 | Harbor使用](kubernetes/26-harbor.md)
-  - [实战 | 快速搭建 ELK](kubernetes/27-elk.md)
+  - [实战 | KONG](kubernetes/27-kong.md)
   - [实战 | RabbitMQ](kubernetes/28-rabbitmq.md)
 
-- 日常应用
-  - [实战 | KubeConfig 的综合使用](kubernetes/30-kubeconfig.md)
-  - [实战 | DaemonSet](kubernetes/31-daemonset.md)
-  - [实战 | StatefulSet](kubernetes/32-statefulset.md)
+- [日常应用](kubernetes/30-readme.md)
+  - [实战 | KubeConfig 的综合使用](kubernetes/31-kubeconfig.md)
+  - [实战 | DaemonSet](kubernetes/32-daemonset.md)
+  - [实战 | StatefulSet](kubernetes/33-statefulset.md)
 - [日常管理](kubernetes/40-mgr.md)
   - [实战 | Rancher 初识](kubernetes/41-rancher.md)
   - [实战 | MetalLB 使用](kubernetes/42-metallb.md)
@@ -39,5 +39,4 @@
   - [实战 | JsonPath 使用](kubernetes/44-jsonpath.md)
 - 存储
   - [实战 | MinIO 使用](kubernetes/51-minio.md)
-
 
