@@ -63,6 +63,7 @@ helm upgrade --install prometheus prometheus-community/prometheus \
 
 helm -n kube-server uninstall prometheus 
 
+# reset
 helm -n kube-server uninstall prometheus && \
     kubectl delete -f ../01-persistent-prometheus.yaml && \
     kubectl apply -f ../01-persistent-prometheus.yaml && \
@@ -156,19 +157,19 @@ blackbox-exporter 常用的一个黑盒
 ```bash
 
 helm search repo prometheus-blackbox-exporter
-helm show values prometheus-community/prometheus-blackbox-exporter > blackbox-exporter.yaml-7.0.0-default
+helm show values prometheus-community/prometheus-blackbox-exporter --version 7.0.0 > blackbox-exporter.yaml-7.0.0-default
 
 # Example 
 #   https://books.8ops.top/attachment/prometheus/helm/blackbox-exporter.yaml
 
 helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
-    -f blackbox-exporter.yaml \
+    -f blackbox-exporter.yaml-7.0.0 \
     -n kube-server \
     --create-namespace \
     --version 7.0.0 --debug
     
 helm upgrade --install blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
-    -f blackbox-exporter.yaml \
+    -f blackbox-exporter.yaml-7.0.0 \
     -n kube-server \
     --create-namespace \
     --version 7.0.0 --debug
@@ -179,6 +180,8 @@ helm -n kube-server uninstall blackbox-exporter
 
 
 ### 1.3 grafana
+
+[Reference](kubernetes/23-grafana.md)
 
 [官方模板](https://grafana.com/grafana/dashboards/)
 
