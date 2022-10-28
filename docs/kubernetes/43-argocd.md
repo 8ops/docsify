@@ -7,10 +7,10 @@
 ```bash
 helm repo add argo https://argoproj.github.io/argo-helm
 helm search repo argo-cd
-helm show values argo/argo-cd > argocd-configs.yaml-5.4.2-default
+helm show values argo/argo-cd --version 5.4.2 > argocd-configs.yaml-5.4.2-default
 
 # Example
-#   https://books.8ops.top/attachment/kubernetes/helm/argocd-configs.yaml-5.4.2
+#   https://books.8ops.top/attachment/argo/helm/argocd-configs.yaml-5.4.2
 # 
 
 helm install argo-cd argo/argo-cd \
@@ -57,6 +57,7 @@ argocd context
 argocd cluster add kubeconfig-guest-name \
     --kubeconfig ~/.kube/config \
     --name argocd-cluster-name
+    
 # 非安全模式 - token认证
 argocd cluster add kubeconfig-guest-name --name argocd-cluster-name
 argocd cluster list
@@ -64,7 +65,7 @@ argocd cluster list
 
 
 
-#### 2.1.1 argocd添加外部kubernetes cluster步骤
+> argocd添加外部kubernetes cluster步骤
 
 ```bash
 # 第一步，通过ingress-nginx暴露流量
@@ -147,25 +148,52 @@ https://kubernetes.default.svc  in-cluster             1.25    Successful
 
 
 
+### 2.2 accounts
+
+Reference
+
+- [用户管理](https://argoproj.github.io/argo-cd/operator-manual/user-management/)
+
+- [RBAC控制](https://argoproj.github.io/argo-cd/operator-manual/rbac/)
+
+```bash
+# get account admin's pass
+~ $ kubectl -n kube-server get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -D  
+
+# add account jesse
+~ $ kubectl -n kube-server edit cm argocd-cm
+data:
+  ……
+  accounts.jesse: login
+  accounts.jesse.enabled: "true"
+
+# setting account jesse's pass
+~ $ argocd account update-password  --account jesse --current-password jesse2020 --new-password jesse2022 --grpc-web
+```
 
 
-### 2.2 应用
 
-TODO
+
+
+### 2.3 应用
+
+`TODO`
 
 ```bash
 # Create a directory app
 argocd app create guestbook \
-    --repo https://github.com/argoproj/argocd-example-apps.git \
+    --repo https://git.8ops.top/gce/argocd-example-apps.git \
     --path guestbook \
     --dest-namespace default \
-    --dest-server https://kubernetes.default.svc --directory-recurse
+    --dest-server https://kubernetes.default.svc \
+    --directory-recurse \
+    --grpc-web
 
 # Create a Jsonnet app
 argocd app create jsonnet-guestbook --repo https://github.com/argoproj/argocd-example-apps.git --path jsonnet-guestbook --dest-namespace default --dest-server https://kubernetes.default.svc --jsonnet-ext-str replicas=2
 
 # Create a Helm app
-argocd app create helm-guestbook --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git --path helm-guestbook --dest-namespace kube-app --dest-server https://kubernetes.default.svc --helm-set replicaCount=2 --project argo-example-apps
+argocd app create helm-guestbook --repo https://git.8ops.top/gce/argocd-example-apps.git --path helm-guestbook --dest-namespace kube-app --dest-server https://kubernetes.default.svc --helm-set replicaCount=2 --project argo-example-apps
 
 # Create a Helm app from a Helm repo
 argocd app create nginx-ingress --repo https://charts.helm.sh/stable --helm-chart nginx-ingress --revision 1.24.3 --dest-namespace default --dest-server https://kubernetes.default.svc

@@ -10,10 +10,13 @@
   - [证书管理](daily/15-openssl.md)
   - [网络操作](daily/16-network.md)
   - [IO](daily/17-io.md)
-  - [GIT操作](daily/18-git.md)
-
+  - [GIT](daily/18-git.md)
+  - [firewall](daily-19-firewall.md)
+  
 - 工具使用
   - [dnsmasq](daily/41-dnsmasq.md)
+  - [kvm](daily/42-kvm.md)
+  - [jumpserver](daily/43-jumpserver.md)
 
 - 开发能力
   - [vue](daily/51-vue.md)

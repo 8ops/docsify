@@ -17,23 +17,23 @@ helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
 helm search repo grafana
  
-helm show values grafana/grafana --version 6.26.4 > grafana.yaml-6.26.4-default 
+helm show values grafana/grafana --version 6.38.1 > grafana.yaml-6.38.1-default 
 
 # Example 
-#   https://books.8ops.top/attachment/grafana/helm/grafana.yaml-6.26.4
+#   https://books.8ops.top/attachment/grafana/helm/grafana.yaml-6.38.1
 # 
 
 helm install grafana grafana/grafana \
-    -f grafana.yaml-6.26.4 \
+    -f grafana.yaml-6.38.1 \
     -n kube-server \
     --create-namespace \
-    --version 6.26.4 --debug
+    --version 6.38.1 --debug
 
 helm upgrade --install grafana grafana/grafana \
-    -f grafana.yaml-6.26.4 \
+    -f grafana.yaml-6.38.1 \
     -n kube-server \
     --create-namespace \
-    --version 6.26.4 --debug
+    --version 6.38.1 --debug
     
 helm -n kube-server uninstall grafana    
 

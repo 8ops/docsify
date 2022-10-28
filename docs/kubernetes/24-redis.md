@@ -31,7 +31,7 @@ helm upgrade --install redis-sentinel bitnami/redis \
 helm -n kube-server uninstall redis-sentinel 
 
 # cluster
-helm show values bitnami/redis-cluster > redis-cluster.yaml-7.5.0-default
+helm show values bitnami/redis-cluster --version 7.5.0 > redis-cluster.yaml-7.5.0-default
 
 # Example
 #   https://books.8ops.top/attachment/redis/helm/redis-cluster.yaml-7.5.0

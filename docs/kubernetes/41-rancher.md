@@ -11,17 +11,19 @@
 ```bash
 # 自签证书
 docker run -d --restart=unless-stopped \
+  --name rancher \
   -p 80:80 -p 443:443 \
   --privileged \
   hub.8ops.top/google_containers/rancher:v2.6.8 
 
 # 公有证书
 docker run -d --privileged --restart=unless-stopped \
-    -p 80:80 -p 443:443 \
-    -v /opt/certs/8ops.top.crt:/etc/rancher/ssl/cert.pem \
-    -v /opt/certs/8ops.top.key:/etc/rancher/ssl/key.pem \
-    hub.8ops.top/google_containers/rancher:v2.6.8 \
-    --no-cacerts
+  --name rancher \
+  -p 80:80 -p 443:443 \
+  -v /opt/certs/8ops.top.crt:/etc/rancher/ssl/cert.pem \
+  -v /opt/certs/8ops.top.key:/etc/rancher/ssl/key.pem \
+  hub.8ops.top/google_containers/rancher:v2.6.8 \
+  --no-cacerts
 
 # --------- Join Cluster --------- #
 # Existing Cluster
@@ -44,6 +46,22 @@ docker run -d --privileged --restart=unless-stopped --net=host \
 
 
 ### 1.2 演示效果
+
+`https://rancher.8ops.top`
+
+```bash
+# 获取密码
+docker logs  rancher  2>&1 | grep "Bootstrap Password:"
+
+# 第一次登录需要重置密码
+admin / rancher@2022
+```
+
+
+
+
+
+
 
 > Existing Cluster
 

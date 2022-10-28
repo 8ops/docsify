@@ -11,6 +11,9 @@ persistence:
   storageClass: "redis-cluster"
   size: 1Gi
 
+service:
+  type: NodePort
+
 redis:
   resources:
     limits:
