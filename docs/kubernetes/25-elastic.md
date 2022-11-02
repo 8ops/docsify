@@ -153,6 +153,53 @@ networks:
 
 ## 三、Helm
 
+[Reference](https://developer.aliyun.com/article/861272)
+
+### 3.1 Prepare
+
+ElasticSearch 7.x 版本默认安装了 X-Pack 插件，并且部分功能免费，这里我们配置安全证书文件。
+
+> 生成证书
+
+```bash
+# 运行容器生成证书
+docker run --name elastic-charts-certs \
+  -i -w /app hub.8ops.top/third/elasticsearch:7.17.3 \
+  /bin/sh -c "elasticsearch-certutil ca --out /app/elastic-stack-ca.p12 --pass '' && elasticsearch-certutil cert --name security-master --dns security-master --ca /app/elastic-stack-ca.p12 --pass '' --ca-pass '' --out /app/elastic-certificates.p12"
+
+# 从容器中将生成的证书拷贝出来
+docker cp elastic-charts-certs:/app/elastic-certificates.p12 ./ 
+
+# 删除容器
+docker rm -f elastic-charts-certs
+
+# 将 pcks12 中的信息分离出来，写入文件
+openssl pkcs12 -nodes -passin pass:'' \
+  -in elastic-certificates.p12 \
+  -out elastic-certificate.pem
+```
+
+> 添加证书到集群
+
+```bash
+# 添加证书
+kubectl -n elastic-system create secret generic elastic-certificates --from-file=elastic-certificates.p12
+kubectl -n elastic-system create secret generic elastic-certificate-pem --from-file=elastic-certificate.pem
+
+# 设置集群用户名密码，用户名不建议修改
+kubectl -n elastic-system create secret generic elastic-credentials \
+  --from-literal=username=elastic --from-literal=password=ops@2022
+  
+kubectl -n elastic-system create secret generic kibana \
+  --from-literal=encryptionkey=zGFTX0cy3ubYVmzuunACDZuRj0PALqOM
+```
+
+
+
+### 3.2 Install
+
+> elasticsearch
+
 ```bash
 helm repo add elastic https://helm.elastic.co
 helm repo update
@@ -162,16 +209,46 @@ helm show values elastic/elasticsearch --version 7.17.3 > elasticsearch.yaml-7.1
 
 # Example
 #   https://books.8ops.top/attachment/elastic/01-persistent-elasticsearch.yaml
-#   https://books.8ops.top/attachment/elastic/helm/elasticsearch.yaml-7.17.3
+#   https://books.8ops.top/attachment/elastic/helm/elasticsearch-master.yaml-7.17.3
+#   https://books.8ops.top/attachment/elastic/helm/elasticsearch-data.yaml-7.17.3
+#   https://books.8ops.top/attachment/elastic/helm/elasticsearch-client.yaml-7.17.3
 #
 
-helm upgrade --install elasticsearch elastic/elasticsearch \
-    -f elasticsearch.yaml-7.17.3 \
-    -n kube-server \
-    --create-namespace \
-    --version 7.17.3 --debug
+# master 节点
+helm upgrade --install elasticsearch-master elastic/elasticsearch \
+    -f elasticsearch-master.yaml-7.17.3 \
+    -n elastic-system\
+    --version 7.17.3
+
+# data 节点
+helm upgrade --install elasticsearch-data elastic/elasticsearch \
+    -f elasticsearch-data.yaml-7.17.3 \
+    -n elastic-system\
+    --version 7.17.3
+
+# client 节点
+helm upgrade --install elasticsearch-client elastic/elasticsearch \
+    -f elasticsearch-client.yaml-7.17.3 \
+    -n elastic-system\
+    --version 7.17.3
+
+```
 
 
 
+> kibana
+
+```bash
+helm search repo kibana
+helm show values elastic/kibana --version 7.17.3 > kibana.yaml-7.17.3
+
+# Example
+#   https://books.8ops.top/attachment/elastic/helm/kibana.yaml-7.17.3
+# 
+
+helm upgrade --install kibana elastic/kibana \
+    -f kibana.yaml-7.17.3 \
+    -n elastic-system\
+    --version 7.17.3
 ```
 

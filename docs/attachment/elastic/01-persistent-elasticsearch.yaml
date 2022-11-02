@@ -8,15 +8,15 @@ items:
     finalizers:
     - kubernetes.io/pv-protection
     labels:
-      pvname: pv-elasticsearch-0
-    name: pv-elasticsearch-0
+      pvname: pv-elasticsearch-master-0
+    name: pv-elasticsearch-master-0
   spec:
     accessModes:
     - ReadWriteOnce
     capacity:
       storage: 30Gi
     local:
-      path: /opt/data/elasticsearch/0
+      path: /opt/data/elasticsearch/master/0
     nodeAffinity:
       required:
         nodeSelectorTerms:
@@ -26,7 +26,7 @@ items:
             values:
             - k-kube-lab-08
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: elasticsearch-master
+    storageClassName: elasticsearch
     volumeMode: Filesystem
 - apiVersion: v1
   kind: PersistentVolume
@@ -36,15 +36,15 @@ items:
     finalizers:
     - kubernetes.io/pv-protection
     labels:
-      pvname: pv-elasticsearch-1
-    name: pv-elasticsearch-1
+      pvname: pv-elasticsearch-master-1
+    name: pv-elasticsearch-master-1
   spec:
     accessModes:
     - ReadWriteOnce
     capacity:
       storage: 30Gi
     local:
-      path: /opt/data/elasticsearch/1
+      path: /opt/data/elasticsearch/master/1
     nodeAffinity:
       required:
         nodeSelectorTerms:
@@ -54,7 +54,7 @@ items:
             values:
             - k-kube-lab-08
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: elasticsearch-master
+    storageClassName: elasticsearch
     volumeMode: Filesystem
 - apiVersion: v1
   kind: PersistentVolume
@@ -64,15 +64,15 @@ items:
     finalizers:
     - kubernetes.io/pv-protection
     labels:
-      pvname: pv-elasticsearch-2
-    name: pv-elasticsearch-2
+      pvname: pv-elasticsearch-master-2
+    name: pv-elasticsearch-master-2
   spec:
     accessModes:
     - ReadWriteOnce
     capacity:
       storage: 30Gi
     local:
-      path: /opt/data/elasticsearch/2
+      path: /opt/data/elasticsearch/master/2
     nodeAffinity:
       required:
         nodeSelectorTerms:
@@ -82,6 +82,90 @@ items:
             values:
             - k-kube-lab-08
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: elasticsearch-master
+    storageClassName: elasticsearch
+    volumeMode: Filesystem
+- apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    annotations:
+      pv.kubernetes.io/bound-by-controller: "yes"
+    finalizers:
+    - kubernetes.io/pv-protection
+    labels:
+      pvname: pv-elasticsearch-data-0
+    name: pv-elasticsearch-data-0
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 30Gi
+    local:
+      path: /opt/data/elasticsearch/data/0
+    nodeAffinity:
+      required:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - k-kube-lab-11
+    persistentVolumeReclaimPolicy: Retain
+    storageClassName: elasticsearch
+    volumeMode: Filesystem
+- apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    annotations:
+      pv.kubernetes.io/bound-by-controller: "yes"
+    finalizers:
+    - kubernetes.io/pv-protection
+    labels:
+      pvname: pv-elasticsearch-data-1
+    name: pv-elasticsearch-data-1
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 30Gi
+    local:
+      path: /opt/data/elasticsearch/data/1
+    nodeAffinity:
+      required:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - k-kube-lab-11
+    persistentVolumeReclaimPolicy: Retain
+    storageClassName: elasticsearch
+    volumeMode: Filesystem
+- apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    annotations:
+      pv.kubernetes.io/bound-by-controller: "yes"
+    finalizers:
+    - kubernetes.io/pv-protection
+    labels:
+      pvname: pv-elasticsearch-data-2
+    name: pv-elasticsearch-data-2
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 30Gi
+    local:
+      path: /opt/data/elasticsearch/data/2
+    nodeAffinity:
+      required:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - k-kube-lab-11
+    persistentVolumeReclaimPolicy: Retain
+    storageClassName: elasticsearch
     volumeMode: Filesystem
 kind: List
