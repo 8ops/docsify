@@ -26,7 +26,7 @@ items:
             values:
             - k-kube-lab-08
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: elasticsearch
+    storageClassName: elastic-cluster-master
     volumeMode: Filesystem
 - apiVersion: v1
   kind: PersistentVolume
@@ -54,7 +54,7 @@ items:
             values:
             - k-kube-lab-08
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: elasticsearch
+    storageClassName: elastic-cluster-master
     volumeMode: Filesystem
 - apiVersion: v1
   kind: PersistentVolume
@@ -82,7 +82,7 @@ items:
             values:
             - k-kube-lab-08
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: elasticsearch
+    storageClassName: elastic-cluster-master
     volumeMode: Filesystem
 - apiVersion: v1
   kind: PersistentVolume
@@ -110,7 +110,7 @@ items:
             values:
             - k-kube-lab-11
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: elasticsearch
+    storageClassName: elastic-cluster-data
     volumeMode: Filesystem
 - apiVersion: v1
   kind: PersistentVolume
@@ -138,7 +138,7 @@ items:
             values:
             - k-kube-lab-11
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: elasticsearch
+    storageClassName: elastic-cluster-data
     volumeMode: Filesystem
 - apiVersion: v1
   kind: PersistentVolume
@@ -166,6 +166,6 @@ items:
             values:
             - k-kube-lab-11
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: elasticsearch
+    storageClassName: elastic-cluster-data
     volumeMode: Filesystem
 kind: List

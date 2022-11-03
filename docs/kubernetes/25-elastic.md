@@ -183,8 +183,10 @@ openssl pkcs12 -nodes -passin pass:'' \
 
 ```bash
 # 添加证书
-kubectl -n elastic-system create secret generic elastic-certificates --from-file=elastic-certificates.p12
-kubectl -n elastic-system create secret generic elastic-certificate-pem --from-file=elastic-certificate.pem
+kubectl -n elastic-system create secret generic elastic-certificates \
+  --from-file=lib/elastic-certificates.p12
+kubectl -n elastic-system create secret generic elastic-certificate-pem \
+  --from-file=lib/elastic-certificate.pem
 
 # 设置集群用户名密码，用户名不建议修改
 kubectl -n elastic-system create secret generic elastic-credentials \
@@ -193,6 +195,10 @@ kubectl -n elastic-system create secret generic elastic-credentials \
 kubectl -n elastic-system create secret generic kibana \
   --from-literal=encryptionkey=zGFTX0cy3ubYVmzuunACDZuRj0PALqOM
 ```
+
+尝试启动xpack资料
+
+- https://github.com/elastic/helm-charts/tree/7.17/kibana/examples/security
 
 
 
@@ -208,29 +214,35 @@ helm search repo elastic
 helm show values elastic/elasticsearch --version 7.17.3 > elasticsearch.yaml-7.17.3
 
 # Example
-#   https://books.8ops.top/attachment/elastic/01-persistent-elasticsearch.yaml
-#   https://books.8ops.top/attachment/elastic/helm/elasticsearch-master.yaml-7.17.3
-#   https://books.8ops.top/attachment/elastic/helm/elasticsearch-data.yaml-7.17.3
-#   https://books.8ops.top/attachment/elastic/helm/elasticsearch-client.yaml-7.17.3
+#   https://books.8ops.top/attachment/elastic/01-persistent-elastic-cluster.yaml
+#   https://books.8ops.top/attachment/elastic/helm/elastic-cluster-master.yaml-7.17.3
+#   https://books.8ops.top/attachment/elastic/helm/elastic-cluster-data.yaml-7.17.3
+#   https://books.8ops.top/attachment/elastic/helm/elastic-cluster-client.yaml-7.17.3
 #
 
 # master 节点
-helm upgrade --install elasticsearch-master elastic/elasticsearch \
-    -f elasticsearch-master.yaml-7.17.3 \
+helm upgrade --install elastic-cluster-master elastic/elasticsearch \
+    -f elastic-cluster-master.yaml-7.17.3 \
     -n elastic-system\
     --version 7.17.3
 
 # data 节点
-helm upgrade --install elasticsearch-data elastic/elasticsearch \
-    -f elasticsearch-data.yaml-7.17.3 \
+helm upgrade --install elastic-cluster-data elastic/elasticsearch \
+    -f elastic-cluster-data.yaml-7.17.3 \
     -n elastic-system\
     --version 7.17.3
 
 # client 节点
-helm upgrade --install elasticsearch-client elastic/elasticsearch \
-    -f elasticsearch-client.yaml-7.17.3 \
+helm upgrade --install elastic-cluster-client elastic/elasticsearch \
+    -f elastic-cluster-client.yaml-7.17.3 \
     -n elastic-system\
     --version 7.17.3
+
+#### 
+# 尝试关闭 xpack.security.enabled 
+# 
+kubectl -n elastic-system delete pvc elastic-cluster-data-elastic-cluster-data-0 elastic-cluster-data-elastic-cluster-data-1 elastic-cluster-data-elastic-cluster-data-2 elastic-cluster-master-elastic-cluster-master-0 elastic-cluster-master-elastic-cluster-master-1 elastic-cluster-master-elastic-cluster-master-2
+
 
 ```
 
@@ -248,7 +260,7 @@ helm show values elastic/kibana --version 7.17.3 > kibana.yaml-7.17.3
 
 helm upgrade --install kibana elastic/kibana \
     -f kibana.yaml-7.17.3 \
-    -n elastic-system\
+    -n elastic-system \
     --version 7.17.3
 ```
 
