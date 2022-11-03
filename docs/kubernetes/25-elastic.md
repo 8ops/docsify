@@ -4,6 +4,8 @@
 
 ## 一、ECK-Operater
 
+Elastic Cloud on Kubernetes
+
 基于kubernetes部署
 
 [Reference](https://www.elastic.co/cn/downloads/elastic-cloud-kubernetes)
@@ -24,12 +26,13 @@
 # version: 7.17.3
 
 # Example
-#   https://books.8ops.top/attachment/elastic/elastic_eck_crds.yaml-2.4.0
-#   https://books.8ops.top/attachment/elastic/elastic_eck_operator.yaml-2.4.0
-#   https://books.8ops.top/attachment/elastic/01-persistent-elastic-pv.yaml
-#   https://books.8ops.top/attachment/elastic/01-persistent-elastic-pvc.yaml
-#   https://books.8ops.top/attachment/elastic/10-elastic.yaml-7.17.3
-# 
+#   https://books.8ops.top/attachment/elastic/01-persistent-elastic-eck-pv.yaml
+#   https://books.8ops.top/attachment/elastic/01-persistent-elastic-eck-pvc.yaml
+#   https://books.8ops.top/attachment/elastic/10-eck_crds.yaml-2.4.0
+#   https://books.8ops.top/attachment/elastic/10-eck_operator.yaml-2.4.0
+#   https://books.8ops.top/attachment/elastic/11-eck-elastic.yaml-7.17.3
+#   https://books.8ops.top/attachment/elastic/12-eck-kibana.yaml-7.17.3
+#
 
 # 1，安装 ECK 对应的 Operator 资源对象
 kubectl apply -f elastic_eck_crds.yaml-2.4.0
@@ -155,7 +158,7 @@ networks:
 
 [Reference](https://developer.aliyun.com/article/861272)
 
-### 3.1 Prepare
+### 3.1 安全准备
 
 ElasticSearch 7.x 版本默认安装了 X-Pack 插件，并且部分功能免费，这里我们配置安全证书文件。
 
@@ -202,7 +205,7 @@ kubectl -n elastic-system create secret generic kibana \
 
 
 
-### 3.2 Install
+### 3.2 安装
 
 > elasticsearch
 
@@ -264,3 +267,34 @@ helm upgrade --install kibana elastic/kibana \
     --version 7.17.3
 ```
 
+
+
+> filebeat
+
+```bash
+
+# Example: demo.out --> filebeat --> elasticsearch --> kibana
+#   https://books.8ops.top/attachment/elastic/50-filebeat-demo.yaml
+# 
+
+# ---
+helm search repo filebeat
+helm show values elastic/filebeat --version 7.17.3 > filebeat.yaml-7.17.3.default
+
+```
+
+
+
+
+
+## 四、常用实践
+
+### 4.1 容器环境收集日志方案
+
+| **方案**                                                     | **优点**                                                     | **缺点**                                                   |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------- |
+| 每个app的镜像中都集成日志收集组件<br />或由app镜像直接将信息推送到采集端 | 部署方便，kubernetes的yaml文件无须特别配置，可以为每个app自定义日志收集配置 | 强耦合，不方便应用和日志收集组件升级和维护且会导致镜像过大 |
+| 单独创建一个日志收集组件跟app的容器一起运行在同一个pod中     | 低耦合，扩展性强，方便维护和升级                             | 需要对kubernetes的yaml文件进行单独配置，略显繁琐           |
+| 将所有的Pod的日志都挂载到宿主机上，每台主机上单独起一个日志收集Pod | 完全解耦，性能最高，管理起来最方便                           | 需要统一日志收集规则，目录和输出方式                       |
+
+![收集区别](../images/elastic/collect.png)
