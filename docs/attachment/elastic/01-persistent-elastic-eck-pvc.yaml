@@ -10,16 +10,16 @@ items:
       elasticsearch.k8s.elastic.co/cluster-name: quickstart
       elasticsearch.k8s.elastic.co/statefulset-name: quickstart-es-default
     name: elasticsearch-data-quickstart-es-default-0
-    namespace: default
+    namespace: elastic-system
   spec:
     accessModes:
     - ReadWriteOnce
     resources:
       requests:
         storage: 10Gi
-    storageClassName: elastic
+    storageClassName: elastic-eck
     volumeMode: Filesystem
-    volumeName: pv-elastic-0
+    volumeName: pv-elastic-eck-0
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -30,16 +30,16 @@ items:
       elasticsearch.k8s.elastic.co/cluster-name: quickstart
       elasticsearch.k8s.elastic.co/statefulset-name: quickstart-es-default
     name: elasticsearch-data-quickstart-es-default-1
-    namespace: default
+    namespace: elastic-system
   spec:
     accessModes:
     - ReadWriteOnce
     resources:
       requests:
         storage: 10Gi
-    storageClassName: elastic
+    storageClassName: elastic-eck
     volumeMode: Filesystem
-    volumeName: pv-elastic-1
+    volumeName: pv-elastic-eck-1
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -50,15 +50,15 @@ items:
       elasticsearch.k8s.elastic.co/cluster-name: quickstart
       elasticsearch.k8s.elastic.co/statefulset-name: quickstart-es-default
     name: elasticsearch-data-quickstart-es-default-2
-    namespace: default
+    namespace: elastic-system
   spec:
     accessModes:
     - ReadWriteOnce
     resources:
       requests:
         storage: 10Gi
-    storageClassName: elastic
+    storageClassName: elastic-eck
     volumeMode: Filesystem
-    volumeName: pv-elastic-2
+    volumeName: pv-elastic-eck-2
 kind: List
 

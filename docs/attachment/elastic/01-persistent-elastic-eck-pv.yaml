@@ -8,8 +8,8 @@ items:
     finalizers:
     - kubernetes.io/pv-protection
     labels:
-      pvname: pv-elastic-0
-    name: pv-elastic-0
+      pvname: pv-elastic-eck-0
+    name: pv-elastic-eck-0
   spec:
     accessModes:
     - ReadWriteOnce
@@ -26,7 +26,7 @@ items:
             values:
             - k-kube-lab-08
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: elastic
+    storageClassName: elastic-eck
     volumeMode: Filesystem
 - apiVersion: v1
   kind: PersistentVolume
@@ -36,8 +36,8 @@ items:
     finalizers:
     - kubernetes.io/pv-protection
     labels:
-      pvname: pv-elastic-1
-    name: pv-elastic-1
+      pvname: pv-elastic-eck-1
+    name: pv-elastic-eck-1
   spec:
     accessModes:
     - ReadWriteOnce
@@ -54,7 +54,7 @@ items:
             values:
             - k-kube-lab-08
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: elastic
+    storageClassName: elastic-eck
     volumeMode: Filesystem
 - apiVersion: v1
   kind: PersistentVolume
@@ -64,8 +64,8 @@ items:
     finalizers:
     - kubernetes.io/pv-protection
     labels:
-      pvname: pv-elastic-2
-    name: pv-elastic-2
+      pvname: pv-elastic-eck-2
+    name: pv-elastic-eck-2
   spec:
     accessModes:
     - ReadWriteOnce
@@ -82,6 +82,6 @@ items:
             values:
             - k-kube-lab-08
     persistentVolumeReclaimPolicy: Retain
-    storageClassName: elastic
+    storageClassName: elastic-eck
     volumeMode: Filesystem
 kind: List

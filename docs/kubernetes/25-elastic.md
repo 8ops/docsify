@@ -242,14 +242,17 @@ helm upgrade --install elastic-cluster-client elastic/elasticsearch \
     --version 7.17.3
 
 #### 
-# 尝试关闭 xpack.security.enabled 
+# 尝试禁用 xpack.security.enabled 
 # 
 kubectl -n elastic-system delete pvc elastic-cluster-data-elastic-cluster-data-0 elastic-cluster-data-elastic-cluster-data-1 elastic-cluster-data-elastic-cluster-data-2 elastic-cluster-master-elastic-cluster-master-0 elastic-cluster-master-elastic-cluster-master-1 elastic-cluster-master-elastic-cluster-master-2
 
-
 ```
 
+![elastic 首页](../images/elastic/elastic.png)
 
+![elastic _cat](../images/elastic/elastic-1.png)
+
+![elastic 索引](../images/elastic/elastic-2.png)
 
 > kibana
 
@@ -267,23 +270,9 @@ helm upgrade --install kibana elastic/kibana \
     --version 7.17.3
 ```
 
+![kibana 首页](../images/elastic/kibana.png)
 
-
-> filebeat
-
-[Reference](https://www.elastic.co/guide/en/beats/filebeat/current/configuring-howto-filebeat.html)
-
-```bash
-
-# Example: demo.out --> filebeat --> elasticsearch --> kibana
-#   https://books.8ops.top/attachment/elastic/50-filebeat-demo.yaml
-# 
-
-# ---
-helm search repo filebeat
-helm show values elastic/filebeat --version 7.17.3 > filebeat.yaml-7.17.3.default
-
-```
+![kibana discover](../images/elastic/kibana-1.png)
 
 
 
@@ -307,6 +296,9 @@ helm upgrade --install kafka bitnami/kafka \
     -n elastic-system \
     --version 19.0.1
 
+#
+# 若重置需要删除原数据，或者不挂载磁盘
+# 否则会因为cluster_id冲突
 # --------------------------------------------- #
 # usage
 kubectl run kafka-client --restart='Never' \
@@ -348,6 +340,26 @@ helm upgrade --install logstash elastic/logstash \
     -n elastic-system \
     --version 7.17.3
 
+```
+
+
+
+> filebeat
+
+[Reference](https://www.elastic.co/guide/en/beats/filebeat/current/configuring-howto-filebeat.html)
+
+```bash
+# Example: 
+#   - demo.json/demo.out --> filebeat --> elasticsearch --> kibana
+#   https://books.8ops.top/attachment/elastic/50-filebeat-demo.yaml
+# 
+#   - demo.json/demo.out --> filebeat --> kafka --> elasticsearch --> logstash --> kibana
+#   https://books.8ops.top/attachment/elastic/50-filebeat-demo-kafka.yaml
+# 
+
+# ---
+helm search repo filebeat
+helm show values elastic/filebeat --version 7.17.3 > filebeat.yaml-7.17.3.default
 
 ```
 

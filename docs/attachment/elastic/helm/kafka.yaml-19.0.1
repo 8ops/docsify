@@ -8,14 +8,11 @@ replicaCount: 3
 
 resources:
   requests:
-    cpu: "500m"
+    cpu: "1"
     memory: "2Gi"
   limits:
-    cpu: "500m"
+    cpu: "1"
     memory: "2Gi"
-
-service:
-  type: NodePort
 
 persistence:
   enabled: true
@@ -33,27 +30,35 @@ metrics:
 
     resources:
       requests:
-        cpu: "56m"
-        memory: "128Mi"
+        cpu: "50m"
+        memory: "64Mi"
       limits:
-        cpu: "56m"
-        memory: "128Mi"
+        cpu: "50m"
+        memory: "64Mi"
 
-  jmx:
-    enabled: true
+    initContainers: 
+    - name: init
+      image: hub.8ops.top/third/busybox:1.28.0
+      args:
+      - /bin/sh
+      - -c 
+      - sleep 30
 
-    image:
-      registry: hub.8ops.top
-      repository: bitnami/jmx-exporter
-      tag: 0.17.2-debian-11-r6
-
-    resources:
-      requests:
-        cpu: "56m"
-        memory: "128Mi"
-      limits:
-        cpu: "56m"
-        memory: "128Mi"
+#   jmx:
+#     enabled: true
+#  
+#     image:
+#       registry: hub.8ops.top
+#       repository: bitnami/jmx-exporter
+#       tag: 0.17.2-debian-11-r6
+#  
+#     resources:
+#       requests:
+#         cpu: "50m"
+#         memory: "64Mi"
+#       limits:
+#         cpu: "50m"
+#         memory: "64Mi"
 
 zookeeper:
   enabled: true
@@ -74,10 +79,9 @@ zookeeper:
 
   resources:
     requests:
-      cpu: "128m"
-      memory: "256Mi"
+      cpu: "200m"
+      memory: "512Mi"
     limits:
-      cpu: "128m"
-      memory: "256Mi"
-
+      cpu: "200m"
+      memory: "512Mi"
 

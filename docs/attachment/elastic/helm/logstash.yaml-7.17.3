@@ -1,5 +1,5 @@
 
-replicas: 1
+replicas: 2
 
 logstashPipeline: 
   logstash.conf: |
@@ -17,8 +17,6 @@ logstashPipeline:
       }
     }
 
-#        index => "logstash-demo-%{+YYYY.MM.dd}"
-#
 # logstashPipeline: 
 #   logstash.conf: |
 #     input {
@@ -55,21 +53,11 @@ logstashJavaOpts: "-Xmx1g -Xms1g"
 
 resources:
   requests:
-    cpu: "100m"
-    memory: "1536Mi"
+    cpu: "500m"
+    memory: "2Gi"
   limits:
-    cpu: "1000m"
-    memory: "1536Mi"
-
-volumeClaimTemplate:
-  accessModes: ["ReadWriteOnce"]
-  resources:
-    requests:
-      storage: 1Gi
-
-persistence:
-  enabled: false
+    cpu: "500m"
+    memory: "2Gi"
 
 antiAffinity: "soft"
-
 
