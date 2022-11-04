@@ -3,7 +3,7 @@ items:
 - apiVersion: v1
   kind: Pod
   metadata:
-    name: filebeat-demo
+    name: filebeat-demo-kafka
     namespace: elastic-system
   spec:
     containers:
@@ -39,7 +39,7 @@ items:
       - mountPath: /var/log
         name: varlog
       - mountPath: /etc/filebeat/filebeat.yml
-        name: filebeat-demo
+        name: filebeat-demo-kafka
         readOnly: true
         subPath: filebeat.yml
     volumes:
@@ -47,8 +47,8 @@ items:
       name: varlog
     - configMap:
         defaultMode: 420
-        name: filebeat-demo
-      name: filebeat-demo
+        name: filebeat-demo-kafka
+      name: filebeat-demo-kafka
 - apiVersion: v1
   data:
     filebeat.yml: |-
@@ -75,13 +75,18 @@ items:
         ignore_older: 1h
         close_inactive: 30m
         tail_files: true
-      output.elasticsearch:
-        hosts: ["elastic-cluster-client:9200"]
-        index: "filebeat-demo-%{+yyyy.MM.dd}"
-      setup.template.name: "filebeat-demo"
-      setup.template.pattern: "filebeat-demo-*"
+      output.kafka:
+        hosts: ["kafka:9092"]
+        topic: '%{[fields][topic]}'
+        partition.round_robin:
+          reachable_only: false
+        required_acks: 1
+        compression: gzip
+        max_message_bytes: 10000000
+      setup.template.name: "filebeat-demo-kafka"
+      setup.template.pattern: "filebeat-demo-kafka-*"
   kind: ConfigMap
   metadata:
-    name: filebeat-demo
+    name: filebeat-demo-kafka
     namespace: elastic-system
 kind: List

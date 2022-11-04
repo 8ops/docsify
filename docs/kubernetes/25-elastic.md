@@ -211,7 +211,7 @@ kubectl -n elastic-system create secret generic kibana \
 
 ```bash
 helm repo add elastic https://helm.elastic.co
-helm repo update
+helm repo update elastic
 
 helm search repo elastic
 helm show values elastic/elasticsearch --version 7.17.3 > elasticsearch.yaml-7.17.3
@@ -271,6 +271,8 @@ helm upgrade --install kibana elastic/kibana \
 
 > filebeat
 
+[Reference](https://www.elastic.co/guide/en/beats/filebeat/current/configuring-howto-filebeat.html)
+
 ```bash
 
 # Example: demo.out --> filebeat --> elasticsearch --> kibana
@@ -280,6 +282,72 @@ helm upgrade --install kibana elastic/kibana \
 # ---
 helm search repo filebeat
 helm show values elastic/filebeat --version 7.17.3 > filebeat.yaml-7.17.3.default
+
+```
+
+
+
+> kafka
+
+[Reference](https://kafka.apache.org/)
+
+```bash
+# Example
+#   https://github.com/bitnami/containers/tree/main/bitnami/kafka
+#   
+#   https://books.8ops.top/attachment/elastic/helm/kafka.yaml-19.0.1
+#   
+
+helm repo update bitnami
+helm search repo kafka
+helm show values bitnami/kafka --version 19.0.1 > kafka.yaml-19.0.1.default
+
+helm upgrade --install kafka bitnami/kafka \
+    -f kafka.yaml-19.0.1 \
+    -n elastic-system \
+    --version 19.0.1
+
+# --------------------------------------------- #
+# usage
+kubectl run kafka-client --restart='Never' \
+  --image hub.8ops.top/bitnami/kafka:3.3.1-debian-11-r1 \
+  --namespace elastic-system --command -- sleep infinity
+
+kubectl exec --tty -i kafka-client --namespace elastic-system -- bash
+
+## PRODUCER:
+kafka-console-producer.sh \
+    --broker-list kafka-0.kafka-headless.elastic-system.svc.cluster.local:9092 \
+    --topic test
+
+## CONSUMER:
+kafka-console-consumer.sh \
+    --bootstrap-server kafka.elastic-system.svc.cluster.local:9092 \
+    --topic test \
+    --from-beginning
+```
+
+
+
+![kafka](../images/elastic/kafka.png)
+
+
+
+> logstash
+
+```bash
+# Example
+#   https://books.8ops.top/attachment/elastic/helm/logstash.yaml-7.17.3
+#   
+
+helm search repo logstash
+helm show values elastic/logstash --version 7.17.3 > logstash.yaml-7.17.3-default
+
+helm upgrade --install logstash elastic/logstash \
+    -f logstash.yaml-7.17.3 \
+    -n elastic-system \
+    --version 7.17.3
+
 
 ```
 

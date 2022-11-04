@@ -183,8 +183,6 @@ helm -n kube-server uninstall blackbox-exporter
 
 [Reference](kubernetes/23-grafana.md)
 
-[官方模板](https://grafana.com/grafana/dashboards/)
-
 ```bash
 # templ
 
@@ -206,24 +204,6 @@ MySQL Overview
 
 Redis Dashboard for Prometheus Redis Exporter
 ```
-
-效果集锦
-
-![kube-state-metrics](../images/grafana/kube-state-metrics.png)
-
-![Kubernetes cluster monitoring](../images/grafana/kubernetes-cluster-monitoring.png)
-
-![Kubernetes / Node Exporter Full](../images/grafana/kubernetes-node-exporter-full.png)
-
-![Kubernetes Nodes](../images/grafana/kubernetes-nodes.png)
-
-![Kubernetes Cluster](../images/grafana/kuernetes-cluster.png)
-
-![MySQL Overview](../images/grafana/middleware-mysql.png)
-
-![NGINX Ingress controller](../images/grafana/middleware-nginx.png)
-
-![Redis Dashboard for Prometheus Redis Exporter](../images/grafana/middleware-redis.png)
 
 
 
