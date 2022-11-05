@@ -15,7 +15,7 @@ items:
       image: hub.8ops.top/third/busybox:1.28.0
       resources:
         limits:
-          cpu: 128m
+          cpu: 200m
           memory: 512Mi
         requests:
           cpu: 30m
@@ -30,7 +30,7 @@ items:
       image: hub.8ops.top/third/filebeat:7.17.3
       resources:
         limits:
-          cpu: 128m
+          cpu: 200m
           memory: 512Mi
         requests:
           cpu: 30m
