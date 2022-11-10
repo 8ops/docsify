@@ -5,15 +5,15 @@ logstashPipeline:
   logstash.conf: |
     input {
       kafka {
-        bootstrap_servers => "kafka:9092"
-        topics => ["json", "out", "test"]
+        bootstrap_servers => "kafka-headless:9092"
+        topics => ["demo-json", "demo-out", "demo-test"]
         codec => "json"
       }
     }
     output { 
       elasticsearch {
-        hosts => ["elastic-cluster-client:9200"]
-        index => "%{[fields][type]}-%{+YYYY.MM.dd}"
+        hosts => ["elastic-cluster-client-headless:9200"]
+        index => "%{[fields][topic]}-%{+YYYY.MM.dd}"
       }
     }
 
@@ -31,7 +31,7 @@ logstashPipeline:
 #   logstash.conf: |
 #     input {
 #       kafka {
-#         bootstrap_servers => "kafka:9092"
+#         bootstrap_servers => "kafka-headless:9092"
 #         auto_offset_reset => "latest"
 #         group_id => logstash_4
 #         consumer_threads => 2
@@ -41,7 +41,7 @@ logstashPipeline:
 #     }
 #     output { 
 #       elasticsearch {
-#         hosts => ["elastic-cluster-client:9200"]
+#         hosts => ["elastic-cluster-client-headless:9200"]
 #         index => "%{[fields][type]}-%{+YYYY.MM.dd}"
 #       }
 #     }

@@ -58,8 +58,8 @@ items:
         paths:
           - /var/log/*.json
         fields:
-          topic: json
-          type: json
+          topic: demo-json
+          type: demo-json
         json.keys_under_root: true
         json.add_error_key: true
         ignore_older: 1h
@@ -70,8 +70,8 @@ items:
         paths:
           - /var/log/*.out
         fields:
-          topic: out
-          type: out
+          topic: demo-out
+          type: demo-out
         ignore_older: 1h
         close_inactive: 30m
         tail_files: true
@@ -83,8 +83,6 @@ items:
         required_acks: 1
         compression: gzip
         max_message_bytes: 10000000
-      setup.template.name: "filebeat-demo-kafka"
-      setup.template.pattern: "filebeat-demo-kafka-*"
   kind: ConfigMap
   metadata:
     name: filebeat-demo-kafka

@@ -317,6 +317,31 @@ kafka-console-consumer.sh \
     --bootstrap-server kafka.elastic-system.svc.cluster.local:9092 \
     --topic test \
     --from-beginning
+
+# 查看消费情况
+kafka-consumer-groups.sh \
+    --bootstrap-server kafka-headless.elastic-system.svc.cluster.local:9092 \
+    --describe 
+    
+# 查看topic
+./kafka-topics.sh \
+    --zookeeper kafka-zookeeper-headless.elastic-system.svc.cluster.local:2181 \
+    --list
+
+# 查看同步单个topic
+./bin/kafka-topics.sh \
+    --zookeeper kafka-zookeeper-headless.elastic-system.svc.cluster.local:2181 \
+    --topic demo-json --describe
+
+# 消费数据
+ ./kafka-console-consumer.sh \
+    --bootstrap-server kafka-headless.elastic-system.svc.cluster.local:9092 \
+    --topic demo-josn
+ 
+ # 修改副本数/ 存储过期时间
+ ./kafka-topics.sh \
+    --zookeeper kafka-zookeeper-headless.elastic-system.svc.cluster.local:2181 \
+    --alert --topic demo-json --partitions 6
 ```
 
 
