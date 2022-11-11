@@ -6,7 +6,7 @@
 
 
 
-## 创建新用户并授权
+## 创建用户并授权
 
 ```bash
 # 新用户名称
@@ -83,6 +83,51 @@ kubectl create clusterrolebinding cluster-reader-for-${USER}-binding \
 kubectl --kubeconfig ${USER}.kubeconfig get pods
 kubectl --kubeconfig ${USER}.kubeconfig get nodes
 kubectl --kubeconfig ${USER}.kubeconfig get all
+
+```
+
+## 示例
+
+```bash
+# 适用于kubernetes v1.24.0 之后的版本
+USER=guest
+kubectl delete clusterrole cluster-reader-for-${USER}
+kubectl create clusterrole cluster-reader-for-${USER} \
+    --verb=get,list,watch \
+    --resource=namespaces,nodes,pods,pods/log,deployments,replicasets,daemonsets,services,ingresses,endpoints,events,configmaps,statefulsets,secrets,jobs,cronjobs,replicationcontrollers,horizontalpodautoscalers \
+    --dry-run=client -o yaml | \
+    kubectl apply -f -
+kubectl edit clusterrole cluster-reader-for-${USER}    
+
+# add
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create
+  
+kubectl -n kube-server delete serviceaccount dashboard-${USER}
+kubectl -n kube-server create serviceaccount dashboard-${USER}
+
+kubectl delete clusterrolebinding dashboard-${USER} 
+kubectl create clusterrolebinding dashboard-${USER} \
+  --clusterrole=cluster-reader-for-${USER} \
+  --serviceaccount=kube-server:dashboard-${USER}
+
+kubectl -n kube-server delete dashboard-${USER}-secret
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dashboard-${USER}-secret
+  namespace: kube-server
+  annotations:
+    kubernetes.io/service-account.name: dashboard-${USER}
+type: kubernetes.io/service-account-token
+EOF
+
+kubectl -n kube-server get secret dashboard-august-secret -o jsonpath={.data.token} | base64 --decode > dashboard-august.token
 
 ```
 

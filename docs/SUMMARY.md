@@ -27,7 +27,7 @@
   - [实战 | 通过Helm搭建Grafana](kubernetes/23-grafana.md)
   - [实战 | 通过Helm搭建Redis](kubernetes/24-redis.md)
   - [实战 | 快速搭建Elastic](kubernetes/25-elastic.md)
-  - [实战 | KubeConfig的使用](kubernetes/30-kubeconfig.md)
+  - [实战 | KubeConfig的使用](kubernetes/31-kubeconfig.md)
 - [运维开发](dev/)
   - [golang](dev/01-golang.md)
 - [数据处理](data/)

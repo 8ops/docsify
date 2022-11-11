@@ -237,11 +237,16 @@ kubectl create clusterrolebinding dashboard-guest \
   --clusterrole=view \
   --serviceaccount=kube-server:dashboard-guest
 
-# output token
+# output token #1
 kubectl describe secrets \
   -n kube-server $(kubectl -n kube-server get secret | awk '/dashboard-guest/{print $1}')
 
-#----
+# output token #2
+kubectl -n kube-server get secret \
+  `kubectl -n kube-server get sa dashboard-guest -o jsonpath={.secrets[0].name}` \
+  -o jsonpath={.data.token} | base64 --decode; echo
+  
+#-----------------------------
 # create sa for ops
 kubectl create serviceaccount dashboard-ops -n kube-server
 
@@ -264,7 +269,7 @@ EOF
 
 # output token
 kubectl describe secrets \
-  -n kube-server $(kubectl -n kube-server get secret | awk '/dashboard-ops/{print $1}')
+  -n kube-server $(kubectl -n kube-server get secret | awk '/dashboard-guest/{print $1}')
 ```
 
 > vim kubernetes-dashboard.yaml
