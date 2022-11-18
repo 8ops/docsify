@@ -6,27 +6,24 @@
 
 ```bash
 helm repo add argo https://argoproj.github.io/argo-helm
+helm repo update argo
 helm search repo argo-cd
-helm show values argo/argo-cd --version 5.4.2 > argocd-configs.yaml-5.4.2-default
+helm show values argo/argo-cd --version 5.13.8 > argocd-configs.yaml-5.13.8-default
 
 # Example
+#   https://books.8ops.top/attachment/argo/helm/argocd-configs.yaml-5.13.8
 #   https://books.8ops.top/attachment/argo/helm/argocd-configs.yaml-5.4.2
 # 
 
-helm install argo-cd argo/argo-cd \
-    -n kube-server \
-    -f argocd-configs.yaml-5.4.2 \
-    --version 5.4.2
-
 helm upgrade --install argo-cd argo/argo-cd \
     -n kube-server \
-    -f argocd-configs.yaml-5.4.2 \
-    --version 5.4.2
+    -f argocd-configs.yaml-5.13.8 \
+    --version 5.13.8
 
 helm -n kube-server uninstall argo-cd
 
 kubectl -n kube-server get secret argocd-initial-admin-secret \
-    -o jsonpath="{.data.password}" | base64 -D
+    -o jsonpath="{.data.password}" | base64 -D; echo 
 
 ```
 
@@ -168,7 +165,28 @@ data:
   accounts.jesse.enabled: "true"
 
 # setting account jesse's pass
+# --current-password is admin's pass
 ~ $ argocd account update-password  --account jesse --current-password jesse2020 --new-password jesse2022 --grpc-web
+
+# policy
+# p, linyanzhi, *, *, lixian/*, allow   -----p是policy，用户名，要使用的资源，要使用的方法，项目，allow或deny
+# policy.default: role:readonly     -----默认策略
+#
+  policy.csv: |
+    p, jesse, applications, *, */*, allow
+    p, jesse, clusters, *, *, allow
+    p, jesse, certificates, get, *, allow
+    p, jesse, repositories, get, *, allow
+    p, jesse, projects, get, *, allow
+    p, jesse, accounts, get, *, allow
+    p, jesse, gpgkeys, get, *, allow
+    p, jesse, logs, get, *, allow
+    p, jesse, exec, create, */*, allow
+
+
+argocd login argo-cd.8ops.top --grpc-web
+argocd account list --grpc-web
+argocd account update-password --account jesse --current-password jesse2022 --new-password jesse2022 --grpc-web
 ```
 
 

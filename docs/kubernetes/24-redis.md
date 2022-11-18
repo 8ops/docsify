@@ -16,17 +16,11 @@ helm show values bitnami/redis --version 16.8.7 > redis-sentinel.yaml-16.8.7-def
 #   https://books.8ops.top/attachment/redis/helm/redis-sentinel.yaml-16.8.7
 #
 
-helm install redis-sentinel bitnami/redis \
-    -f redis-sentinel.yaml-16.8.7 \
-    -n kube-server \
-    --create-namespace \
-    --version 16.8.7 --debug
-
 helm upgrade --install redis-sentinel bitnami/redis \
     -f redis-sentinel.yaml-16.8.7 \
     -n kube-server \
     --create-namespace \
-    --version 16.8.7 --debug
+    --version 16.8.7
 
 helm -n kube-server uninstall redis-sentinel 
 
@@ -74,5 +68,14 @@ kubectl -n kube-server scale sts redis-cluster --replicas=0
 redis-cli --cluster add-node 127.0.0.1:7000 172.31.6.35:7000
 redis-cli --cluster reshard 127.0.0.1:7000
 redis-cli --cluster add-node 127.0.0.1:7001 172.31.6.35:7000 --cluster-slave --cluster-master-id [MASTER_NODE_ID]
+```
+
+
+
+## 三、Single
+
+
+
+```bash
 ```
 
