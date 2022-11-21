@@ -16,9 +16,6 @@ configs:
     accounts.jesse: login
     accounts.jesse.enabled: "true"
 
-    accounts.august: login
-    accounts.august.enabled: "true"
-
   params:
     controller.status.processors: 20
     controller.operation.processors: 10
@@ -121,15 +118,6 @@ server:
       - secretName: tls-8ops.top
         hosts:
           - argo-cd.8ops.top
-  ingressGrpc:
-    enabled: true
-    ingressClassName: external
-    hosts:
-      - argo-cd-grpc.8ops.top
-    tls:
-      - secretName: tls-8ops.top
-        hosts:
-          - argo-cd-grpc.8ops.top
 
 repoServer:
   resources:

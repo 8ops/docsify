@@ -269,8 +269,14 @@ EOF
 
 # output token
 kubectl describe secrets \
-  -n kube-server $(kubectl -n kube-server get secret | awk '/dashboard-guest/{print $1}')
+  -n kube-server $(kubectl -n kube-server get secret | awk '/dashboard-ops/{print $1}')
 ```
+
+Reference
+
+- [kubeconfig](kubernetes/31-kubeconfig.md)
+
+
 
 > vim kubernetes-dashboard.yaml
 

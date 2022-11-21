@@ -48,16 +48,16 @@ kubectl config get-contexts
 
 # 登录 argo-cd
 argocd login argo-cd.8ops.top --grpc-web
-argocd context
+argocd context --grpc-web
 
 # 添加 kubernetes cluster
 argocd cluster add kubeconfig-guest-name \
     --kubeconfig ~/.kube/config \
-    --name argocd-cluster-name
+    --name argocd-cluster-name --grpc-web
     
 # 非安全模式 - token认证
-argocd cluster add kubeconfig-guest-name --name argocd-cluster-name
-argocd cluster list
+argocd cluster add kube-context-name --name argocd-context-name --grpc-web
+argocd cluster list --grpc-web
 ```
 
 
@@ -74,7 +74,9 @@ kubectl apply -f kube-apiserver-ingress.yaml
 argocd login argocd.8ops.top
 
 # 第四步，添加cluster
-argocd cluster add kube-external-insecure  --name kube-external-insecure --grpc-web
+argocd cluster add kube-context-name --name argocd-context-name --grpc-web
+# 添加完成后会在对应的 kubernetes cluster 创建 ServiceAccount/argocd-manager
+# kubectl -n kube-system get ServiceAccount/argocd-manager ClusterRole/argocd-manager-role ClusterRoleBinding/argocd-manager-role-binding
 
 # 第五步，查看cluster
 argocd cluster list --grpc-web
@@ -225,7 +227,71 @@ argocd app create kasane --repo https://github.com/argoproj/argocd-example-apps.
 
 
 
+### 2.4 数据存储
+
+默认基于 kubernetes cluster's ETCD 存储
+
+```bash
+# 1，获取资源类型
+$ kubectl api-resources | grep argo
+applications      app,apps         argoproj.io/v1alpha1  true  Application
+applicationsets   appset,appsets   argoproj.io/v1alpha1  true  ApplicationSet
+appprojects       appproj,appprojs argoproj.io/v1alpha1  true  AppProject
+argocdextensions                   argoproj.io/v1alpha1  true  ArgoCDExtension
+
+# 2，获取资源列表
+$ kubectl -n kube-server get applications
+NAME             SYNC STATUS   HEALTH STATUS
+helm-guestbook   Synced        Healthy
+
+# 3，展开详情
+$ kubectl -n kube-server get applications helm-guestbook -o yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  creationTimestamp: "2022-10-11T05:37:49Z"
+  generation: 19734
+  name: helm-guestbook
+  namespace: kube-server
+  resourceVersion: "18247691"
+  uid: c26e8225-c6cc-4338-a494-525f572cae4a
+spec:
+  destination:
+    namespace: kube-app
+    server: https://kubernetes.default.svc
+  project: argo-example-apps
+  source:
+    helm:
+      parameters:
+      - name: replicaCount
+        value: "2"
+    path: helm-guestbook
+    repoURL: https://git.8ops.top/gce/argocd-example-apps.git
+    targetRevision: HEAD
+……    
+```
 
 
 
+## 三、常见问题
 
+
+
+### 3.1 加入集群认证问题
+
+1. 白名单
+2. 通过 token 走 insecure
+3. 通过 kubeconfig 当引用外部 ca 文件时注意引入目录
+
+
+
+### 3.2 kubernetes cluster 多套 argocd 
+
+```bash
+# helm values
+crds:
+  install: false
+  keep: true
+```
+
+当同一命名空间多次部署时，不管是否是同一套 argocd 会自动加载之前的配置信息。
