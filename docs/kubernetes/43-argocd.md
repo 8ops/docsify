@@ -5,17 +5,17 @@
 ## 一、安装
 
 ```bash
-helm repo add argo https://argoproj.github.io/argo-helm
-helm repo update argo
+helm repo add argoproj https://argoproj.github.io/argo-helm
+helm repo update argoproj
 helm search repo argo-cd
-helm show values argo/argo-cd --version 5.13.8 > argocd-configs.yaml-5.13.8-default
+helm show values argoproj/argo-cd --version 5.13.8 > argocd-configs.yaml-5.13.8-default
 
 # Example
 #   https://books.8ops.top/attachment/argo/helm/argocd-configs.yaml-5.13.8
 #   https://books.8ops.top/attachment/argo/helm/argocd-configs.yaml-5.4.2
 # 
 
-helm upgrade --install argo-cd argo/argo-cd \
+helm upgrade --install argo-cd argoproj/argo-cd \
     -n kube-server \
     -f argocd-configs.yaml-5.13.8 \
     --version 5.13.8
@@ -82,6 +82,8 @@ argocd cluster add kube-context-name --name argocd-context-name --grpc-web
 argocd cluster list --grpc-web
 ```
 
+
+
 > kube-apiserver-ingress.yaml
 
 ```bash
@@ -112,6 +114,8 @@ spec:
     - kube-apiserver.8ops.top
     secretName: tls-8ops.top
 ```
+
+
 
 > kubeconfig
 
@@ -157,7 +161,7 @@ Reference
 
 ```bash
 # get account admin's pass
-~ $ kubectl -n kube-server get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -D  
+~ $ kubectl -n kube-server get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode
 
 # add account jesse
 ~ $ kubectl -n kube-server edit cm argocd-cm
@@ -185,7 +189,6 @@ data:
     p, jesse, logs, get, *, allow
     p, jesse, exec, create, */*, allow
 
-
 argocd login argo-cd.8ops.top --grpc-web
 argocd account list --grpc-web
 argocd account update-password --account jesse --current-password jesse2022 --new-password jesse2022 --grpc-web
@@ -193,43 +196,9 @@ argocd account update-password --account jesse --current-password jesse2022 --ne
 
 
 
+### 2.3 存储
 
-
-### 2.3 应用
-
-`TODO`
-
-```bash
-# Create a directory app
-argocd app create guestbook \
-    --repo https://git.8ops.top/gce/argocd-example-apps.git \
-    --path guestbook \
-    --dest-namespace default \
-    --dest-server https://kubernetes.default.svc \
-    --directory-recurse \
-    --grpc-web
-
-# Create a Jsonnet app
-argocd app create jsonnet-guestbook --repo https://github.com/argoproj/argocd-example-apps.git --path jsonnet-guestbook --dest-namespace default --dest-server https://kubernetes.default.svc --jsonnet-ext-str replicas=2
-
-# Create a Helm app
-argocd app create helm-guestbook --repo https://git.8ops.top/gce/argocd-example-apps.git --path helm-guestbook --dest-namespace kube-app --dest-server https://kubernetes.default.svc --helm-set replicaCount=2 --project argo-example-apps
-
-# Create a Helm app from a Helm repo
-argocd app create nginx-ingress --repo https://charts.helm.sh/stable --helm-chart nginx-ingress --revision 1.24.3 --dest-namespace default --dest-server https://kubernetes.default.svc
-
-# Create a Kustomize app
-argocd app create kustomize-guestbook --repo https://github.com/argoproj/argocd-example-apps.git --path kustomize-guestbook --dest-namespace default --dest-server https://kubernetes.default.svc --kustomize-image gcr.io/heptio-images/ks-guestbook-demo:0.1
-
-# Create a app using a custom tool:
-argocd app create kasane --repo https://github.com/argoproj/argocd-example-apps.git --path plugins/kasane --dest-namespace default --dest-server https://kubernetes.default.svc --config-management-plugin kasane
-```
-
-
-
-### 2.4 数据存储
-
-默认基于 kubernetes cluster's ETCD 存储
+相关元信息存储在 kubernetes cluster's etcd 中
 
 ```bash
 # 1，获取资源类型
@@ -269,6 +238,159 @@ spec:
     repoURL: https://git.8ops.top/gce/argocd-example-apps.git
     targetRevision: HEAD
 ……    
+```
+
+
+
+### 2.4 笔记
+
+> 综合
+
+```bash
+argocd login argo-cd-ops.lab-ofc.wuxingdev.cn --username=admin --password=xx --grpc-web
+argocd account update-password --account jesse --current-password xx --new-password jesse2022 --grpc-web
+
+argocd ctx list
+
+argocd cluster list
+argocd proj list
+argocd repo list
+argocd app list
+
+# backup
+argocd cluster list -o yaml > 01-argocd-cluster-list.yaml
+argocd proj list    -o yaml > 02-argocd-proj-list.yaml
+argocd repo list    -o yaml > 03-argocd-repo-list.yaml
+argocd app  list    -o yaml > 04-argocd-app-list.yaml
+
+```
+
+
+
+> cluster
+
+```bash
+argocd cluster list
+argocd cluster rm 11-dev-ofc
+
+# cluster add
+argocd cluster add 11-dev-ofc-insecure  --name=11-dev-ofc  --grpc-web
+argocd cluster add 12-test-ali-insecure --name=12-test-ali --grpc-web
+argocd cluster add 13-stage-sh-insecure --name=13-stage-sh --grpc-web
+argocd cluster add 14-prod-sh-insecure  --name=14-prod-sh  --grpc-web
+```
+
+
+
+> proj
+
+```bash
+argocd proj list
+argocd proj delete argo-example-proj
+
+# argocd proj add-destination argo-example-proj in-cluster kube-app --name
+argocd proj create argo-example-proj --description "argo example proj"
+argocd proj add-destination argo-example-proj https://kubernetes.default.svc kube-app 
+
+argocd proj remove-destination argo-example-proj https://kubernetes.default.svc kube-app
+```
+
+
+
+> repo
+
+```bash
+argocd repo list
+argocd repo rm https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git
+
+argocd repo add https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --name argo-example-repo \
+    --project argo-example-proj \
+    --username gatgitlab-read \
+    --password jifenpay \
+    --insecure-skip-server-verification
+```
+
+
+
+> app
+
+```bash
+argocd app list
+argocd app delete guestbook
+argocd app delete helm-guestbook
+    
+# Create a directory app
+argocd app create guestbook \
+    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --path guestbook \
+    --dest-namespace kube-app \
+    --project argo-example-proj \
+    --dest-server https://kubernetes.default.svc \
+    --directory-recurse \
+    --revision master \
+    --label demo=true 
+
+# Create a Helm app
+argocd app create helm-guestbook \
+    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --path helm-guestbook \
+    --dest-namespace kube-app \
+    --project argo-example-proj \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --label demo=true
+
+argocd app set helm-guestbook --values values-production.yaml
+
+# Create a Helm app from a Helm repo
+argocd app create helm-repo-redis \
+    --repo https://charts.bitnami.com/bitnami \
+    --helm-chart redis \
+    --revision 17.3.14 \
+    --dest-namespace kube-app \
+    --dest-server https://kubernetes.default.svc \
+    --label demo=true \
+    --helm-set architecture=standalone \
+    --helm-set auth.password=jesse \
+    --helm-set master.persistence.enabled=false \
+    --helm-set replica.persistence.enabled=false \
+    --helm-set global.imageRegistry=registry.wuxingdev.cn \
+    --helm-set image.tag=7.0.5 \
+    --helm-set metrics.enabled=true \
+    --helm-set metrics.image.tag=1.37.0 
+
+argocd app set helm-repo-redis --helm-set master.count=1
+argocd app set helm-repo-redis --helm-set replica.persistence.enabled=false
+
+# 
+argocd app create helm-repo-redis-cluster \
+    --repo https://charts.bitnami.com/bitnami \
+    --helm-chart redis-cluster \
+    --revision 7.5.0 \
+    --dest-namespace kube-app \
+    --dest-server https://kubernetes.default.svc \
+    --label demo=true \
+    --values-literal-file values.yaml
+
+# 无效
+# argocd app set helm-repo-redis-cluster --values-literal-file values.yaml
+argocd app set helm-repo-redis-cluster --helm-set persistence.enabled=false 
+argocd app set helm-repo-redis-cluster --helm-set redis.useAOFPersistence=false 
+    
+# ---
+helm show values bitnami/redis --version 17.3.14 > Chart.yaml
+
+cat >> Chart.yaml << EOF 
+dependencies:
+  - name: redis
+    version: "17.3.14"
+    repository: "https://charts.bitnami.com/bitnami"
+EOF
+
+helm pull bitnami/redis --version 17.3.14
+
+helm dependency build helm-redis
 ```
 
 
