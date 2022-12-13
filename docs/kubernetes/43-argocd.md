@@ -242,9 +242,7 @@ spec:
 
 
 
-### 2.4 笔记
-
-> 综合
+### 2.4 综合
 
 ```bash
 argocd login argo-cd-ops.lab-ofc.wuxingdev.cn --username=admin --password=xx --grpc-web
@@ -253,21 +251,25 @@ argocd account update-password --account jesse --current-password xx --new-passw
 argocd ctx list
 
 argocd cluster list
-argocd proj list
-argocd repo list
-argocd app list
+argocd proj    list
+argocd repo    list
+argocd app     list
 
 # backup
 argocd cluster list -o yaml > 01-argocd-cluster-list.yaml
-argocd proj list    -o yaml > 02-argocd-proj-list.yaml
-argocd repo list    -o yaml > 03-argocd-repo-list.yaml
-argocd app  list    -o yaml > 04-argocd-app-list.yaml
+argocd proj    list -o yaml > 02-argocd-proj-list.yaml
+argocd repo    list -o yaml > 03-argocd-repo-list.yaml
+argocd app     list -o yaml > 04-argocd-app-list.yaml
 
+kubectl run redis-client --restart='Never' \
+  --image registry.wuxingdev.cn/bitnami/redis:7.0.4 \
+  --namespace kube-app \
+  --command -- sleep infinity
 ```
 
 
 
-> cluster
+### 2.5 cluster
 
 ```bash
 argocd cluster list
@@ -282,27 +284,32 @@ argocd cluster add 14-prod-sh-insecure  --name=14-prod-sh  --grpc-web
 
 
 
-> proj
+### 2.6 proj
 
 ```bash
 argocd proj list
 argocd proj delete argo-example-proj
+argocd proj create argo-example-proj --description "argo example proj" 
+
+argocd proj remove-source argo-example-proj  \
+    https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git
+argocd proj add-source argo-example-proj \
+    https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git
 
 # argocd proj add-destination argo-example-proj in-cluster kube-app --name
-argocd proj create argo-example-proj --description "argo example proj"
-argocd proj add-destination argo-example-proj https://kubernetes.default.svc kube-app 
-
-argocd proj remove-destination argo-example-proj https://kubernetes.default.svc kube-app
+argocd proj remove-destination argo-example-proj \
+    https://kubernetes.default.svc kube-app
+argocd proj add-destination argo-example-proj \
+    https://kubernetes.default.svc kube-app 
 ```
 
 
 
-> repo
+### 2.7 repo
 
 ```bash
 argocd repo list
 argocd repo rm https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git
-
 argocd repo add https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
     --name argo-example-repo \
     --project argo-example-proj \
@@ -313,7 +320,7 @@ argocd repo add https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
 
 
 
-> app
+### 2.8 app
 
 ```bash
 argocd app list
@@ -328,7 +335,9 @@ argocd app create guestbook \
     --dest-namespace kube-app \
     --dest-server https://kubernetes.default.svc \
     --revision master \
-    --label demo=true 
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm 
 
 # Create a Helm app
 argocd app delete helm-guestbook
@@ -339,7 +348,9 @@ argocd app create helm-guestbook \
     --project argo-example-proj \
     --dest-server https://kubernetes.default.svc \
     --revision master \
-    --label demo=true
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm 
 
 argocd app set helm-guestbook --values values-production.yaml
 
@@ -351,13 +362,13 @@ argocd app create helm-repo-redis \
     --revision 17.3.14 \
     --dest-namespace kube-app \
     --dest-server https://kubernetes.default.svc \
-    --label demo=true \
+    --label author=jesse \
+    --label tier=helm \
+    --helm-set global.imageRegistry=registry.wuxingdev.cn \
+    --helm-set image.tag=7.0.5 \
     --helm-set architecture=standalone \
     --helm-set auth.password=jesse \
     --helm-set master.persistence.enabled=false \
-    --helm-set replica.persistence.enabled=false \
-    --helm-set global.imageRegistry=registry.wuxingdev.cn \
-    --helm-set image.tag=7.0.5 \
     --helm-set metrics.enabled=true \
     --helm-set metrics.image.tag=1.37.0 
 
@@ -372,7 +383,8 @@ argocd app create helm-repo-redis-cluster \
     --revision 7.5.0 \
     --dest-namespace kube-app \
     --dest-server https://kubernetes.default.svc \
-    --label demo=true \
+    --label author=jesse \
+    --label tier=helm 
     --values-literal-file cluster-values.yaml
 
 # TODO persistence 未成功移除
@@ -382,141 +394,214 @@ argocd app set helm-repo-redis-cluster --helm-set redis.useAOFPersistence=false
 
 
 
-> Create a Helm app from a Helm dependency
+### 2.9 app Helm Template
 
-```bash
-# TODO
-# helm show values bitnami/redis --version 17.3.14 > sentinel-values.yaml-default
-# helm show values bitnami/redis-cluster --version 8.3.1 > cluster-values.yaml-default
-# 
-# cat >> Chart.yaml << EOF 
-# dependencies:
-#   - name: redis
-#     version: "17.3.14"
-#     repository: "https://charts.bitnami.com/bitnami"
-# EOF
-# 
-# helm dependency build helm-redis --skip-refresh
-#
-# helm install --generate-name --dry-run --debug helm-redis -f helm-redis/values.yaml
-```
+Create a Helm app from a Helm Templates
 
-
-
-> Create a Helm app from a Helm Templates
+> sentinel
 
 ```bash
 helm search repo redis
 
-# sentinel
 helm pull bitnami/redis --version 17.3.14 -d /tmp
 tar xf /tmp/redis-17.3.14.tgz -C .
-mv redis helm-repo-redis-sentinel
+mv redis helm-repo-redis-sentinel-tpl
 
-vim helm-repo-redis-sentinel/values.yaml
+vim helm-repo-redis-sentinel-tpl/values.yaml
 
 helm install --generate-name --dry-run --debug \
-  helm-repo-redis-sentinel \
-  -f helm-repo-redis-sentinel/values.yaml
+  helm-repo-redis-sentinel-tpl \
+  -f helm-repo-redis-sentinel-tpl/values.yaml
 
-helm -n kube-app uninstall helm-repo-redis-sentinel
-helm -n kube-app upgrade --install helm-repo-redis-sentinel \
-    helm-repo-redis-sentinel \
-    -f helm-repo-redis-sentinel/sentinel-values.yaml
+helm -n kube-app uninstall helm-repo-redis-sentinel-tpl-standalone
+helm -n kube-app upgrade --install helm-repo-redis-sentinel-tpl-standalone \
+    helm-repo-redis-sentinel-tpl \
+    -f helm-repo-redis-sentinel-tpl/sentinel-standalone-values.yaml
 
-kubectl -n kube-app -exec -it redis-client bash
-redis-cli -h helm-repo-redis-sentinel-headless -a jesse
+helm -n kube-app uninstall helm-repo-redis-sentinel-tpl-replication
+helm -n kube-app upgrade --install helm-repo-redis-sentinel-tpl-replication \
+    helm-repo-redis-sentinel-tpl \
+    -f helm-repo-redis-sentinel-tpl/sentinel-replication-values.yaml
+
+kubectl -n kube-app exec -it redis-client bash
+redis-cli -h helm-repo-redis-sentinel-tpl-standalone-headless -a jesse
 config get maxmemory
 
-argocd app delete helm-repo-redis-sentinel
-argocd app create helm-repo-redis-sentinel \
+redis-cli -h helm-repo-redis-sentinel-tpl-replication-headless -a jesse info replication
+redis-cli -h helm-repo-redis-sentinel-tpl-replication -a jesse info replication
+redis-cli -h helm-repo-redis-sentinel-tpl-replication-node-0.helm-repo-redis-sentinel-tpl-replication-headless.kube-app.svc.cluster.local -a jesse info replication
+
+argocd app delete helm-repo-redis-sentinel-tpl-standalone
+argocd app create helm-repo-redis-sentinel-tpl-standalone \
     --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
-    --path helm-repo-redis-sentinel \
+    --path helm-repo-redis-sentinel-tpl \
     --project argo-example-proj \
     --dest-namespace kube-app \
     --dest-server https://kubernetes.default.svc \
     --revision master \
-    --label demo=true \
+    --sync-policy automated \
+    --label author=jesse \
     --label tier=helm \
-    --values sentinel-values.yaml
-    
-# cluster
+    --values standalone-values.yaml
+
+argocd app delete helm-repo-redis-sentinel-tpl-replication
+argocd app create helm-repo-redis-sentinel-tpl-replication \
+    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --path helm-repo-redis-sentinel-tpl \
+    --project argo-example-proj \
+    --dest-namespace kube-app \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values replication-values.yaml
+```
+
+> cluster
+
+```bash
 helm pull bitnami/redis-cluster --version 8.3.1 -d /tmp
 tar xf /tmp/redis-cluster-8.3.1.tgz -C .
-mv redis-cluster helm-repo-redis-cluster
+mv redis-cluster helm-repo-redis-cluster-tpl
 
-vim helm-repo-redis-cluster/values.yaml
+vim helm-repo-redis-cluster-tpl/values.yaml
 
 helm install --generate-name --dry-run --debug \
-  helm-repo-redis-sentinel \
-  -f helm-repo-redis-cluster/values.yaml
+  helm-repo-redis-cluster-tpl \
+  -f helm-repo-redis-cluster-tpl/values.yaml
   
-helm -n kube-app uninstall helm-repo-redis-cluster
-helm -n kube-app upgrade --install helm-repo-redis-cluster \
-    helm-repo-redis-cluster \
-    -f helm-repo-redis-cluster/cluster-values.yaml
+helm -n kube-app uninstall helm-repo-redis-cluster-tpl
+helm -n kube-app upgrade --install helm-repo-redis-cluster-tpl \
+    helm-repo-redis-cluster-tpl \
+    -f helm-repo-redis-cluster-tpl/cluster-values.yaml
 
-kubectl -n kube-app  rollout restart sts helm-repo-redis-cluster
-kubectl -n kube-app -exec -it redis-client bash
-redis-cli -h helm-repo-redis-cluster-headless -a jesse -c
+kubectl -n kube-app rollout restart sts helm-repo-redis-cluster-tpl
+kubectl -n kube-app exec -it redis-client bash
+redis-cli -h helm-repo-redis-cluster-tpl-headless -a jesse -c
 config get maxmemory
 
-argocd app delete helm-repo-redis-cluster
-argocd app create helm-repo-redis-cluster \
+argocd app delete helm-repo-redis-cluster-tpl
+argocd app create helm-repo-redis-cluster-tpl \
     --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
-    --path helm-repo-redis-cluster \
+    --path helm-repo-redis-cluster-tpl \
     --project argo-example-proj \
     --dest-namespace kube-app \
     --dest-server https://kubernetes.default.svc \
     --revision master \
-    --label demo=true \
+    --sync-policy automated \
+    --label author=jesse \
     --label tier=helm \
     --values cluster-values.yaml
 ```
 
 
 
-> Create a Helm app from a Helm Dependency
+### 2.10 app Helm Dependency
+
+Create a Helm app from a Helm Dependency
+
+> sentinel
 
 ```bash
-# sentinel
-mkdir -p helm-repo-redis-sentinel-v2
-cd helm-repo-redis-sentinel-v2
+mkdir -p helm-repo-redis-sentinel-dep
+cd helm-repo-redis-sentinel-dep
 
+# - name: redis 必须是 bitnami 里面存在的 Charts
 cat <<EOF | tee Chart.yaml
 apiVersion: v2
 name: bitnami-redis
 version: "17.3.14"
 dependencies:
-- name: sentinel-redis
+- name: redis
   version: "17.3.14"
   repository: "https://charts.bitnami.com/bitnami"
 EOF
 
 vim sentinel-values.yaml
 
-helm dependency build --skip-refresh
-helm dependency list
+helm dep build --skip-refresh
+helm dep list
 
 helm install --generate-name --dry-run --debug \
-  helm-repo-redis-sentinel-v2 \
-  -f helm-repo-redis-sentinel-v2/sentinel-values.yaml
+  helm-repo-redis-sentinel-dep \
+  -f helm-repo-redis-sentinel-dep/standalone-values.yaml
+  
+helm install --generate-name --dry-run --debug \
+  helm-repo-redis-sentinel-dep \
+  -f helm-repo-redis-sentinel-dep/replication-values.yaml
 
-argocd app delete helm-repo-redis-sentinel-v2
-argocd app create helm-repo-redis-sentinel-v2 \
+argocd app delete helm-repo-redis-sentinel-dep-standalone
+argocd app create helm-repo-redis-sentinel-dep-standalone \
     --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
-    --path helm-repo-redis-sentinel-v2 \
+    --path helm-repo-redis-sentinel-dep \
     --project argo-example-proj \
     --dest-namespace kube-app \
     --dest-server https://kubernetes.default.svc \
     --revision master \
-    --label demo=true \
+    --sync-policy automated \
+    --label author=jesse \
     --label tier=helm \
-    --release-name helm-repo-redis-sentinel-v2 \
-    --values values.yaml
+    --release-name helm-repo-redis-sentinel-dep-standalone \
+    --values standalone-values.yaml
+    
+argocd app delete helm-repo-redis-sentinel-dep-replication
+argocd app create helm-repo-redis-sentinel-dep-replication \
+    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --path helm-repo-redis-sentinel-dep \
+    --project argo-example-proj \
+    --dest-namespace kube-app \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --release-name helm-repo-redis-sentinel-dep-replication \
+    --values replication-values.yaml
 ```
 
+> cluster
 
+```bash
+mkdir -p helm-repo-redis-cluster-dep
+cd helm-repo-redis-cluster-dep
+
+# - name: redis-cluster 必须是 bitnami 里面存在的 Charts
+cat <<EOF | tee Chart.yaml
+apiVersion: v2
+name: bitnami-redis
+version: "8.3.1"
+dependencies:
+- name: redis-cluster
+  version: "8.3.1"
+  repository: "https://charts.bitnami.com/bitnami"
+EOF
+
+vim cluster-values.yaml
+
+helm dep build --skip-refresh
+helm dep list
+
+helm install --generate-name --dry-run --debug \
+  helm-repo-redis-cluster-dep \
+  -f helm-repo-redis-cluster-dep/cluster-values.yaml
+
+argocd app delete helm-repo-redis-cluster-dep
+argocd app create helm-repo-redis-cluster-dep \
+    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --path helm-repo-redis-cluster-dep \
+    --project argo-example-proj \
+    --dest-namespace kube-app \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values cluster-values.yaml
+
+# 经验证是非必须的
+#    --release-name helm-repo-redis-cluster-dep \ 
+```
 
 
 
@@ -542,3 +627,12 @@ crds:
 ```
 
 当同一命名空间多次部署时，不管是否是同一套 argocd 会自动加载之前的配置信息。
+
+
+
+### 3.3 界面 PARAMETERS 无法识别出 values.yaml
+
+```bash
+argocd proj add-source argo-example-proj https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git
+```
+
