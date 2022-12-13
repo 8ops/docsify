@@ -317,21 +317,21 @@ argocd repo add https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
 
 ```bash
 argocd app list
-argocd app delete guestbook
-argocd app delete helm-guestbook
     
 # Create a directory app
+argocd app delete guestbook
 argocd app create guestbook \
     --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
     --path guestbook \
-    --dest-namespace kube-app \
     --project argo-example-proj \
-    --dest-server https://kubernetes.default.svc \
     --directory-recurse \
+    --dest-namespace kube-app \
+    --dest-server https://kubernetes.default.svc \
     --revision master \
     --label demo=true 
 
 # Create a Helm app
+argocd app delete helm-guestbook
 argocd app create helm-guestbook \
     --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
     --path helm-guestbook \
@@ -344,6 +344,7 @@ argocd app create helm-guestbook \
 argocd app set helm-guestbook --values values-production.yaml
 
 # Create a Helm app from a Helm repo
+argocd app delete helm-repo-redis
 argocd app create helm-repo-redis \
     --repo https://charts.bitnami.com/bitnami \
     --helm-chart redis \
@@ -363,7 +364,8 @@ argocd app create helm-repo-redis \
 argocd app set helm-repo-redis --helm-set master.count=1
 argocd app set helm-repo-redis --helm-set replica.persistence.enabled=false
 
-# 
+# Create a Helm app from a Helm repo
+argocd app delete helm-repo-redis-cluster
 argocd app create helm-repo-redis-cluster \
     --repo https://charts.bitnami.com/bitnami \
     --helm-chart redis-cluster \
@@ -371,27 +373,150 @@ argocd app create helm-repo-redis-cluster \
     --dest-namespace kube-app \
     --dest-server https://kubernetes.default.svc \
     --label demo=true \
-    --values-literal-file values.yaml
+    --values-literal-file cluster-values.yaml
 
-# 无效
-# argocd app set helm-repo-redis-cluster --values-literal-file values.yaml
+# TODO persistence 未成功移除
 argocd app set helm-repo-redis-cluster --helm-set persistence.enabled=false 
 argocd app set helm-repo-redis-cluster --helm-set redis.useAOFPersistence=false 
-    
-# ---
-helm show values bitnami/redis --version 17.3.14 > Chart.yaml
+```
 
-cat >> Chart.yaml << EOF 
+
+
+> Create a Helm app from a Helm dependency
+
+```bash
+# TODO
+# helm show values bitnami/redis --version 17.3.14 > sentinel-values.yaml-default
+# helm show values bitnami/redis-cluster --version 8.3.1 > cluster-values.yaml-default
+# 
+# cat >> Chart.yaml << EOF 
+# dependencies:
+#   - name: redis
+#     version: "17.3.14"
+#     repository: "https://charts.bitnami.com/bitnami"
+# EOF
+# 
+# helm dependency build helm-redis --skip-refresh
+#
+# helm install --generate-name --dry-run --debug helm-redis -f helm-redis/values.yaml
+```
+
+
+
+> Create a Helm app from a Helm Templates
+
+```bash
+helm search repo redis
+
+# sentinel
+helm pull bitnami/redis --version 17.3.14 -d /tmp
+tar xf /tmp/redis-17.3.14.tgz -C .
+mv redis helm-repo-redis-sentinel
+
+vim helm-repo-redis-sentinel/values.yaml
+
+helm install --generate-name --dry-run --debug \
+  helm-repo-redis-sentinel \
+  -f helm-repo-redis-sentinel/values.yaml
+
+helm -n kube-app uninstall helm-repo-redis-sentinel
+helm -n kube-app upgrade --install helm-repo-redis-sentinel \
+    helm-repo-redis-sentinel \
+    -f helm-repo-redis-sentinel/sentinel-values.yaml
+
+kubectl -n kube-app -exec -it redis-client bash
+redis-cli -h helm-repo-redis-sentinel-headless -a jesse
+config get maxmemory
+
+argocd app delete helm-repo-redis-sentinel
+argocd app create helm-repo-redis-sentinel \
+    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --path helm-repo-redis-sentinel \
+    --project argo-example-proj \
+    --dest-namespace kube-app \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --label demo=true \
+    --label tier=helm \
+    --values sentinel-values.yaml
+    
+# cluster
+helm pull bitnami/redis-cluster --version 8.3.1 -d /tmp
+tar xf /tmp/redis-cluster-8.3.1.tgz -C .
+mv redis-cluster helm-repo-redis-cluster
+
+vim helm-repo-redis-cluster/values.yaml
+
+helm install --generate-name --dry-run --debug \
+  helm-repo-redis-sentinel \
+  -f helm-repo-redis-cluster/values.yaml
+  
+helm -n kube-app uninstall helm-repo-redis-cluster
+helm -n kube-app upgrade --install helm-repo-redis-cluster \
+    helm-repo-redis-cluster \
+    -f helm-repo-redis-cluster/cluster-values.yaml
+
+kubectl -n kube-app  rollout restart sts helm-repo-redis-cluster
+kubectl -n kube-app -exec -it redis-client bash
+redis-cli -h helm-repo-redis-cluster-headless -a jesse -c
+config get maxmemory
+
+argocd app delete helm-repo-redis-cluster
+argocd app create helm-repo-redis-cluster \
+    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --path helm-repo-redis-cluster \
+    --project argo-example-proj \
+    --dest-namespace kube-app \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --label demo=true \
+    --label tier=helm \
+    --values cluster-values.yaml
+```
+
+
+
+> Create a Helm app from a Helm Dependency
+
+```bash
+# sentinel
+mkdir -p helm-repo-redis-sentinel-v2
+cd helm-repo-redis-sentinel-v2
+
+cat <<EOF | tee Chart.yaml
+apiVersion: v2
+name: bitnami-redis
+version: "17.3.14"
 dependencies:
-  - name: redis
-    version: "17.3.14"
-    repository: "https://charts.bitnami.com/bitnami"
+- name: sentinel-redis
+  version: "17.3.14"
+  repository: "https://charts.bitnami.com/bitnami"
 EOF
 
-helm pull bitnami/redis --version 17.3.14
+vim sentinel-values.yaml
 
-helm dependency build helm-redis
+helm dependency build --skip-refresh
+helm dependency list
+
+helm install --generate-name --dry-run --debug \
+  helm-repo-redis-sentinel-v2 \
+  -f helm-repo-redis-sentinel-v2/sentinel-values.yaml
+
+argocd app delete helm-repo-redis-sentinel-v2
+argocd app create helm-repo-redis-sentinel-v2 \
+    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --path helm-repo-redis-sentinel-v2 \
+    --project argo-example-proj \
+    --dest-namespace kube-app \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --label demo=true \
+    --label tier=helm \
+    --release-name helm-repo-redis-sentinel-v2 \
+    --values values.yaml
 ```
+
+
 
 
 
