@@ -245,7 +245,7 @@ spec:
 ### 2.4 综合
 
 ```bash
-argocd login argo-cd-ops.lab-ofc.wuxingdev.cn --username=admin --password=xx --grpc-web
+argocd login argo-cd.8ops.top --username=admin --password=xx --grpc-web
 argocd account update-password --account jesse --current-password xx --new-password jesse2022 --grpc-web
 
 argocd ctx list
@@ -262,7 +262,7 @@ argocd repo    list -o yaml > 03-argocd-repo-list.yaml
 argocd app     list -o yaml > 04-argocd-app-list.yaml
 
 kubectl run redis-client --restart='Never' \
-  --image registry.wuxingdev.cn/bitnami/redis:7.0.4 \
+  --image hub.8ops.top/bitnami/redis:7.0.4 \
   --namespace kube-app \
   --command -- sleep infinity
 ```
@@ -292,9 +292,9 @@ argocd proj delete argo-example-proj
 argocd proj create argo-example-proj --description "argo example proj" 
 
 argocd proj remove-source argo-example-proj  \
-    https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git
+    https://git.8ops.top/gce/argocd-example-apps.git
 argocd proj add-source argo-example-proj \
-    https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git
+    https://git.8ops.top/gce/argocd-example-apps.git
 
 # argocd proj add-destination argo-example-proj in-cluster kube-app --name
 argocd proj remove-destination argo-example-proj \
@@ -309,8 +309,8 @@ argocd proj add-destination argo-example-proj \
 
 ```bash
 argocd repo list
-argocd repo rm https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git
-argocd repo add https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+argocd repo rm https://git.8ops.top/gce/argocd-example-apps.git
+argocd repo add https://git.8ops.top/gce/argocd-example-apps.git \
     --name argo-example-repo \
     --project argo-example-proj \
     --username gatgitlab-read \
@@ -328,7 +328,7 @@ argocd app list
 # Create a directory app
 argocd app delete guestbook
 argocd app create guestbook \
-    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/gce/argocd-example-apps.git \
     --path guestbook \
     --project argo-example-proj \
     --directory-recurse \
@@ -342,7 +342,7 @@ argocd app create guestbook \
 # Create a Helm app
 argocd app delete helm-guestbook
 argocd app create helm-guestbook \
-    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/gce/argocd-example-apps.git \
     --path helm-guestbook \
     --dest-namespace kube-app \
     --project argo-example-proj \
@@ -364,7 +364,7 @@ argocd app create helm-repo-redis \
     --dest-server https://kubernetes.default.svc \
     --label author=jesse \
     --label tier=helm \
-    --helm-set global.imageRegistry=registry.wuxingdev.cn \
+    --helm-set global.imageRegistry=hub.8ops.top \
     --helm-set image.tag=7.0.5 \
     --helm-set architecture=standalone \
     --helm-set auth.password=jesse \
@@ -433,7 +433,7 @@ redis-cli -h helm-repo-redis-sentinel-tpl-replication-node-0.helm-repo-redis-sen
 
 argocd app delete helm-repo-redis-sentinel-tpl-standalone
 argocd app create helm-repo-redis-sentinel-tpl-standalone \
-    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/gce/argocd-example-apps.git \
     --path helm-repo-redis-sentinel-tpl \
     --project argo-example-proj \
     --dest-namespace kube-app \
@@ -446,7 +446,7 @@ argocd app create helm-repo-redis-sentinel-tpl-standalone \
 
 argocd app delete helm-repo-redis-sentinel-tpl-replication
 argocd app create helm-repo-redis-sentinel-tpl-replication \
-    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/gce/argocd-example-apps.git \
     --path helm-repo-redis-sentinel-tpl \
     --project argo-example-proj \
     --dest-namespace kube-app \
@@ -483,7 +483,7 @@ config get maxmemory
 
 argocd app delete helm-repo-redis-cluster-tpl
 argocd app create helm-repo-redis-cluster-tpl \
-    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/gce/argocd-example-apps.git \
     --path helm-repo-redis-cluster-tpl \
     --project argo-example-proj \
     --dest-namespace kube-app \
@@ -533,7 +533,7 @@ helm install --generate-name --dry-run --debug \
 
 argocd app delete helm-repo-redis-sentinel-dep-standalone
 argocd app create helm-repo-redis-sentinel-dep-standalone \
-    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/gce/argocd-example-apps.git \
     --path helm-repo-redis-sentinel-dep \
     --project argo-example-proj \
     --dest-namespace kube-app \
@@ -547,7 +547,7 @@ argocd app create helm-repo-redis-sentinel-dep-standalone \
     
 argocd app delete helm-repo-redis-sentinel-dep-replication
 argocd app create helm-repo-redis-sentinel-dep-replication \
-    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/gce/argocd-example-apps.git \
     --path helm-repo-redis-sentinel-dep \
     --project argo-example-proj \
     --dest-namespace kube-app \
@@ -588,7 +588,7 @@ helm install --generate-name --dry-run --debug \
 
 argocd app delete helm-repo-redis-cluster-dep
 argocd app create helm-repo-redis-cluster-dep \
-    --repo https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/gce/argocd-example-apps.git \
     --path helm-repo-redis-cluster-dep \
     --project argo-example-proj \
     --dest-namespace kube-app \
@@ -633,6 +633,6 @@ crds:
 ### 3.3 界面 PARAMETERS 无法识别出 values.yaml
 
 ```bash
-argocd proj add-source argo-example-proj https://gitlab.wuxingdev.cn/gce/argocd-example-apps.git
+argocd proj add-source argo-example-proj https://git.8ops.top/gce/argocd-example-apps.git
 ```
 
