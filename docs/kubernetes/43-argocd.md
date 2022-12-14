@@ -314,7 +314,7 @@ argocd repo add https://git.8ops.top/gce/argocd-example-apps.git \
     --name argo-example-repo \
     --project argo-example-proj \
     --username gatgitlab-read \
-    --password jifenpay \
+    --password xx \
     --insecure-skip-server-verification
 ```
 

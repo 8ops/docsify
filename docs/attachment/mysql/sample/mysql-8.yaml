@@ -98,7 +98,7 @@ items:
         containers:
         - env:
           - name: MYSQL_ROOT_PASSWORD
-            value: jifenpay
+            value: jesse
           image: hub.8ops.top/third/mysql:8.0.28
           imagePullPolicy: IfNotPresent
           name: mysql
