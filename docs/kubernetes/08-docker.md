@@ -31,3 +31,25 @@ docker update --restart=always <container id>
 
 
 
+### 1.3 Centos
+
+```bash
+# 国内
+yum install -y yum-utils
+yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+
+yum search docker-ce
+yum info docker-ce
+yum install docker-ce
+
+mkdir -p /srv/lib/docker
+ln -s /srv/lib/docker /var/lib/docker
+systemctl enable docker
+systemctl is-enabled docker
+systemctl start docker
+systemctl status docker
+
+yum search docker-compose
+yum install -y docker-compose
+```
+

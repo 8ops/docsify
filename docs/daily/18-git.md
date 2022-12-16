@@ -1,4 +1,6 @@
-# git
+# Git
+
+## 一、常用操作
 
 > 贡献代码
 
@@ -16,7 +18,7 @@ git push origin master #更新到fork源
 git remote prune origin
 ```
 
-## case by case
+### 1.1 case by case
 
 在mac、linux及windows切换编程时，出现
 
@@ -38,7 +40,7 @@ $ git config --global core.autocrlf input
 $ git config --global sslVerify false
 ```
 
-## 简易使用
+### 1.2 简易使用
 
 ```
 删除远程分支
@@ -110,7 +112,7 @@ git config --glbal http.sslverify false
 
 
 
-## 常用操作
+### 1.3 常用操作
 
 ```bash
 github的提交方式
@@ -142,4 +144,77 @@ github的提交方式
 （6）git diff ＋ commit编号--------------------------查询不同代码 
 
 ```
+
+## 二、安装
+
+[Reference](https://gitlab.cn/install/)
+
+
+
+### 2.1 docker engine
+
+| 本地位置              | 容器位置          | 使用                          |
+| :-------------------- | :---------------- | :---------------------------- |
+| `$GITLAB_HOME/data`   | `/var/opt/gitlab` | 用于存储应用程序数据。        |
+| `$GITLAB_HOME/logs`   | `/var/log/gitlab` | 用于存储日志。                |
+| `$GITLAB_HOME/config` | `/etc/gitlab`     | 用于存储极狐GitLab 配置文件。 |
+
+```bash
+export GITLAB_HOME=/data1/gitlab
+mkdir -p $GITLAB_HOME
+docker run --detach \
+  --hostname git.8ops.top \
+  --publish 50443:443 --publish 50080:80 --publish 50022:22 \
+  --name gitlab \
+  --restart always \
+  --volume $GITLAB_HOME/config:/etc/gitlab \
+  --volume $GITLAB_HOME/logs:/var/log/gitlab \
+  --volume $GITLAB_HOME/data:/var/opt/gitlab \
+  --shm-size 256m \
+  registry.gitlab.cn/omnibus/gitlab-jh:latest
+
+docker logs -f gitlab
+docker exec -it gitlab grep 'Password:' /etc/gitlab/initial_root_password
+```
+
+
+
+### 2.2 docker-compose
+
+```bash
+export GITLAB_HOME=/data1/gitlab
+mkdir -p $GITLAB_HOME
+cat > docker-compose.yml <<EOF
+version: '3.6'
+services:
+  web:
+    image: 'registry.gitlab.cn/omnibus/gitlab-jh:latest'
+    restart: always
+    hostname: 'git.8ops.top'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://git.8ops.top'
+    ports:
+      - '443:443'
+      - '80:80'
+      - '22:22'
+    volumes:
+      - '\$GITLAB_HOME/config:/etc/gitlab'
+      - '\$GITLAB_HOME/logs:/var/log/gitlab'
+      - '\$GITLAB_HOME/data:/var/opt/gitlab'
+    shm_size: '256m'
+EOF
+
+docker-compose up -d
+docker-compose down
+
+docker exec -it gitlab-web-1 grep 'Password:' /etc/gitlab/initial_root_password
+
+docker exec -t gitlab-web-1 gitlab-backup create
+docker exec -t gitlab-web-1 gitlab-backup create \
+    SKIP=artifacts,repositories,registry,uploads,builds,pages,lfs,packages,terraform_state
+
+```
+
+
 

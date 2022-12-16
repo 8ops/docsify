@@ -246,7 +246,7 @@ spec:
 
 ```bash
 argocd login argo-cd.8ops.top --username=admin --password=xx --grpc-web
-argocd account update-password --account jesse --current-password xx --new-password jesse2022 --grpc-web
+argocd account update-password --account jesse --current-password xx --new-password xx --grpc-web
 
 argocd ctx list
 
@@ -292,15 +292,25 @@ argocd proj delete argo-example-proj
 argocd proj create argo-example-proj --description "argo example proj" 
 
 argocd proj remove-source argo-example-proj  \
-    https://git.8ops.top/gce/argocd-example-apps.git
+    https://git.8ops.top/ops/argocd-example-apps.git
 argocd proj add-source argo-example-proj \
-    https://git.8ops.top/gce/argocd-example-apps.git
+    https://git.8ops.top/ops/argocd-example-apps.git
 
 # argocd proj add-destination argo-example-proj in-cluster kube-app --name
 argocd proj remove-destination argo-example-proj \
     https://kubernetes.default.svc kube-app
 argocd proj add-destination argo-example-proj \
     https://kubernetes.default.svc kube-app 
+argocd proj get argo-example-proj
+
+# ---
+
+argocd proj create control-plane-proj --description "control plane proj" 
+argocd proj add-source control-plane-proj \
+    https://git.8ops.top/ops/control-plane-ops.git
+argocd proj add-destination control-plane-proj \
+    https://kubernetes.default.svc kube-server 
+argocd proj get control-plane-proj
 ```
 
 
@@ -309,13 +319,23 @@ argocd proj add-destination argo-example-proj \
 
 ```bash
 argocd repo list
-argocd repo rm https://git.8ops.top/gce/argocd-example-apps.git
-argocd repo add https://git.8ops.top/gce/argocd-example-apps.git \
+argocd repo rm https://git.8ops.top/ops/argocd-example-apps.git
+argocd repo add https://git.8ops.top/ops/argocd-example-apps.git \
     --name argo-example-repo \
     --project argo-example-proj \
-    --username gatgitlab-read \
-    --password xx \
+    --username gitlab-read \
+    --password xxxx \
     --insecure-skip-server-verification
+argocd repo get https://git.8ops.top/ops/argocd-example-apps.git
+
+# ---
+
+argocd repo add https://git.8ops.top/ops/control-plane-ops.git \
+    --name control-plane-repo \
+    --project control-plane-proj \
+    --username gitlab-read \
+    --password jesse2022 \
+    --insecure-skip-server-verification    
 ```
 
 
@@ -328,7 +348,7 @@ argocd app list
 # Create a directory app
 argocd app delete guestbook
 argocd app create guestbook \
-    --repo https://git.8ops.top/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/ops/argocd-example-apps.git \
     --path guestbook \
     --project argo-example-proj \
     --directory-recurse \
@@ -342,7 +362,7 @@ argocd app create guestbook \
 # Create a Helm app
 argocd app delete helm-guestbook
 argocd app create helm-guestbook \
-    --repo https://git.8ops.top/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/ops/argocd-example-apps.git \
     --path helm-guestbook \
     --dest-namespace kube-app \
     --project argo-example-proj \
@@ -375,21 +395,21 @@ argocd app create helm-repo-redis \
 argocd app set helm-repo-redis --helm-set master.count=1
 argocd app set helm-repo-redis --helm-set replica.persistence.enabled=false
 
-# Create a Helm app from a Helm repo
-argocd app delete helm-repo-redis-cluster
-argocd app create helm-repo-redis-cluster \
-    --repo https://charts.bitnami.com/bitnami \
-    --helm-chart redis-cluster \
-    --revision 7.5.0 \
-    --dest-namespace kube-app \
-    --dest-server https://kubernetes.default.svc \
-    --label author=jesse \
-    --label tier=helm 
-    --values-literal-file cluster-values.yaml
-
-# TODO persistence 未成功移除
-argocd app set helm-repo-redis-cluster --helm-set persistence.enabled=false 
-argocd app set helm-repo-redis-cluster --helm-set redis.useAOFPersistence=false 
+# # Create a Helm app from a Helm repo
+# argocd app delete helm-repo-redis-cluster
+# argocd app create helm-repo-redis-cluster \
+#     --repo https://charts.bitnami.com/bitnami \
+#     --helm-chart redis-cluster \
+#     --revision 7.5.0 \
+#     --dest-namespace kube-app \
+#     --dest-server https://kubernetes.default.svc \
+#     --label author=jesse \
+#     --label tier=helm 
+#     --values-literal-file cluster-values.yaml
+# 
+# # TODO persistence 未成功移除
+# argocd app set helm-repo-redis-cluster --helm-set persistence.enabled=false 
+# argocd app set helm-repo-redis-cluster --helm-set redis.useAOFPersistence=false 
 ```
 
 
@@ -433,7 +453,7 @@ redis-cli -h helm-repo-redis-sentinel-tpl-replication-node-0.helm-repo-redis-sen
 
 argocd app delete helm-repo-redis-sentinel-tpl-standalone
 argocd app create helm-repo-redis-sentinel-tpl-standalone \
-    --repo https://git.8ops.top/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/ops/argocd-example-apps.git \
     --path helm-repo-redis-sentinel-tpl \
     --project argo-example-proj \
     --dest-namespace kube-app \
@@ -446,7 +466,7 @@ argocd app create helm-repo-redis-sentinel-tpl-standalone \
 
 argocd app delete helm-repo-redis-sentinel-tpl-replication
 argocd app create helm-repo-redis-sentinel-tpl-replication \
-    --repo https://git.8ops.top/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/ops/argocd-example-apps.git \
     --path helm-repo-redis-sentinel-tpl \
     --project argo-example-proj \
     --dest-namespace kube-app \
@@ -483,7 +503,7 @@ config get maxmemory
 
 argocd app delete helm-repo-redis-cluster-tpl
 argocd app create helm-repo-redis-cluster-tpl \
-    --repo https://git.8ops.top/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/ops/argocd-example-apps.git \
     --path helm-repo-redis-cluster-tpl \
     --project argo-example-proj \
     --dest-namespace kube-app \
@@ -533,7 +553,7 @@ helm install --generate-name --dry-run --debug \
 
 argocd app delete helm-repo-redis-sentinel-dep-standalone
 argocd app create helm-repo-redis-sentinel-dep-standalone \
-    --repo https://git.8ops.top/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/ops/argocd-example-apps.git \
     --path helm-repo-redis-sentinel-dep \
     --project argo-example-proj \
     --dest-namespace kube-app \
@@ -547,7 +567,7 @@ argocd app create helm-repo-redis-sentinel-dep-standalone \
     
 argocd app delete helm-repo-redis-sentinel-dep-replication
 argocd app create helm-repo-redis-sentinel-dep-replication \
-    --repo https://git.8ops.top/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/ops/argocd-example-apps.git \
     --path helm-repo-redis-sentinel-dep \
     --project argo-example-proj \
     --dest-namespace kube-app \
@@ -588,7 +608,7 @@ helm install --generate-name --dry-run --debug \
 
 argocd app delete helm-repo-redis-cluster-dep
 argocd app create helm-repo-redis-cluster-dep \
-    --repo https://git.8ops.top/gce/argocd-example-apps.git \
+    --repo https://git.8ops.top/ops/argocd-example-apps.git \
     --path helm-repo-redis-cluster-dep \
     --project argo-example-proj \
     --dest-namespace kube-app \
@@ -605,7 +625,18 @@ argocd app create helm-repo-redis-cluster-dep \
 
 
 
-## 三、常见问题
+## 三、自举
+
+[Reference](kubernetes/43-argocd.md)
+
+```bash
+```
+
+
+
+
+
+## 四、常见问题
 
 
 
