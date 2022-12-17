@@ -619,20 +619,83 @@ argocd app create helm-repo-redis-cluster-dep \
     --label tier=helm \
     --values cluster-values.yaml
 
-# 经验证是非必须的
+# #经验证是非必须的
 #    --release-name helm-repo-redis-cluster-dep \ 
+# argocd app delete argo-cd --cascade=false
 ```
 
 
 
-## 三、自举
+## 三、ArgoCD 场景
+
+### 3.1 argocd 
+
+自举
 
 [Reference](kubernetes/43-argocd.md)
+
+```bash
+helm repo add argoproj https://argoproj.github.io/argo-helm
+helm repo update argoproj
+helm search repo argo-cd
+helm pull argoproj/argo-cd --version 5.13.8 -d /tmp
+tar xf /tmp/argo-cd-5.13.8.tgz -C .
+
+vim values-ops.yaml
+
+argocd app create argo-cd \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path devops/argo-cd \
+    --project control-plane-proj \
+    --dest-namespace kube-server \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-ops.yaml
+
+# 貌似不允许这样
+```
+
+### 3.2 metallb
 
 ```bash
 ```
 
 
+
+### 3.3 ingress-nginx
+
+### 3.4 dashboard
+
+### 3.7、prometheus
+
+[Reference](kubernetes/43-argocd.md)
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update prometheus-community
+helm search repo prometheus
+helm pull prometheus-community/prometheus --version 15.8.5 -d /tmp
+tar xf /tmp/prometheus-15.8.5.tgz -C .
+
+vim values-ops.yaml
+
+argocd app create prometheus \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path devops/prometheus \
+    --project control-plane-proj \
+    --dest-namespace kube-server \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-ops.yaml
+
+# 貌似不允许这样
+```
 
 
 

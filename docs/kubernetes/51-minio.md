@@ -2,7 +2,7 @@
 
 [Reference](http://docs.minio.org.cn/docs/)
 
-## Server
+## 一、Server
 
 > linux 
 
@@ -26,16 +26,25 @@ kubectl minio tenant create tenant1 --servers 4 --volumes 16 --capacity 16Ti
 
 
 
+### 1.1 Helm
+
+```
+helm repo add minio https://charts.min.io/
+helm repo update minio
+helm search repo minio
+helm show values minio/minio --version 5.0.1 > minio-5.0.1.yaml-default
+
+helm show values bitnami/minio --version 11.10.21 > minio-11.10.21.yaml-default
+
+```
 
 
-## Client
+
+## 二、Client
 
 >  linux
 
 ```bash
-
-
-
 curl https://dl.min.io/client/mc/release/linux-amd64/mc -k -o ~/bin/mc
 chmod +x ~/bin/mc
 

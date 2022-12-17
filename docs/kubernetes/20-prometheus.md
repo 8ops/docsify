@@ -32,7 +32,7 @@ prometheus是目前人气较高的一款监控软件，活跃的社区吸引了�
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
+helm repo update prometheus-community
 helm search repo prometheus
 
 # prometheus
@@ -349,6 +349,8 @@ templates:
 
 - 集中查看数据
 - 备份采集数据
+
+
 
 
 
