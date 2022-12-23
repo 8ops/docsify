@@ -34,7 +34,7 @@ kubectl -n kube-server get secret argocd-initial-admin-secret \
 可以通过 `UI` 界面向导操作，也可以通过 `argocd` 命令操作
 
 ```bash
-wget -O ~/bin/argocd https://argo-cd.8ops.top/download/argocd-linux-amd64
+curl -sSL -o ~/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.5.2/argocd-linux-amd64
 chmod +x ~/bin/argocd
 ```
 
@@ -641,6 +641,7 @@ helm search repo argo-cd
 helm pull argoproj/argo-cd --version 5.13.8 -d /tmp
 tar xf /tmp/argo-cd-5.13.8.tgz -C .
 
+cd argo-cd
 vim values-ops.yaml
 
 argocd app create argo-cd \
@@ -656,20 +657,95 @@ argocd app create argo-cd \
     --values values-ops.yaml
 
 # 貌似不允许这样
+# argocd app delete argo-cd
 ```
 
-### 3.2 metallb
+### 3.2 calico
 
 ```bash
+helm repo add projectcalico https://projectcalico.docs.tigera.io/charts
+helm repo update
+helm search repo tigera-operator
+helm pull projectcalico/tigera-operator --version v3.24.1 -d /tmp
+tar xf /tmp/tigera-operator-v3.24.1.tgz -C .
+
+cd tigera-operator
+vim values-ops.yaml
+
+# argocd proj allow-cluster-resource control-plane-proj * * 
+# argocd proj allow-namespace-resource control-plane-proj * * 
+argocd proj add-destination control-plane-proj \
+    https://kubernetes.default.svc kube-system
+argocd proj get control-plane-proj
+    
+argocd app create calico \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path devops/tigera-operator \
+    --project control-plane-proj \
+    --dest-namespace kube-system \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-ops.yaml
+
+# 貌似不允许这样
+# argocd app delete calico
 ```
 
 
 
-### 3.3 ingress-nginx
+### 3.3 metallb
 
-### 3.4 dashboard
+```bash
+helm repo add metallb https://metallb.github.io/metallb
+helm repo update metallb
+helm search repo metallb
+helm pull metallb/metallb --version 0.13.5 -d /tmp
+tar xf /tmp/metallb-0.13.5.tgz -C .
 
-### 3.7、prometheus
+cd metallb
+vim values-ops.yaml
+
+argocd app create metallb \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path devops/metallb \
+    --project control-plane-proj \
+    --dest-namespace kube-server \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-ops.yaml
+
+# 不建议这样
+# argocd app delete metallb
+
+argocd app create metallb-extention \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path devops/metallb/extention \
+    --project control-plane-proj \
+    --directory-recurse \
+    --dest-namespace kube-server \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --label author=jesse \
+    --label tier=helm 
+```
+
+
+
+### 3.4 ingress-nginx
+
+
+
+### 3.5 dashboard
+
+
+
+### 3.6 prometheus
 
 [Reference](kubernetes/43-argocd.md)
 
