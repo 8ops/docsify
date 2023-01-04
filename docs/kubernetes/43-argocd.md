@@ -11,8 +11,8 @@ helm search repo argo-cd
 helm show values argoproj/argo-cd --version 5.13.8 > argocd-configs.yaml-5.13.8-default
 
 # Example
-#   https://books.8ops.top/attachment/argo/helm/argocd-configs.yaml-5.13.8
-#   https://books.8ops.top/attachment/argo/helm/argocd-configs.yaml-5.4.2
+#   https://books.8ops.top/attachment/argoproj/helm/argocd-configs.yaml-5.13.8
+#   https://books.8ops.top/attachment/argoproj/helm/argocd-configs.yaml-5.4.2
 # 
 
 helm upgrade --install argo-cd argoproj/argo-cd \
@@ -628,9 +628,7 @@ argocd app create helm-repo-redis-cluster-dep \
 
 ## 三、ArgoCD 场景
 
-### 3.1 argocd 
-
-自举
+尝试自举 argocd 
 
 [Reference](kubernetes/43-argocd.md)
 
@@ -660,7 +658,7 @@ argocd app create argo-cd \
 # argocd app delete argo-cd
 ```
 
-### 3.2 calico
+### 3.1 calico
 
 ```bash
 helm repo add projectcalico https://projectcalico.docs.tigera.io/charts
@@ -672,15 +670,19 @@ tar xf /tmp/tigera-operator-v3.24.1.tgz -C .
 cd tigera-operator
 vim values-ops.yaml
 
-# argocd proj allow-cluster-resource control-plane-proj * * 
-# argocd proj allow-namespace-resource control-plane-proj * * 
+argocd proj allow-cluster-resource control-plane-proj * * 
+argocd proj allow-namespace-resource control-plane-proj * * 
 argocd proj add-destination control-plane-proj \
     https://kubernetes.default.svc kube-system
+argocd proj add-destination control-plane-proj \
+    https://kubernetes.default.svc kube-server
+argocd proj add-destination control-plane-proj \
+    https://kubernetes.default.svc default
 argocd proj get control-plane-proj
-    
+
 argocd app create calico \
     --repo https://git.8ops.top/ops/control-plane-ops.git \
-    --path devops/tigera-operator \
+    --path tigera-operator \
     --project control-plane-proj \
     --dest-namespace kube-system \
     --dest-server https://kubernetes.default.svc \
@@ -688,29 +690,72 @@ argocd app create calico \
     --sync-policy automated \
     --label author=jesse \
     --label tier=helm \
-    --values values-ops.yaml
+    --values values-ops.yaml \
+    --helm-skip-crds
 
-# 貌似不允许这样
-# argocd app delete calico
+# 由于此前使用Helm安装过calico
 ```
 
 
 
-### 3.3 metallb
+### 3.2 metallb
 
 ```bash
 helm repo add metallb https://metallb.github.io/metallb
 helm repo update metallb
 helm search repo metallb
-helm pull metallb/metallb --version 0.13.5 -d /tmp
-tar xf /tmp/metallb-0.13.5.tgz -C .
+helm pull metallb/metallb --version 0.13.7 -d /tmp
+tar xf /tmp/metallb-0.13.7.tgz -C .
 
 cd metallb
 vim values-ops.yaml
 
 argocd app create metallb \
     --repo https://git.8ops.top/ops/control-plane-ops.git \
-    --path devops/metallb \
+    --path metallb \
+    --project control-plane-proj \
+    --dest-namespace kube-server \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-ops.yaml \
+    --helm-skip-crds
+
+# 不建议这样
+# argocd app delete metallb
+
+argocd app create metallb-extention \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path metallb/extention \
+    --project control-plane-proj \
+    --directory-recurse \
+    --dest-namespace kube-server \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --label author=jesse \
+    --label tier=helm 
+argocd app set metallb-extention --sync-policy automated
+```
+
+
+
+### 3.3 ingress-nginx
+
+```bash
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update ingress-nginx
+helm search repo ingress-nginx
+helm pull ingress-nginx/ingress-nginx --version 4.4.0 -d /tmp
+tar xf /tmp/ingress-nginx-4.4.0.tgz -C .
+
+cd ingress-nginx
+vim values-ops.yaml
+
+argocd app create ingress-nginx \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path ingress-nginx \
     --project control-plane-proj \
     --dest-namespace kube-server \
     --dest-server https://kubernetes.default.svc \
@@ -719,33 +764,97 @@ argocd app create metallb \
     --label author=jesse \
     --label tier=helm \
     --values values-ops.yaml
+```
 
-# 不建议这样
-# argocd app delete metallb
 
-argocd app create metallb-extention \
+
+### 3.4 dashboard
+
+```bash
+helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+helm repo update kubernetes-dashboard
+helm search repo kubernetes-dashboard
+helm pull kubernetes-dashboard/kubernetes-dashboard --version 6.0.0 -d /tmp
+tar xf /tmp/kubernetes-dashboard-6.0.0.tgz -C .
+
+cd kubernetes-dashboard
+vim values-ops.yaml
+
+argocd app create kubernetes-dashboard \
     --repo https://git.8ops.top/ops/control-plane-ops.git \
-    --path devops/metallb/extention \
+    --path kubernetes-dashboard \
     --project control-plane-proj \
-    --directory-recurse \
     --dest-namespace kube-server \
     --dest-server https://kubernetes.default.svc \
     --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-ops.yaml
+```
+
+
+
+### 3.5 echoserver
+
+```bash
+argocd app create echoserver \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path echoserver \
+    --project control-plane-proj \
+    --directory-recurse \
+    --dest-namespace default \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
     --label author=jesse \
     --label tier=helm 
 ```
 
 
 
-### 3.4 ingress-nginx
+### 3.6 mysql
+
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update bitnami
+helm search repo mysql
+helm pull bitnami/mysql --version 9.4.5 -d /tmp
+tar xf /tmp/mysql-9.4.5.tgz -C .
+
+cd mysql
+vim values-standalone.yaml
+
+argocd app create mysql-standalone \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path mysql \
+    --project control-plane-proj \
+    --dest-namespace kube-server \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-standalone.yaml
+
+argocd app create mysql-extention \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path mysql/extention \
+    --project control-plane-proj \
+    --directory-recurse \
+    --dest-namespace kube-server \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm     
+```
 
 
 
-### 3.5 dashboard
 
 
-
-### 3.6 prometheus
+### 3.10 prometheus
 
 [Reference](kubernetes/43-argocd.md)
 
@@ -756,11 +865,51 @@ helm search repo prometheus
 helm pull prometheus-community/prometheus --version 15.8.5 -d /tmp
 tar xf /tmp/prometheus-15.8.5.tgz -C .
 
-vim values-ops.yaml
+cd prometheus
+vim values-server.yaml
+vim values-alertmanager.yaml
+vim values-extra.yaml
 
 argocd app create prometheus \
     --repo https://git.8ops.top/ops/control-plane-ops.git \
-    --path devops/prometheus \
+    --path prometheus \
+    --project control-plane-proj \
+    --dest-namespace kube-server \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-server.yaml \
+    --values values-alertmanager.yaml \
+    --values values-extra.yaml
+
+argocd app create prometheus-extention \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path prometheus/extention \
+    --project control-plane-proj \
+    --directory-recurse \
+    --dest-namespace kube-server \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm 
+```
+
+### 3.11 blackbox
+
+```bash
+helm search repo prometheus-blackbox-exporter
+helm pull prometheus-community/prometheus-blackbox-exporter --version 7.0.0 -d /tmp
+tar xf /tmp/prometheus-blackbox-exporter-7.0.0.tgz -C .
+
+cd prometheus-blackbox-exporter
+vim values-ops.yaml
+
+argocd app create prometheus-blackbox-exporter \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path prometheus-blackbox-exporter \
     --project control-plane-proj \
     --dest-namespace kube-server \
     --dest-server https://kubernetes.default.svc \
@@ -769,8 +918,184 @@ argocd app create prometheus \
     --label author=jesse \
     --label tier=helm \
     --values values-ops.yaml
+```
 
-# 貌似不允许这样
+### 3.12 grafana
+
+```bash
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update grafana
+helm search repo grafana
+helm pull grafana/grafana --version 6.38.1 -d /tmp
+tar xf /tmp/grafana-6.38.1.tgz -C .
+
+cd grafana
+vim values-ops.yaml
+
+argocd app create grafana \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path grafana \
+    --project control-plane-proj \
+    --dest-namespace kube-server \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-ops.yaml
+```
+
+
+
+### 3.20 elastic
+
+```bash
+helm repo add elastic https://helm.elastic.co
+helm repo update elastic
+helm search repo elastic
+helm pull elastic/elasticsearch --version 7.17.3 -d /tmp
+tar xf /tmp/elasticsearch-7.17.3.tgz -C .
+
+cd elasticsearch
+vim values-master.yaml
+vim values-data.yaml
+vim values-client.yaml
+
+argocd proj add-destination control-plane-proj \
+    https://kubernetes.default.svc elastic-system
+    
+argocd app create elastic-master \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path elasticsearch \
+    --project control-plane-proj \
+    --dest-namespace elastic-system \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-master.yaml
+    
+argocd app create elastic-data \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path elasticsearch \
+    --project control-plane-proj \
+    --dest-namespace elastic-system \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-data.yaml
+    
+argocd app create elastic-client \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path elasticsearch \
+    --project control-plane-proj \
+    --dest-namespace elastic-system \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-client.yaml
+
+argocd app create elastic-extention \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path elasticsearch/extention \
+    --project control-plane-proj \
+    --directory-recurse \
+    --dest-namespace elastic-system \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm         
+```
+
+### 3.21 kibana
+
+```bash
+helm search repo kibana
+helm pull elastic/kibana --version 7.17.3 -d /tmp
+tar xf /tmp/kibana-7.17.3.tgz -C .
+
+cd kibana
+vim values-ops.yaml
+
+argocd app create kibana \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path kibana \
+    --project control-plane-proj \
+    --dest-namespace elastic-system \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-ops.yaml
+```
+
+
+
+### 3.22 kafka
+
+```bash
+helm repo update bitnami
+helm search repo kafka
+helm pull bitnami/kafka --version 19.0.1 -d /tmp
+tar xf /tmp/kafka-19.0.1.tgz -C .
+
+cd kafka
+vim values-ops.yaml
+
+argocd app create kafka \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path kafka \
+    --project control-plane-proj \
+    --dest-namespace elastic-system \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-ops.yaml
+
+```
+
+### 3.23 logstash
+
+```bash
+helm search repo logstash
+helm pull elastic/logstash --version 7.17.3 -d /tmp
+tar xf /tmp/logstash-7.17.3.tgz -C .
+
+cd kibana
+vim values-ops.yaml
+
+argocd app create logstash \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path logstash \
+    --project control-plane-proj \
+    --dest-namespace elastic-system \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-ops.yaml
+
+argocd app create logstash-extention \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path logstash/extention \
+    --project control-plane-proj \
+    --directory-recurse \
+    --dest-namespace elastic-system \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm      
 ```
 
 

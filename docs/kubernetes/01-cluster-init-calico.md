@@ -264,7 +264,7 @@ kubectl -n kube-system edit cm kube-proxy
 
 ```bash
 helm repo add projectcalico https://projectcalico.docs.tigera.io/charts
-helm repo update
+helm repo update projectcalico
 helm search repo tigera-operator
 helm show values projectcalico/tigera-operator > calico-tigera-operator.yaml-v3.24.1-default
 
@@ -276,7 +276,7 @@ helm install calico projectcalico/tigera-operator \
 
 helm upgrade --install calico projectcalico/tigera-operator \
     -f calico-tigera-operator.yaml-v3.24.1 \
-    -n kube-cni \
+    -n kube-system \
     --create-namespace \
     --version v3.24.1
 ```
