@@ -84,19 +84,19 @@ https://books.8ops.top/attachment/grafana/template/middleware-redis-ha.json
 
 [官方模板](https://grafana.com/grafana/dashboards/)
 
-![kube-state-metrics](/Users/jesse/workspace/10-8ops.top/books/docs/images/grafana/kube-state-metrics.png)
+![kube-state-metrics](../images/grafana/kube-state-metrics.png)
 
-![Kubernetes cluster monitoring](/Users/jesse/workspace/10-8ops.top/books/docs/images/grafana/kubernetes-cluster-monitoring.png)
+![Kubernetes cluster monitoring](../images/grafana/kubernetes-cluster-monitoring.png)
 
-![Kubernetes / Node Exporter Full](/Users/jesse/workspace/10-8ops.top/books/docs/images/grafana/kubernetes-node-exporter-full.png)
+![Kubernetes / Node Exporter Full](../images/grafana/kubernetes-node-exporter-full.png)
 
-![Kubernetes Nodes](/Users/jesse/workspace/10-8ops.top/books/docs/images/grafana/kubernetes-nodes.png)
+![Kubernetes Nodes](../images/grafana/kubernetes-nodes.png)
 
-![Kubernetes Cluster](/Users/jesse/workspace/10-8ops.top/books/docs/images/grafana/kuernetes-cluster.png)
+![Kubernetes Cluster](../images/grafana/kuernetes-cluster.png)
 
-![MySQL Overview](/Users/jesse/workspace/10-8ops.top/books/docs/images/grafana/middleware-mysql.png)
+![MySQL Overview](../images/grafana/middleware-mysql.png)
 
-![NGINX Ingress controller](/Users/jesse/workspace/10-8ops.top/books/docs/images/grafana/middleware-nginx.png)
+![NGINX Ingress controller](../images/grafana/middleware-nginx.png)
 
 ![Redis Dashboard for Prometheus Redis Exporter](../images/grafana/middleware-redis.png)
 

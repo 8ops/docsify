@@ -403,3 +403,89 @@ helm show values elastic/filebeat --version 7.17.3 > filebeat.yaml-7.17.3.defaul
 | 将所有的Pod的日志都挂载到宿主机上，每台主机上单独起一个日志收集Pod | 完全解耦，性能最高，管理起来最方便                           | 需要统一日志收集规则，目录和输出方式                       |
 
 ![收集区别](../images/elastic/collect.png)
+
+
+
+### 4.2 ILM
+
+进入kibana管理界面，进入`Management --> Dev Tools`
+
+```bash
+# 第一步，创建生命周期管理策略
+PUT /_ilm/policy/clean_index_7days
+{
+  "policy": {
+    "phases": {
+      "delete": {
+        "min_age": "7d",
+        "actions": {
+          "delete": {}
+        }
+      }
+    }
+  }
+}
+
+GET /_ilm/policy/clean_index_7days
+
+# 第二步，创建模板
+PUT /_template/demo
+{
+  "index_patterns": ["demo-*"],
+  "order": 1,
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 1,
+    "index.lifecycle.name": "clean_index_7days"
+  }
+}
+
+GET /_template/demo
+
+# 第三步，绑定索引和策略（已经产生的索引不会自动绑定）
+PUT /demo-json-2023.01.01/_settings
+{
+    "index" : {
+        "lifecycle" : {
+            "name" : "clean_index_7days"
+        }
+    }
+}
+
+GET /demo-json-2023.01.01/_ilm/explain
+
+# 第四步，调整检测策略
+PUT /_cluster/settings
+{
+  "transient": {
+    "indices.lifecycle.poll_interval": "10s"
+  }
+}
+
+GET /_cluster/settings
+
+```
+
+
+
+## 五、常见问题
+
+### 5.1 ILM出现错误
+
+<u>现象</u>
+
+```bash
+illegal_argument_exception: index.lifecycle.rollover_alias [demo] does not point to index [demo-2023.01.05]
+
+illegal_argument_exception: rollover target [logs] does not point to a write index
+
+illegal_argument_exception: setting [index.lifecycle.rollover_alias] for index [demo-2023.01.05] is empty or not defined
+```
+
+<u>原因</u>
+
+- 启用滚动更新需要为每个索引设置别名，按天分割的索引不适合动态设置别名。
+
+<u>解决</u>
+
+- 先移除旧策略，再绑定新策略（直接替换不生效）。

@@ -963,7 +963,19 @@ vim values-client.yaml
 
 argocd proj add-destination control-plane-proj \
     https://kubernetes.default.svc elastic-system
-    
+
+argocd app create elastic-extention \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path elasticsearch/extention \
+    --project control-plane-proj \
+    --directory-recurse \
+    --dest-namespace elastic-system \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm        
+
 argocd app create elastic-master \
     --repo https://git.8ops.top/ops/control-plane-ops.git \
     --path elasticsearch \
@@ -999,18 +1011,7 @@ argocd app create elastic-client \
     --label author=jesse \
     --label tier=helm \
     --values values-client.yaml
-
-argocd app create elastic-extention \
-    --repo https://git.8ops.top/ops/control-plane-ops.git \
-    --path elasticsearch/extention \
-    --project control-plane-proj \
-    --directory-recurse \
-    --dest-namespace elastic-system \
-    --dest-server https://kubernetes.default.svc \
-    --revision master \
-    --sync-policy automated \
-    --label author=jesse \
-    --label tier=helm         
+ 
 ```
 
 ### 3.21 kibana

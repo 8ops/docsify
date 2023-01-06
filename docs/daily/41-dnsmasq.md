@@ -1,6 +1,8 @@
 # dnsmasq
 
-**（1）dnsmasq经常修改的比较重要参数说明**
+## 一、配置
+
+**dnsmasq经常修改的比较重要参数说明**
 
 | 具体参数       | 参数说明                                                     |
 | -------------- | ------------------------------------------------------------ |
@@ -30,9 +32,10 @@ auth-ttl=3600
 
 
 **它可以提供如下几个实用的功能：**
-1 提供dns服务
-2 优先使用本地自定义dns
-3 提供dhcp服务
+
+1. 提供dns服务
+2. 优先使用本地自定义dns
+3. 提供dhcp服务
 
 一般情况下，我们可以用bind解决dns的问题，dhcpd解决dhcp的问题，另外，还可以用ypbind解决自定义hostname解析的ip（当然还有用户的功能），它都解决了！很实用吧？这真的很吸引人，况且它一直在更新维护，最新版本是6月份的。
 
@@ -530,5 +533,98 @@ dns-forward-max=1000
 #conf-file=/etc/dnsmasq.more.conf
 conf-dir=/etc/dnsmasq.d
 #servers-file=<file>
+```
+
+
+
+## 二、压测
+
+### 2.1 安装
+
+```bash
+git clone https://gitlab.isc.org/isc-projects/queryperf.git
+cd queryperf
+./configure
+make
+cp queryperf ~/bin/
+```
+
+
+
+### 2.2 HELP
+
+```bash
+ queryperf --help
+
+DNS Query Performance Testing Tool
+Version: $Id: queryperf.c,v 1.12 2007/09/05 07:36:04 marka Exp $
+
+queryperf: invalid option -- '-'
+Invalid option: --
+
+Usage: queryperf [-d datafile] [-s server_addr] [-p port] [-q num_queries]
+                 [-b bufsize] [-t timeout] [-n] [-l limit] [-f family] [-1]
+                 [-i interval] [-r arraysize] [-u unit] [-H histfile]
+                 [-T qps] [-e] [-D] [-R] [-c] [-v] [-h]
+  -d specifies the input data file (default: stdin)
+  -s sets the server to query (default: 127.0.0.1)
+  -p sets the port on which to query the server (default: 53)
+  -q specifies the maximum number of queries outstanding (default: 20)
+  -t specifies the timeout for query completion in seconds (default: 5)
+  -n causes configuration changes to be ignored
+  -l specifies how a limit for how long to run tests in seconds (no default)
+  -1 run through input only once (default: multiple iff limit given)
+  -b set input/output buffer size in kilobytes (default: 32 k)
+  -i specifies interval of intermediate outputs in seconds (default: 0=none)
+  -f specify address family of DNS transport, inet or inet6 (default: any)
+  -r set RTT statistics array size (default: 50000)
+  -u set RTT statistics time unit in usec (default: 100)
+  -H specifies RTT histogram data file (default: none)
+  -T specify the target qps (default: 0=unspecified)
+  -e enable EDNS 0
+  -D set the DNSSEC OK bit (implies EDNS)
+  -R disable recursion
+  -c print the number of packets with each rcode
+  -v verbose: report the RCODE of each response on stdout
+  -h print this usage
+```
+
+### 2.3 使用
+
+```bash
+for i in {a..z};do echo "$i.8ops.top A" >> datafile;done
+
+~# queryperf -d datafile -s 10.101.11.105
+DNS Query Performance Testing Tool
+Version: $Id: queryperf.c,v 1.12 2007/09/05 07:36:04 marka Exp $
+
+[Status] Processing input data
+[Status] Sending queries (beginning with 10.101.11.105)
+[Status] Testing complete
+
+Statistics:
+
+  Parse input file:     once
+  Ended due to:         reaching end of file
+
+  Queries sent:         10026 queries
+  Queries completed:    10026 queries
+  Queries lost:         0 queries
+  Queries delayed(?):   0 queries
+
+  RTT max:         	16.616721 sec
+  RTT min:              0.000185 sec
+  RTT average:          0.063880 sec
+  RTT std deviation:    0.096947 sec
+  RTT out of range:     16 queries
+
+  Percentage completed: 100.00%
+  Percentage lost:        0.00%
+
+  Started at:           Fri Jan  6 17:16:29 2023
+  Finished at:          Fri Jan  6 17:17:18 2023
+  Ran for:              49.019564 seconds
+
+  Queries per second:   204.530583 qps
 ```
 

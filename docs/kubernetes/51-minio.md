@@ -32,7 +32,7 @@ kubectl minio tenant create tenant1 --servers 4 --volumes 16 --capacity 16Ti
 helm repo add minio https://charts.min.io/
 helm repo update minio
 helm search repo minio
-helm show values minio/minio --version 5.0.1 > minio-5.0.1.yaml-default
+helm show values minio/minio --version 5.0.4 > minio-5.0.4.yaml-default
 
 helm show values bitnami/minio --version 11.10.21 > minio-11.10.21.yaml-default
 
