@@ -825,6 +825,18 @@ tar xf /tmp/mysql-9.4.5.tgz -C .
 cd mysql
 vim values-standalone.yaml
 
+argocd app create mysql-extention \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path mysql/extention \
+    --project control-plane-proj \
+    --directory-recurse \
+    --dest-namespace kube-server \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm     
+    
 argocd app create mysql-standalone \
     --repo https://git.8ops.top/ops/control-plane-ops.git \
     --path mysql \
@@ -837,9 +849,25 @@ argocd app create mysql-standalone \
     --label tier=helm \
     --values values-standalone.yaml
 
-argocd app create mysql-extention \
+```
+
+
+
+### 3.7 minio
+
+```bash
+helm repo add minio https://charts.min.io/
+helm repo update minio
+helm search repo minio
+helm pull minio/minio --version 5.0.4 -d /tmp
+tar xf /tmp/minio-5.0.4.tgz -C .
+
+cd minio
+vim values-ops.yaml
+
+argocd app create minio-extention \
     --repo https://git.8ops.top/ops/control-plane-ops.git \
-    --path mysql/extention \
+    --path minio/extention \
     --project control-plane-proj \
     --directory-recurse \
     --dest-namespace kube-server \
@@ -848,6 +876,24 @@ argocd app create mysql-extention \
     --sync-policy automated \
     --label author=jesse \
     --label tier=helm     
+    
+argocd app create minio \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path minio \
+    --project control-plane-proj \
+    --dest-namespace kube-server \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-ops.yaml
+
+helm upgrade --install minio minio/minio \
+    -f minio.yaml-5.0.4 \
+    --namespace=kube-server \
+    --create-namespace \
+    --version 5.0.4   
 ```
 
 

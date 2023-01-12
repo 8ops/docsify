@@ -18,7 +18,8 @@
   - [kvm](daily/42-kvm.md)
   - [jumpserver](daily/43-jumpserver.md)
   - [rsyncd](daily/44-rsyncd.md)
-
+  - [nfs](daily/45-nfs.md)
+  
 - 开发能力
   - [vue](daily/51-vue.md)
   - [gitbook](daily/52-gitbook.md)
