@@ -44,6 +44,7 @@ rpcinfo -p 10.101.9.179
 ```bash
 # Server
 apt install rpcbind libnfs-utils nfs-common
+apt install nfs-kernel-server
 
 vim /etc/exports
 /opt/lib/nfs 10.101.0.0/16(rw,sync)
@@ -54,6 +55,8 @@ systemctl is-enabled rpcbind nfs-utils
 systemctl status rpcbind nfs-utils
 
 systemctl restart rpcbind nfs-utils nfs
+
+showmount -e 10.101.11.236
 
 # Client
 apt install nfs-common
