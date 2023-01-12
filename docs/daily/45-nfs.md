@@ -6,9 +6,10 @@
 
 ```bash
 # Server
-yum install rpcbind nfs-utils 
-
 mkdir -p /data1/lib/nfs-data
+chown -R nfsnobody:nfsnobody /data1/lib/nfs-data
+
+yum install rpcbind nfs-utils 
 
 vim /etc/exports
 /data1/lib/nfs-data 10.101.0.0/16(rw,sync)
@@ -25,9 +26,10 @@ systemctl status  rpcbind nfs-utils nfs
 
 showmount -e 10.101.9.179
 
-# Client
+# Client [Ubuntu]
 yum install nfs-utils 
 mkdir -p /data1/lib/nfs-data
+chown -R nobody:nogroup /data1/lib/nfs-data
 
 vim /etc/fstab
 10.101.9.179:/data1/lib/nfs-data /data1/lib/nfs-data nfs4 defaults 0 0
@@ -43,24 +45,29 @@ rpcinfo -p 10.101.9.179
 
 ```bash
 # Server
+mkdir -p /data1/lib/nfs
+chown -R nobody:nogroup /data1/lib/nfs
+
 apt install rpcbind libnfs-utils nfs-common
 apt install nfs-kernel-server
 
 vim /etc/exports
 /opt/lib/nfs 10.101.0.0/16(rw,sync)
 
-systemctl start rpcbind nfs-utils
-systemctl enable rpcbind nfs-utils
-systemctl is-enabled rpcbind nfs-utils
-systemctl status rpcbind nfs-utils
+systemctl start rpcbind nfs-utils nfs-kernel-server
+systemctl enable rpcbind nfs-utils nfs-kernel-server
+systemctl is-enabled rpcbind nfs-utils nfs-kernel-server
+systemctl status rpcbind nfs-utils nfs-kernel-server
 
-systemctl restart rpcbind nfs-utils nfs
+systemctl restart rpcbind nfs-utils nfs-kernel-server
+systemctl status rpcbind nfs-utils nfs-kernel-server
 
 showmount -e 10.101.11.236
 
-# Client
+# Client[CentOS]
 apt install nfs-common
 mkdir -p /opt/lib/nfs
+chown -R nfsnobody:nfsnobody /data1/lib/nfs
 
 vim /etc/fstab
 10.101.11.236:/data1/lib/nfs /data1/lib/nfs nfs4 defaults 0 0
