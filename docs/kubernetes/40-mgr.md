@@ -17,6 +17,7 @@
 | [cillium](https://github.com/cilium/cilium)                  | eBPF-based Networking, Security, and Observability           |
 | [weave](https://github.com/weaveworks/weave)                 | Simple, resilient multi-host containers networking and more. |
 | [argocd](https://argoproj.github.io/cd/)                     | Declarative continuous delivery with a fully-loaded UI.      |
+| [kubefirst](https://docs.kubefirst.io/)                      | Kubefirst is a fully automated and operational open source platform that includes some of the best tools available in the Kubernetes space, all working together from a single command. |
 
 
 

@@ -898,6 +898,37 @@ helm upgrade --install minio minio/minio \
 
 
 
+### 3.8 nfs-provider
+
+[Reference](https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner)
+
+```bash
+helm repo add nfs-provider https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
+helm repo update nfs-provider
+helm search repo nfs
+helm pull nfs-provider/nfs-subdir-external-provisioner --version 4.0.17 -d /tmp
+tar xf /tmp/nfs-subdir-external-provisioner-4.0.17.tgz -C .
+
+cd nfs-subdir-external-provisioner
+vim values-ops.yaml
+
+# 需要在节点上支持 mount.nfs，否则 Pod 会报错误
+# Warning  FailedMount  3m51s (x650 over 21h)  kubelet  MountVolume.SetUp failed for volume "nfs-subdir-external-provisioner-root" : mount failed: exit status 32
+apt install nfs-common
+
+argocd app create nfs-subdir-external-provisioner \
+    --repo https://git.8ops.top/ops/control-plane-ops.git \
+    --path nfs-subdir-external-provisioner \
+    --project control-plane-proj \
+    --dest-namespace kube-server \
+    --dest-server https://kubernetes.default.svc \
+    --revision master \
+    --sync-policy automated \
+    --label author=jesse \
+    --label tier=helm \
+    --values values-ops.yaml
+```
+
 
 
 ### 3.10 prometheus
@@ -1144,6 +1175,10 @@ argocd app create logstash-extention \
     --label author=jesse \
     --label tier=helm      
 ```
+
+
+
+
 
 
 

@@ -40,4 +40,5 @@
   - [实战 | JsonPath 使用](kubernetes/44-jsonpath.md)
 - 存储
   - [实战 | MinIO 使用](kubernetes/51-minio.md)
+  - [实战 | NFS Provider](kubernetes/52-nfs-provider.md)
 

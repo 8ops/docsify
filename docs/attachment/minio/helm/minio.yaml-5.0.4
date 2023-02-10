@@ -1,3 +1,4 @@
+nameOverride: "minio-cluster"
 
 image:
   repository: hub.8ops.top/quay/minio
@@ -14,7 +15,7 @@ replicas: 1
 
 persistence:
   enabled: true
-  storageClass: "minio-data"
+  storageClass: "nfs-client"
   accessMode: ReadWriteOnce
   size: 100Gi
 
