@@ -371,3 +371,22 @@ ts=2022-05-13T23:29:02.926Z caller=main.go:1077 level=error err="opening storage
 ```
 
 进入 `/opt/data/prometheus/server`删除文件`lock`
+
+
+
+### 3.2 获取指标
+
+```bash
+# apiserver
+curl -s $APISERVER/metrics \
+  --header "Authorization: Bearer $TOKEN" \
+  --cacert /tmp/ca.crt \
+  -o metrics.txt
+  
+# etcd
+curl -s https://10.101.11.183:2379/metrics \
+  --cert /etc/kubernetes/pki/etcd/healthcheck-client.crt \
+  --key /etc/kubernetes/pki/etcd/healthcheck-client.key \
+  --cacert /etc/kubernetes/pki/etcd/ca.crt
+```
+

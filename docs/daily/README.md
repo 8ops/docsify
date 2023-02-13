@@ -13,13 +13,14 @@
   - [GIT](daily/18-git.md)
   - [firewall](daily-19-firewall.md)
   
-- 软件应用
+- 常用组件
   - [dnsmasq](daily/41-dnsmasq.md)
   - [kvm](daily/42-kvm.md)
   - [jumpserver](daily/43-jumpserver.md)
   - [rsyncd](daily/44-rsyncd.md)
   - [nfs](daily/45-nfs.md)
   - [nginx](daily/46-nginx.md)
+  - [elastic](daily/47-elastic.md)
   
 - 开发能力
   - [vue](daily/51-vue.md)

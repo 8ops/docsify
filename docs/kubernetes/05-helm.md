@@ -56,7 +56,7 @@ sysctl -w net.core.somaxconn=32768; sysctl -w net.ipv4.ip_local_port_range='1024
 
 ```bash
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
+helm repo update ingress-nginx
 
 helm search repo ingress-nginx
 
@@ -205,7 +205,7 @@ systemctl daemon-reload && sleep 5 && systemctl status logrotate.timer
 
 ```bash
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
-helm repo update
+helm repo update kubernetes-dashboard
 
 helm search repo kubernetes-dashboard
 
@@ -358,6 +358,7 @@ metrics-server:
 
 ```bash
 helm repo add elastic https://helm.elastic.co
+helm repo update elastic
 
 # logstash
 helm search repo logstash
@@ -412,7 +413,7 @@ kubectl -n elastic-system logs -f statefulset.apps/elastic-operator
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
+helm repo update prometheus-community
 helm search repo prometheus
 
 # prometheus
@@ -435,7 +436,7 @@ helm upgrade --install prometheus prometheus-community/prometheus \
 
 ```bash
 helm repo add jetstack https://charts.jetstack.io
-helm repo update
+helm repo update jetstack
 helm search repo cert-manager
 
 # cert-manager
@@ -484,7 +485,7 @@ helm upgrade --install cert-manager-webhook-dnspod  \
 
 ```bash
 helm repo add bitnami https://charts.bitnami.com/bitnami
-helm repo update
+helm repo update bitnami
 helm search repo nginx
 
 helm show values bitnami/nginx > nginx.yaml-default
@@ -499,89 +500,3 @@ helm install prometheus-sd  \
 helm -n kube-server uninstall prometheus-sd
 ```
 
-## ~~Zadig~~
-
-`UnSuccess`
-
-```bash
-helm repo add koderover-chart https://koderover.tencentcloudcr.com/chartrepo/chart
-helm repo update
-helm search repo zadig
-
-helm show values koderover-chart/zadig > koderover-zadig.yaml-default
-
-export NAMESPACE=kube-server
-export DOMAIN=zadig.8ops.top
-
-# helm upgrade --install zadig \
-#     --namespace ${NAMESPACE} \
-#     koderover-chart/zadig \
-#     --version=1.8.0 \
-#     --set endpoint.FQDN=${DOMAIN} \
-#     --set global.extensions.extAuth.extauthzServerRef.namespace=${NAMESPACE} \
-#     --set "dex.config.staticClients[0].redirectURIs[0]=http://${DOMAIN}/api/v1/callback,dex.config.staticClients[0].id=zadig,dex.config.staticClients[0].name=zadig,dex.config.staticClients[0].secret=ZXhhbXBsZS1hcHAtc2VjcmV0"
-
-helm install zadig koderover-chart/zadig \
-    -f koderover-zadig.yaml \
-    -n kube-server \
-    --create-namespace \
-    --version 1.8.0 --debug
-
-helm -n kube-server uninstall zadig
-kubectl -n kube-server delete all -l app.kubernetes.io/name=zadig
-
-# backup. Either IP+PORT or DOMAIN shoule be provided
-# export IP=10.101.11.234
-# export PORT=30010
-export NAMESPACE=kube-server
-export DOMAIN=zadig.8ops.top
-export INGRESS_CLASS=external
-
-curl -SsL https://download.koderover.com/install?type=standard -o zadig-install.sh
-bash zadig-install.sh
-
-
-```
-
-> vim koderover-zadig.yaml
-
-```yaml
-endpoint:
-  FQDN: zadig.8ops.top
-global:
-  image:
-    registry: koderover.tencentcloudcr.com/koderover-public
-  extensions:
-    extAuth:
-      extauthzServerRef:
-        namespace: kube-server
-
-dex:
-  config:
-    staticClients:
-      - id: zadig
-        redirectURIs:
-          - 'http://zadig.8ops.top/api/v1/callback'
-        name: 'zadig'
-        secret: ZXhhbXBsZS1hcHAtc2VjcmV0
-```
-
-## ~~Banzai~~
-
-`UnSuccess`
-
-```bash
-helm repo add banzaicloud-stable https://kubernetes-charts.banzaicloud.com
-
-helm repo update
-
-helm search repo logging-operator-logging
-
-helm install banzaicloud-stable/logging-operator-logging
-
-helm install banzaicloud banzaicloud-stable/logging-operator-logging \
-    -n kube-server \
-    --create-namespace \
-    --version 3.16.0 --debug
-
-```
