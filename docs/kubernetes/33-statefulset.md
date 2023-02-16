@@ -215,6 +215,9 @@ web-2 nginx-slim:0.7 10.101.9.173
 
 kubectl delete sts/web --cascade=false
 
+kubectl rollout restart sts/web
+kubectl rollout status  sts/web
+
 ```
 
 

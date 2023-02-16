@@ -10,6 +10,7 @@
   - [Firewall](daily/19-firewall.md)
   - [KVM](daily/42-kvm.md)
   - [Jumpserver](daily/43-jumpserver.md)
+  - [mysql](daily/48-mysql.md)
 - [运维进阶](ops/)
   - [DevOps](ops/01-devops.md)
   - [DataOps](ops/02-dataops.md)

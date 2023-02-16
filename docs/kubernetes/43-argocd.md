@@ -171,12 +171,13 @@ data:
   accounts.jesse.enabled: "true"
 
 # setting account jesse's pass
-# --current-password is admin's pass
-~ $ argocd account update-password  --account jesse --current-password jesse2020 --new-password jesse2022 --grpc-web
+# --current-password is admin's pass required
+~ $ argocd account update-password  --account jesse --current-password xxxx --new-password xxxx --grpc-web
 
+kubectl -n kube-server edit cm argocd-rbac-cm
 # policy
-# p, linyanzhi, *, *, lixian/*, allow   -----p是policy，用户名，要使用的资源，要使用的方法，项目，allow或deny
-# policy.default: role:readonly     -----默认策略
+# p, user, *, *, project/*, allow   ---- p=policy，用户名，资源，动作，项目，allow或deny
+# policy.default: role:readonly     ---- 默认策略
 #
   policy.csv: |
     p, jesse, applications, *, */*, allow
@@ -191,7 +192,19 @@ data:
 
 argocd login argo-cd.8ops.top --grpc-web
 argocd account list --grpc-web
-argocd account update-password --account jesse --current-password jesse2022 --new-password jesse2022 --grpc-web
+
+
+# Can I sync any app?
+argocd account can-i sync applications '*'
+
+# Can I update a project?
+argocd account can-i update projects 'default'
+
+# Can I create a cluster?
+argocd account can-i create clusters '*'
+
+Actions: [get create update delete sync override]
+Resources: [clusters projects applications applicationsets repositories certificates logs exec]
 ```
 
 
@@ -291,6 +304,7 @@ argocd proj list
 argocd proj delete argo-example-proj
 argocd proj create argo-example-proj --description "argo example proj" 
 
+# argocd proj add-source
 argocd proj remove-source argo-example-proj  \
     https://git.8ops.top/ops/argocd-example-apps.git
 argocd proj add-source argo-example-proj \
@@ -302,6 +316,12 @@ argocd proj remove-destination argo-example-proj \
 argocd proj add-destination argo-example-proj \
     https://kubernetes.default.svc kube-app 
 argocd proj get argo-example-proj
+
+# argocd proj allow-cluster-resource
+argocd proj allow-cluster-resource argo-example-proj '*' '*' -l allow
+
+# argocd proj allow-namespace-resource
+argocd proj allow-namespace-resource argo-example-proj '*' '*' -l allow
 
 # ---
 

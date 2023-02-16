@@ -21,6 +21,7 @@
   - [nfs](daily/45-nfs.md)
   - [nginx](daily/46-nginx.md)
   - [elastic](daily/47-elastic.md)
+  - [mysql](daily/48-mysql.md)
   
 - 开发能力
   - [vue](daily/51-vue.md)
