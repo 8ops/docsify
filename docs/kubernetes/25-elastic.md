@@ -466,6 +466,38 @@ GET /_cluster/settings
 
 ```
 
+<u>区分 HOT / WARM /DELETE 存储</u>
+
+```bash
+PUT _ilm/policy/clean_index_7days
+{
+  "policy": {
+    "phases": {
+      "hot": {
+        "min_age": "0ms",
+        "actions": {}
+      },
+      "warm": {
+        "min_age": "2d",
+        "actions": {
+          "allocate": {
+            "number_of_replicas": 0
+          }
+        }
+      },
+      "delete": {
+        "min_age": "8d",
+        "actions": {
+          "delete": {
+            "delete_searchable_snapshot": true
+          }
+        }
+      }
+    }
+  }
+}
+```
+
 
 
 ## 五、常见问题

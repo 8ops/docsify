@@ -11,19 +11,22 @@
 ```bash
 # 新用户名称
 USER=guest
+CA_CRT=/etc/kubernetes/pki/ca.crt
+CA_KEY=/etc/kubernetes/pki/ca.key
+SERVER=https://10.101.11.111:6443
 
 # 创建新用户签名证书
 openssl genrsa -out ${USER}.key 2048
 openssl req -new -key ${USER}.key -out ${USER}.csr -subj "/C=CN/ST=ShangHai/L=ShangHai/O=Kubernetes/OU=GAT/CN=${USER}"
 openssl x509 -req -in ${USER}.csr \
-    -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial \
+    -CA ${CA_CRT} -CAkey ${CA_KEY} -CAcreateserial \
     -out ${USER}.crt -days 365
 
 # 设置集群参数
 kubectl config set-cluster kubernetes \
-    --certificate-authority=/etc/kubernetes/pki/ca.crt \
+    --certificate-authority=${CA_CRT} \
     --embed-certs=true \
-    --server=https://10.101.11.111:6443 \
+    --server=${SERVER} \
     --kubeconfig=${USER}.kubeconfig
 
 # 设置客户端认证参数
@@ -51,7 +54,7 @@ kubectl config use-context ${USER}@kubernetes --kubeconfig=${USER}.kubeconfig
 ##   下面实例使用第 2 种
 
 # 创建ClusterRole
-kubectl create clusterrole cluster-reader-for-${USER} \
+kubectl create clusterrole cluster-op-for-${USER} \
     --verb=get,list,watch \
     --resource=namespaces,nodes,pods,pods/log,deployments,replicasets,daemonsets,services,ingresses,endpoints,events,configmaps,statefulsets,secrets,jobs,cronjobs,replicationcontrollers,horizontalpodautoscalers \
     --dry-run=client -o yaml 
@@ -66,18 +69,18 @@ kubectl create clusterrole cluster-reader-for-${USER} \
 #  - create
 
 # 绑定 ClusterRoleBinding
-kubectl create clusterrolebinding cluster-reader-for-${USER}-binding \
-    --clusterrole=cluster-reader-for-${USER} \
+kubectl create clusterrolebinding cluster-op-for-${USER}-binding \
+    --clusterrole=cluster-op-for-${USER} \
     --user=${USER} \
     --dry-run=client -o yaml 
     # | kubectl apply -f -
 
-## kubectl delete clusterrole cluster-reader-for-${USER}
-## kubectl delete clusterrolebinding cluster-reader-for-${USER}-binding
+## kubectl delete clusterrole cluster-op-for-${USER}
+## kubectl delete clusterrolebinding cluster-op-for-${USER}-binding
 ## 关联默认查看权限
-##   kubectl create clusterrolebinding cluster-reader-for-${USER}-binding --clusterrole=view --user=${USER}
+##   kubectl create clusterrolebinding cluster-op-for-${USER}-binding --clusterrole=view --user=${USER}
 ## 关联默认管理权限
-##   kubectl create clusterrolebinding cluster-reader-for-${USER}-binding --clusterrole=cluster-admin --user=${USER}
+##   kubectl create clusterrolebinding cluster-op-for-${USER}-binding --clusterrole=cluster-admin --user=${USER}
 
 # 使用集锦
 kubectl --kubeconfig ${USER}.kubeconfig get pods
@@ -91,13 +94,13 @@ kubectl --kubeconfig ${USER}.kubeconfig get all
 ```bash
 # 适用于kubernetes v1.24.0 之后的版本
 USER=guest
-kubectl delete clusterrole cluster-reader-for-${USER}
-kubectl create clusterrole cluster-reader-for-${USER} \
+kubectl delete clusterrole cluster-op-for-${USER}
+kubectl create clusterrole cluster-op-for-${USER} \
     --verb=get,list,watch \
     --resource=namespaces,nodes,pods,pods/log,deployments,replicasets,daemonsets,services,ingresses,endpoints,events,configmaps,statefulsets,secrets,jobs,cronjobs,replicationcontrollers,horizontalpodautoscalers \
     --dry-run=client -o yaml | \
     kubectl apply -f -
-kubectl edit clusterrole cluster-reader-for-${USER}    
+kubectl edit clusterrole cluster-op-for-${USER}    
 
 # add
 - apiGroups:
@@ -112,7 +115,7 @@ kubectl -n kube-server create serviceaccount dashboard-${USER}
 
 kubectl delete clusterrolebinding dashboard-${USER} 
 kubectl create clusterrolebinding dashboard-${USER} \
-  --clusterrole=cluster-reader-for-${USER} \
+  --clusterrole=cluster-op-for-${USER} \
   --serviceaccount=kube-server:dashboard-${USER}
 
 kubectl -n kube-server delete dashboard-${USER}-secret
@@ -127,7 +130,7 @@ metadata:
 type: kubernetes.io/service-account-token
 EOF
 
-kubectl -n kube-server get secret dashboard-august-secret -o jsonpath={.data.token} | base64 --decode > dashboard-august.token
+kubectl -n kube-server get secret dashboard-${USER}-secret -o jsonpath={.data.token} | base64 --decode > dashboard-${USER}.token
 
 ```
 

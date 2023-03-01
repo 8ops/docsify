@@ -390,3 +390,51 @@ curl -s https://10.101.11.183:2379/metrics \
   --cacert /etc/kubernetes/pki/etcd/ca.crt
 ```
 
+
+
+### 3.3 获取 etcd's metrices
+
+```bash
+# 1 创建证书
+kubectl create secret generic etcd-certs \
+  --from-file=/etc/kubernetes/pki/etcd/healthcheck-client.crt \
+  --from-file=/etc/kubernetes/pki/etcd/healthcheck-client.key \
+  --from-file=/etc/kubernetes/pki/etcd/ca.crt \
+  -n kube-server
+
+# 2 helm config
+  extraSecretMounts:
+    - name: etcd-certs
+      mountPath: /var/run/secrets/kubernetes.io/etcd
+      secretName: etcd-certs
+      readOnly: true
+
+# 3 generic config
+- job_name: kubernetes-etcd
+  honor_timestamps: true
+  scrape_interval: 1m
+  scrape_timeout: 10s
+  metrics_path: /metrics
+  scheme: https
+  tls_config:
+    ca_file: /var/run/secrets/kubernetes.io/etcd/ca.crt
+    cert_file: /var/run/secrets/kubernetes.io/etcd/healthcheck-client.crt
+    key_file: /var/run/secrets/kubernetes.io/etcd/healthcheck-client.key
+    insecure_skip_verify: false
+  follow_redirects: true
+  relabel_configs:
+  - source_labels: [__meta_kubernetes_service_label_app_kubernetes_io_name]
+    separator: ;
+    regex: etcd
+    replacement: $1
+    action: keep
+  kubernetes_sd_configs:
+  - role: endpoints
+    kubeconfig_file: ""
+    follow_redirects: true
+    namespaces:
+      own_namespace: false
+      names:
+      - kube-system
+```
+
