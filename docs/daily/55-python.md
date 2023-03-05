@@ -137,7 +137,25 @@ EOF
 pip install --upgrade pip
 ```
 
+> MacBook Pro
 
+```bash
+
+mkdir -p ~/.pyenv/cache
+
+wget https://www.python.org/ftp/python/3.11.2/Python-3.11.2.tar.xz -O ~/.pyenv/cache/Python-3.11.2.tar.xz 
+
+env \
+  PATH="$(brew --prefix tcl-tk)/bin:$PATH" \
+  LDFLAGS="-L$(brew --prefix tcl-tk)/lib -L$(brew --prefix zlib)/lib -L$(brew --prefix bzip2)/lib" \
+  CPPFLAGS="-I$(brew --prefix tcl-tk)/include -L$(brew --prefix zlib)/include -L$(brew --prefix bzip2)/include" \
+  PKG_CONFIG_PATH="$(brew --prefix tcl-tk)/lib/pkgconfig" \
+  CFLAGS="-I$(brew --prefix tcl-tk)/include -I$(brew --prefix openssl)/include -I$(brew --prefix bzip2)/include -I$(brew --prefix zlib)/include -I$(brew --prefix readline)/include -I$(xcrun --show-sdk-path)/usr/include" \
+  LDFLAGS="-I$(brew --prefix tcl-tk)/lib -L$(brew --prefix openssl)/lib -L$(brew --prefix readline)/lib -L$(brew --prefix zlib)/lib -L$(brew --prefix bzip2)/lib" \
+  MAKE_OPTS="-j8" \
+  CC=gcc pyenv install -v 3.11.2
+
+```
 
 ## 片外
 
