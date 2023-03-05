@@ -31,6 +31,7 @@
   - [Python](daily/55-python.md)
 
 - 杂记
+  - [MacBook Pro](daily/96-macbook.md)
   - [随便记记](daily/97-miscellany.md)
   - [特效](daily/98-impact.md)
   - [文章管理](daily/99-article.md)
