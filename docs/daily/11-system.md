@@ -30,7 +30,20 @@ jesse	ALL=(ALL) 	ALL
 
 
 
+## 三、SSH
 
+```bash
+ssh -i hostname -l username
+Unable to negotiate with 10.101.11.200 port 222: no matching host key type found. Their offer: ssh-rsa,ssh-dss
+
+ssh -V
+OpenSSH_9.0p1, LibreSSL 3.3.6
+
+# 需要降级加密算法
+~/.ssh/config
+HostKeyAlgorithms +ssh-rsa
+PubkeyAcceptedKeyTypes +ssh-rsa
+```
 
 
 

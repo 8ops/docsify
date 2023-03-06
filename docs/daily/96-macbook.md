@@ -21,10 +21,11 @@ https://developer.aliyun.com/mirror/homebrew/
 
 ```
 
+
+
 ## xcode
 
 ```bash
-
 sudo rm -rf /Library/Developer/CommandLineTools
 xcode-select --install
 /usr/bin/xcodebuild -version
@@ -33,7 +34,14 @@ xcode-select -print-path
 # sudo xcode-select -s /Library/Developer/CommandLineTools
 sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
-
 ```
 
+
+
+## hostname
+
+```bash
+sudo scutil --set HostName MacBook-Pro
+
+```
 
