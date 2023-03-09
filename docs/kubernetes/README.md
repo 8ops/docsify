@@ -11,6 +11,7 @@
 - [实战 | Kubernetes 常用组件-Dashboard](kubernetes/03-addon-dashboard.md)
 - [实战 | Kubernetes 常用组件-Ingress-Controller](kubernetes/04-addon-ingress-controller.md)
 - [实战 | Helm 的使用](kubernetes/05-helm.md)
+- [实战 | Kubernetes Cluster  续签组件证书](kubernetes/06-cluster-upgrade-node.md)
 - [实战 | Kubernetes Cluster 升级版本](kubernetes/06-cluster-upgrade.md)
   - [v1.24.0](kubernetes/06-cluster-upgrade-1.24.md)
   - [v1.25.0](kubernetes/06-cluster-upgrade-1.25.md)

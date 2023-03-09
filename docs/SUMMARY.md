@@ -21,6 +21,7 @@
   - [实战 | Kubernetes Cluster 快速重置](kubernetes/02-cluster-reset.md)
   - [实战 | 加速访问镜像](kubernetes/10-access-image.md)
   - [实战 | Helm 的使用](kubernetes/05-helm.md)
+  - [实战 | Kubernetes Cluster  续签组件证书](kubernetes/06-cluster-upgrade-node.md)
   - [实战 | Kubernetes Cluster 升级版本](kubernetes/06-cluster-upgrade.md)
   - [实战 | 跨集群迁移容器](kubernetes/07-app-migrate.md)
   - [实战 | 通过 Helm 搭建 Prometheus](kubernetes/20-prometheus.md)
