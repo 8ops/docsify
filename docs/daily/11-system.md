@@ -47,3 +47,24 @@ PubkeyAcceptedKeyTypes +ssh-rsa
 
 
 
+## 四、VIM
+
+### 4.1 语法高亮
+
+```bash
+# 查看colorscheme
+ls /usr/share/vim/vim*/colors/ ~/.vim/colors
+/usr/share/vim/vim90/colors:
+README.txt     default.vim    elflord.vim darkblue.vim
+
+~/.vim/colors:
+solarized.vim
+
+# vim /usr/share/vim/vimrc 
+vim ~/.vimrc
+syntax enable
+set background=dark
+colorscheme darkblue
+set ruler
+```
+
