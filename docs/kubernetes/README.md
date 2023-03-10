@@ -15,6 +15,7 @@
 - [实战 | Kubernetes Cluster 升级版本](kubernetes/06-cluster-upgrade.md)
   - [v1.24.0](kubernetes/06-cluster-upgrade-1.24.md)
   - [v1.25.0](kubernetes/06-cluster-upgrade-1.25.md)
+- [实战 | 维护集群关键问题](kubernetes/06-cluster-upgrade-qa.md)
 - [实战 | 跨集群迁移容器](kubernetes/07-app-migrate.md)
 - [实战 | 使用 Docker](kubernetes/08-docker.md)
 - 常用组件

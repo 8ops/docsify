@@ -177,7 +177,8 @@ ls -l /var/lib/etcd
 > 使用 containerd 做为容器运行时
 
 ```bash
-CONTAINERD_VERSION=1.5.5-0ubuntu3~20.04.2
+# CONTAINERD_VERSION=1.5.5-0ubuntu3~20.04.2
+CONTAINERD_VERSION=1.6.12-0ubuntu1~20.04.1
 apt install -y containerd=${CONTAINERD_VERSION}
 
 apt-mark hold containerd
@@ -666,6 +667,19 @@ etcdctl member list \
 	--cacert=/etc/kubernetes/pki/etcd/ca.crt \
 	--cert=/etc/kubernetes/pki/etcd/server.crt \
 	--key=/etc/kubernetes/pki/etcd/server.key
+	
+etcdctl endpoint status \
+	--endpoints=https://10.101.11.240:2379,https://10.101.11.114:2379,https://10.101.11.154:2379 \
+	--cacert=/etc/kubernetes/pki/etcd/ca.crt \
+	--cert=/etc/kubernetes/pki/etcd/server.crt \
+	--key=/etc/kubernetes/pki/etcd/server.key
+
+etcdctl endpoint status \
+	--cluster \
+	--cacert=/etc/kubernetes/pki/etcd/ca.crt \
+	--cert=/etc/kubernetes/pki/etcd/server.crt \
+	--key=/etc/kubernetes/pki/etcd/server.key
+
 ```
 
 
