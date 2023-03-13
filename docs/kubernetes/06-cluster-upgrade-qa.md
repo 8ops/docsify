@@ -2,11 +2,27 @@
 
 ## 一、信息查看
 
+> 节点信息
+
+```bash
+K-KUBE-LAB-01 10.101.11.240
+K-KUBE-LAB-02 10.101.11.114
+K-KUBE-LAB-03 10.101.11.154
+
+K-KUBE-LAB-201 10.101.11.238
+K-KUBE-LAB-202 10.101.11.93
+K-KUBE-LAB-203 10.101.11.53
+
+```
+
+
+
 kubernetes 所有组件中只会有 ETCD 存在 leader 选举
 
 ```bash
-etcdctl member list \
-  --endpoints=https://10.101.11.240:2379 \
+# The items in the lists are endpoint, ID, version, db size, is leader, is learner, raft term, raft index, raft applied index, errors.
+etcdctl member list -w table \
+  --endpoints=https://10.101.11.114:2379 \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
   --key=/etc/kubernetes/pki/etcd/server.key
@@ -18,7 +34,7 @@ etcdctl endpoint status \
   --key=/etc/kubernetes/pki/etcd/server.key
 
 etcdctl endpoint status \
-  --endpoints=https://10.101.11.240:2379 \
+  --endpoints=https://10.101.11.114:2379 \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
   --key=/etc/kubernetes/pki/etcd/server.key
@@ -29,17 +45,19 @@ etcdctl move-leader ed1afb9abd383490 \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
   --key=/etc/kubernetes/pki/etcd/server.key
-  
-# The items in the lists are endpoint, ID, version, db size, is leader, is learner, raft term, raft index, raft applied index, errors.
 
-# 节点信息
-K-KUBE-LAB-01 10.101.11.240
-K-KUBE-LAB-02 10.101.11.114
-K-KUBE-LAB-03 10.101.11.154
+etcdctl member remove 99bb4ff3ed8558ca \
+  --endpoints=https://10.101.11.114:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key
 
-K-KUBE-LAB-201 10.101.11.238
-K-KUBE-LAB-202 10.101.11.93
-K-KUBE-LAB-203 10.101.11.53
+etcdctl member add k-kube-lab-201 \
+  --endpoints=https://10.101.11.114:2379 \
+  --peer-urls=https://10.101.11.238:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key
 
 ```
 
@@ -56,6 +74,18 @@ kubernetes cluster 在运行过程中会有很多异常情况，此处用于模�
 ### 2.1 场景一：终止部分control-plane节点
 
 **可行**
+
+| control-plane节点数 | 允许异常节点 |
+| ------------------- | ------------ |
+| 3                   | 1            |
+| 4                   | 1            |
+| 5                   | 2            |
+| 6                   | 2            |
+| 7                   | 3            |
+| 8                   | 3            |
+| 9                   | 5            |
+
+
 
 > 模拟故障
 
@@ -137,9 +167,11 @@ rsync -av manifests-20230310/ manifests/
 
 
 
-### 2.4 场景三：当集群不可用时 join 新节点
+### 2.4 场景四：当集群不可用时 join 新节点
 
 **不可行**
+
+> 恢复故障
 
 ```bash
 kubeadm init phase upload-certs --upload-certs
@@ -151,5 +183,60 @@ kubeadm init phase upload-certs --upload-certs
 
 # 现象：无法join
 # 原因：无法往etcd插入节点数据
+```
+
+
+
+### 2.5 场景五：编辑etcd数据
+
+**不可行**
+
+> 恢复故障
+
+```bash
+etcdctl member remove b9512d2bb2a3c6f5 \
+  --endpoints=https://10.101.11.154:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key
+
+etcdctl member add k-kube-lab-201 \
+  --endpoints=https://10.101.11.154:2379 \
+  --peer-urls=https://10.101.11.238:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key
+
+etcdctl endpoint status \
+  --endpoints=https://10.101.11.154:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key
+
+etcdctl endpoint status \
+  --cluster \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key  
+  
+# 原因：当集群不可用时etcd数据只支持查看
+```
+
+
+
+### 2.6 场景六：删除 control-plane节点后再join
+
+**可行**
+
+> 恢复故障
+
+```bash
+# etcd member 节点信息还存在需要先手动移除
+etcdctl member remove b9512d2bb2a3c6f5 \
+  --endpoints=https://10.101.11.154:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key
+# 原因：若不  
 ```
 
