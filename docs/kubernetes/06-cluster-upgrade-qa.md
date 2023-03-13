@@ -59,55 +59,91 @@ kubernetes cluster 在运行过程中会有很多异常情况，此处用于模�
 
 ```bash
 # 共3台control-plane
-# 停第一台
-cd /etc/kubernetes
-mv manifests manifests-20230310
-# etcd leader 成功飘移 集群正常
 
-# 停第二台
+#1，停第1台静态容器
 cd /etc/kubernetes
 mv manifests manifests-20230310
-# etcd learner/leader 集群崩溃
+# 现象：集群正常，etcd leader 飘移
+# 原因：etcd leader 成功飘移（etcd leader 刚好在停掉的节点上）
+
+#2，停第2台静态容器
+cd /etc/kubernetes
+mv manifests manifests-20230310
+# 现象：集群崩溃，etcd leader 消失
+# 原因：etcd learner/leader 角色未发生变化，etcd luster节点数量小于2 etcd 集群不存在leader无法正常工作
 ```
 
 > 恢复故障
 
 ```bash
-# 恢复第二台
+#1，恢复第2台静态容器
 cd /etc/kubernetes
 rsync -av manifests-20230310/ manifests/
-# etcd leader 未发生飘移 集群正常
+# 现象：集群正常，etcd leader 出现
+# 原因：etcd leader 未发生飘移 ，etcd luster节点数量为2
 
-# 恢复第一台
+#2，恢复第1台静态容器
 cd /etc/kubernetes
 rsync -av manifests-20230310/ manifests/
-# etcd leader 未发生飘移 集群正常
+# 现象：集群正常
 ```
 
 
 
-### 2.2 场景二：终止全部control-plane节点
+### 2.2 场景二：终止全部 control-plane 节点
 
-参考场景一当恢复到第二台control-plane时集群恢复可用。
+参考场景一，当恢复到第2台 control-plane 时集群恢复可用。
 
 
 
 ### 2.3 场景三：挪用其他节点证书恢复
 
+**不可行**
+
+> 模拟故障
+
+```bash
+# 在其中一个节点上操作
+
+#1，停掉control-plane
+cd /etc/kubernetes
+mv manifests manifests-20230310
+# 现象：集群正常，摘掉1个control-plane
+
+#2，备份证书
+mv pki pki-20230310
+```
 
 
 
+> 恢复故障
 
-### 2.4 场景三：当集群不可用时join新节点
+```bash
+#1，从其他节点恢复证书
+scp /etc/kubernetes/pki
+
+#2，恢复control-plane
+cd /etc/kubernetes
+rsync -av manifests-20230310/ manifests/
+# 现象：集群正常，摘掉control-plane未恢复
+# 原因：拷贝过来的证书签名中 X509v3 Subject Alternative Name 未包含当前节点信息
+```
+
+
+
+### 2.4 场景三：当集群不可用时 join 新节点
+
+**不可行**
 
 ```bash
 kubeadm init phase upload-certs --upload-certs
+
 # I0310 17:40:27.320512 1479993 version.go:256] remote version is much newer: v1.26.2; falling back to: stable-1.25
 # [upload-certs] Storing the certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
 # error execution phase upload-certs: error uploading certs: error creating token: timed out waiting for the condition
 # To see the stack trace of this error execute with --v=5 or higher
 
-# 不可行
-# 无法往etcd插入节点数据
+# 现象：无法join
+# 原因：无法往etcd插入节点数据
 ```
 
