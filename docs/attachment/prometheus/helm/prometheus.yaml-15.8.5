@@ -122,6 +122,12 @@ server:
       configMap: prometheus-metadata-hosts
       readOnly: true
 
+  extraSecretMounts:
+    - name: etcd-certs
+      mountPath: /var/run/secrets/kubernetes.io/etcd
+      secretName: etcd-certs
+      readOnly: true
+
   ingress:
     enabled: true
     ingressClassName: external

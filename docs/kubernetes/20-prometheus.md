@@ -395,46 +395,95 @@ curl -s https://10.101.11.183:2379/metrics \
 ### 3.3 获取 etcd's metrices
 
 ```bash
-# 1 创建证书
+# 1. 创建证书
 kubectl create secret generic etcd-certs \
   --from-file=/etc/kubernetes/pki/etcd/healthcheck-client.crt \
   --from-file=/etc/kubernetes/pki/etcd/healthcheck-client.key \
   --from-file=/etc/kubernetes/pki/etcd/ca.crt \
   -n kube-server
 
-# 2 helm config
+# 2. helm config
   extraSecretMounts:
     - name: etcd-certs
       mountPath: /var/run/secrets/kubernetes.io/etcd
       secretName: etcd-certs
       readOnly: true
 
-# 3 generic config
-- job_name: kubernetes-etcd
-  honor_timestamps: true
-  scrape_interval: 1m
-  scrape_timeout: 10s
-  metrics_path: /metrics
-  scheme: https
-  tls_config:
-    ca_file: /var/run/secrets/kubernetes.io/etcd/ca.crt
-    cert_file: /var/run/secrets/kubernetes.io/etcd/healthcheck-client.crt
-    key_file: /var/run/secrets/kubernetes.io/etcd/healthcheck-client.key
-    insecure_skip_verify: false
-  follow_redirects: true
-  relabel_configs:
-  - source_labels: [__meta_kubernetes_service_label_app_kubernetes_io_name]
-    separator: ;
-    regex: etcd
-    replacement: $1
-    action: keep
-  kubernetes_sd_configs:
-  - role: endpoints
-    kubeconfig_file: ""
+# 3. generic config
+  - job_name: kubernetes-etcd
+    honor_timestamps: true
+    scrape_interval: 1m
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: https
+    tls_config:
+      ca_file: /var/run/secrets/kubernetes.io/etcd/ca.crt
+      cert_file: /var/run/secrets/kubernetes.io/etcd/healthcheck-client.crt
+      key_file: /var/run/secrets/kubernetes.io/etcd/healthcheck-client.key
+      insecure_skip_verify: false
     follow_redirects: true
-    namespaces:
-      own_namespace: false
-      names:
-      - kube-system
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_service_label_app_kubernetes_io_name]
+      separator: ;
+      regex: etcd
+      replacement: $1
+      action: keep
+    kubernetes_sd_configs:
+    - role: endpoints
+      kubeconfig_file: ""
+      follow_redirects: true
+      namespaces:
+        own_namespace: false
+        names:
+        - kube-system
+
+# 4. create service
+# Example 
+#   https://books.8ops.top/attachment/prometheus/70-generic-secret.sh
+#   https://books.8ops.top/attachment/prometheus/71-prometheus-sd-etcd.yaml
+#   kubectl apply -f 70-generic-secret.sh
+#   kubectl apply -f 71-prometheus-sd-etcd.yaml
+# 
+#   kubectl -n kube-system create service clusterip kube-etcd --tcp=2379:2379
+kubectl apply -f - << EOF
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: kube-etcd
+      app.kubernetes.io/name: etcd
+    name: kube-etcd
+    namespace: kube-system
+  spec:
+    ports:
+    - name: etcd
+      port: 2379
+      protocol: TCP
+      targetPort: 2379
+    type: ClusterIP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    labels:
+      app: kube-etcd
+      k8s-app: etcd
+    name: kube-etcd
+    namespace: kube-system
+  subsets:
+  - addresses:
+    - ip: 10.101.11.240
+    - ip: 10.101.11.114
+    - ip: 10.101.11.154
+    ports:
+    - port: 2379
+      protocol: TCP
+kind: List
+EOF
+
+kubectl -n kube-system label services/kube-etcd app.kubernetes.io/name=etcd
+kubectl -n kube-system get services/kube-etcd endpoints/kube-etcd
+
 ```
 

@@ -262,7 +262,7 @@ etcdctl member remove 1bd3101f2cbe0fab \
 +---------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
 ```
 
-
+[etcd performance](https://doczhcn.gitbook.io/etcd/index/index-1/performance)
 
 
 
