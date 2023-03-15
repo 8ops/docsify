@@ -37,9 +37,8 @@ etcdctl endpoint status -w table \
 ## 操作
 
 ```bash
-
-# 切换leader
-etcdctl move-leader ed1afb9abd383490 \
+# 切换leader（--endpoints指向原leader）
+etcdctl move-leader aa3d2ade73c186ec \
   --endpoints=https://10.101.11.240:2379 \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
@@ -57,9 +56,14 @@ etcdctl member add k-kube-lab-201 \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
   --key=/etc/kubernetes/pki/etcd/server.key
+
+# 清除存储碎片
+etcdctl defrag \
+  --endpoints=https://10.101.11.240:2379,https://10.101.11.114:2379,https://10.101.11.154:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key
 ```
-
-
 
 
 
@@ -71,32 +75,34 @@ etcdctl member add k-kube-lab-201 \
 # 假定 IP_1 是 leader, 写入请求发到 leader
 # 1
 benchmark \
-  --endpoints=https://10.101.11.53:2379 \
+  --endpoints=https://10.101.11.240:2379 \
   --conns=1 --clients=1 \
   put --key-size=8 --sequential-keys --total=10000 --val-size=256 \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
-  --key=/etc/kubernetes/pki/etcd/server.key
+  --key=/etc/kubernetes/pki/etcd/server.key 2>&1 1>/tmp/benchmark.out
 
 # 2
 benchmark \
-  --endpoints=https://10.101.11.53:2379 \
+  --endpoints=https://10.101.11.240:2379 \
   --conns=100 --clients=100 \
   put --key-size=8 --sequential-keys --total=10000 --val-size=256 \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
-  --key=/etc/kubernetes/pki/etcd/server.key
+  --key=/etc/kubernetes/pki/etcd/server.key 2>&1 1>/tmp/benchmark.out
 
 # 写入发到所有成员
 # 3
 benchmark \
-  --endpoints=https://10.101.11.53:2379,https://10.101.11.240:2379,https://10.101.11.114:2379 \
+  --endpoints=https://10.101.11.240:2379,https://10.101.11.114:2379,https://10.101.11.154:2379 \
   --conns=100 --clients=100 \
   put --key-size=8 --sequential-keys --total=10000 --val-size=256 \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
-  --key=/etc/kubernetes/pki/etcd/server.key
-  
+  --key=/etc/kubernetes/pki/etcd/server.key 2>&1 1>/tmp/benchmark.out
+
+# 分析结果
+awk '/Average|Requests\/sec/{if($1~/Average/){latency+=$2*1000}else if($1~/Requests\/sec/){qps+=$2}}END{printf("%.1f\t%d\n",latency,qps)}' /tmp/benchmark.out
 ```
 
 
@@ -107,28 +113,28 @@ benchmark \
 # Linearizable 读取请求
 # 1
 benchmark \
-  --endpoints=https://10.101.11.53:2379 \
+  --endpoints=https://10.101.11.240:2379 \
   --conns=1 --clients=1 \
   range YOUR_KEY --consistency=l --total=10000 \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
-  --key=/etc/kubernetes/pki/etcd/server.key
+  --key=/etc/kubernetes/pki/etcd/server.key 2>&1 1>/tmp/benchmark.out
  
 # 2
 benchmark \
-  --endpoints=https://10.101.11.53:2379 \
+  --endpoints=https://10.101.11.240:2379 \
   --conns=100 --clients=100 \
   range YOUR_KEY --consistency=l --total=10000 \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
-  --key=/etc/kubernetes/pki/etcd/server.key
+  --key=/etc/kubernetes/pki/etcd/server.key 2>&1 1>/tmp/benchmark.out
 
 # Serializable 读取请求，使用每个成员然后将数字加起来
 # 3
 for endpoint in \
-  https://10.101.11.53:2379 \
   https://10.101.11.240:2379 \
-  https://10.101.11.114:2379
+  https://10.101.11.114:2379 \
+  https://10.101.11.154:2379
 do
 benchmark \
   --endpoints=$endpoint \
@@ -137,13 +143,13 @@ benchmark \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
   --key=/etc/kubernetes/pki/etcd/server.key
-done
+done 2>&1 1>/tmp/benchmark.out
 
 # 4
 for endpoint in \
-  https://10.101.11.53:2379 \
   https://10.101.11.240:2379 \
-  https://10.101.11.114:2379
+  https://10.101.11.114:2379 \
+  https://10.101.11.154:2379
 do
 benchmark \
   --endpoints=$endpoint \
@@ -152,7 +158,10 @@ benchmark \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
   --key=/etc/kubernetes/pki/etcd/server.key
-done
+done 2>&1 1>/tmp/benchmark.out
+
+# 分析结果
+awk '/Average|Requests\/sec/{if($1~/Average/){latency+=$2*1000}else if($1~/Requests\/sec/){qps+=$2}}END{printf("%.1f\t%d\n",latency,qps)}' /tmp/benchmark.out
 ```
 
 
@@ -173,10 +182,10 @@ done
 
 | 方式  | 策略         | 请求数 | key  | value | conns | clients | latency | qps  |
 | ----- | ------------ | ------ | ---- | ----- | ----- | ------- | ------- | ---- |
-| write | leader       | 10000  | 8    | 256   | 1     | 1       |         |      |
-| write | leader       | 10000  | 8    | 256   | 100   | 100     |         |      |
-| write | all member   | 10000  | 8    | 256   | 100   | 100     |         |      |
-| read  | Linearizable | 10000  | 8    | 256   | 1     | 1       |         |      |
-| read  | Linearizable | 10000  | 8    | 256   | 100   | 100     |         |      |
-| read  | Serializable | 10000  | 8    | 256   | 1     | 1       |         |      |
-| read  | Serializable | 10000  | 8    | 256   | 100   | 100     |         |      |
+| write | leader       | 10000  | 8    | 256   | 1     | 1       | 4       | 251  |
+| write | leader       | 10000  | 8    | 256   | 100   | 100     | 46.9    | 2114 |
+| write | all member   | 10000  | 8    | 256   | 100   | 100     | 27.2    | 3474 |
+| read  | Linearizable | 10000  | 8    | 256   | 1     | 1       | 2.4     | 412  |
+| read  | Linearizable | 10000  | 8    | 256   | 100   | 100     | 31.7    | 3134 |
+| read  | Serializable | 10000  | 8    | 256   | 1     | 1       | 3.7     | 2450 |
+| read  | Serializable | 10000  | 8    | 256   | 100   | 100     | 95.9    | 8412 |
