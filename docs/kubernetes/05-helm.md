@@ -419,12 +419,6 @@ helm search repo prometheus
 # prometheus
 helm show values prometheus-community/prometheus > prometheus.yaml-default
 
-helm install prometheus prometheus-community/prometheus \
-    -f prometheus.yaml \
-    -n kube-server \
-    --create-namespace \
-    --version 15.8.0 --debug
-
 helm upgrade --install prometheus prometheus-community/prometheus \
     -f prometheus.yaml \
     -n kube-server \
@@ -432,7 +426,11 @@ helm upgrade --install prometheus prometheus-community/prometheus \
     --version 15.8.0 --debug
 ```
 
+
+
 ## 五、Cert-Manager
+
+[Reference](https://cert-manager.io/docs/configuration/ca/)
 
 ```bash
 helm repo add jetstack https://charts.jetstack.io
@@ -440,46 +438,182 @@ helm repo update jetstack
 helm search repo cert-manager
 
 # cert-manager
-helm show values jetstack/cert-manager > cert-manager.yaml-default
+helm show values jetstack/cert-manager --version=v1.11.0 > cert-manager.yaml-v1.11.0-default
 
-helm install cert-manager jetstack/cert-manager \
-    -f cert-manager.yaml \
-    -n kube-server \
-    --create-namespace \
-    --version v1.8.0 --debug
+# Example 
+#   https://books.8ops.top/attachment/cert-manager/helm/cert-manager.yaml-v1.11.0
+#   
 
 helm upgrade --install cert-manager jetstack/cert-manager \
-    -f cert-manager.yaml \
-    -n kube-server \
+    -f cert-manager.yaml-v1.11.0 \
+    -n cert-manager \
     --create-namespace \
-    --version v1.8.0 --debug
+    --set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=119.29.29.29:53\,114.114.114.114:53}' \
+    --version v1.11.0 --debug
 
-helm -n kube-server uninstall cert-manager
+helm -n cert-manager uninstall cert-manager
+```
 
+
+
+### 5.1 私有CA签发
+
+```bash
+# 1. ROOT CA
+kubectl -n cert-manager create secret generic ca-key-pair \
+  --from-file=tls.crt=xx.crt \
+  --from-file=tls.key=xx.key
+
+# 2. ClusterIssuer 可切换成 Issuer
+kubectl apply -f - << EOF
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: ca-cluster-issuer
+  namespace: cert-manager
+spec:
+  ca:
+    secretName: ca-key-pair
+    crlDistributionPoints: # 域名证书吊销列表
+    - "http://example.com"
+EOF
+
+# 3. Ingress
+# https://books.8ops.top/attachment/cert-manager/echoserver-cert-private.yaml
+#
+kubectl apply -f - << EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: ca-cluster-issuer # 自动签发注解
+  labels:
+    app: echoserver-cert
+  name: echoserver-cert
+  namespace: default
+spec:
+  ingressClassName: external
+  rules:
+  - host: echoserver.abc.org
+    http:
+      paths:
+      - backend:
+          service:
+            name: echoserver
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - echoserver.abc.org
+    secretName: tls-abc.org # 自动生成 secret 名称
+EOF    
+
+# 4. view
+~$ kubectl get ing,secret
+NAME                                        CLASS      HOSTS                 ADDRESS         PORTS     AGE
+ingress.networking.k8s.io/echoserver-cert   external   echoserver.abc.org    10.101.11.216   80, 443   8m13s
+
+NAME                  TYPE                DATA   AGE
+secret/tls-abc.org    kubernetes.io/tls   3      7m10s
+```
+
+
+
+### 5.2 LetsEncrypt
+
+[Reference](https://cert-manager.io/docs/configuration/acme/dns01/#webhook)
+
+cert-manager also supports out of tree DNS providers using an external webhook. Links to these supported providers along with their documentation are below:
+
+- [`AliDNS-Webhook`](https://github.com/pragkent/alidns-webhook)
+- [`cert-manager-alidns-webhook`](https://github.com/DEVmachine-fr/cert-manager-alidns-webhook)
+- [`cert-manager-webhook-civo`](https://github.com/okteto/cert-manager-webhook-civo)
+- [`cert-manager-webhook-dnspod`](https://github.com/qqshfox/cert-manager-webhook-dnspod)
+- [`cert-manager-webhook-dnsimple`](https://github.com/neoskop/cert-manager-webhook-dnsimple)
+- [`cert-manager-webhook-gandi`](https://github.com/bwolf/cert-manager-webhook-gandi)
+- [`cert-manager-webhook-infomaniak`](https://github.com/Infomaniak/cert-manager-webhook-infomaniak)
+- [`cert-manager-webhook-inwx`](https://gitlab.com/smueller18/cert-manager-webhook-inwx)
+- [`cert-manager-webhook-linode`](https://github.com/slicen/cert-manager-webhook-linode)
+- [`cert-manager-webhook-oci`](https://gitlab.com/dn13/cert-manager-webhook-oci) (Oracle Cloud Infrastructure)
+- [`cert-manager-webhook-scaleway`](https://github.com/scaleway/cert-manager-webhook-scaleway)
+- [`cert-manager-webhook-selectel`](https://github.com/selectel/cert-manager-webhook-selectel)
+- [`cert-manager-webhook-softlayer`](https://github.com/cgroschupp/cert-manager-webhook-softlayer)
+- [`cert-manager-webhook-ibmcis`](https://github.com/jb-dk/cert-manager-webhook-ibmcis)
+- [`cert-manager-webhook-loopia`](https://github.com/Identitry/cert-manager-webhook-loopia)
+- [`cert-manager-webhook-arvan`](https://github.com/kiandigital/cert-manager-webhook-arvan)
+- [`bizflycloud-certmanager-dns-webhook`](https://github.com/bizflycloud/bizflycloud-certmanager-dns-webhook)
+- [`cert-manager-webhook-hetzner`](https://github.com/vadimkim/cert-manager-webhook-hetzner)
+- [`cert-manager-webhook-yandex-cloud`](https://github.com/malinink/cert-manager-webhook-yandex-cloud)
+- [`cert-manager-webhook-netcup`](https://github.com/aellwein/cert-manager-webhook-netcup)
+- [`cert-manager-webhook-pdns`](https://github.com/zachomedia/cert-manager-webhook-pdns)
+
+> imroc
+
+```bash
 # cert-manager-webhook-dnspod
-helm repo add roc https://charts.imroc.cc
-helm repo update
+helm repo add imroc https://charts.imroc.cc
+helm repo update imroc
 helm search repo cert-manager-webhook-dnspod
 
-helm show values roc/cert-manager-webhook-dnspod > cert-manager-webhook-dnspod.yaml-default
+helm show values imroc/cert-manager-webhook-dnspod --version=1.2.0 > cert-manager-webhook-dnspod.yaml-1.2.0-default
 
-# helm upgrade -i  cert-manager-webhook-dnspod roc/cert-manager-webhook-dnspod \
-#     --namespace cert-manager \
-#     --set clusterIssuer.secretId=<SECRET_ID> \
-#     --set clusterIssuer.secretKey=<SECRET_KEY> 
+# Example 
+#   https://books.8ops.top/attachment/cert-manager/helm/cert-manager-webhook-dnspod.yaml-1.2.0
+#   
 
-helm install cert-manager-webhook-dnspod  \
-    -f cert-manager-webhook-dnspod.yaml roc/cert-manager-webhook-dnspod \
-    -n kube-server \
+helm upgrade --install cert-manager-webhook-dnspod imroc/cert-manager-webhook-dnspod \
+    -f cert-manager-webhook-dnspod.yaml-1.2.0 \
+    -n cert-manager \
     --create-namespace \
     --version 1.2.0 --debug
 
-helm upgrade --install cert-manager-webhook-dnspod  \
-    -f cert-manager-webhook-dnspod.yaml roc/cert-manager-webhook-dnspod \
-    -n kube-server \
-    --create-namespace \
-    --version 1.2.0 --debug
+# uninstall
+helm -n cert-manager uninstall cert-manager-webhook-dnspod
+kubectl -n cert-manager delete \
+    secret/cert-manager-webhook-dnspod-ca \
+    secret/cert-manager-webhook-dnspod-letsencrypt \
+    secret/cert-manager-webhook-dnspod-webhook-tls
+kubectl -n cert-manager get \
+    all,cm,secret,issuer,clusterissuer,certificate,CertificateRequest,cert-manager
+
 ```
+
+> qqshfox
+
+[Reference](https://github.com/qqshfox/cert-manager-webhook-dnspod)
+
+```bash
+git clone https://github.com/qqshfox/cert-manager-webhook-dnspod.git abc
+mv abc/deploy/cert-manager-webhook-dnspod  cert-manager-webhook-dnspod
+
+# Example 
+#   https://books.8ops.top/attachment/cert-manager/helm/cert-manager-webhook-dnspod.yaml
+#   https://books.8ops.top/attachment/cert-manager/certificate-dnspod.yaml # 用于单独测试生成签名证书
+#   https://books.8ops.top/attachment/cert-manager/echoserver-cert-lensencrypt.yaml
+#
+
+helm upgrade --install cert-manager-webhook-dnspod ./cert-manager-webhook-dnspod \
+    --namespace cert-manager \
+    -f cert-manager-webhook-dnspod.yaml \
+    --debug
+
+--set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=119.29.29.29:53\,223.6.6.6:53}'
+
+# 自动生成
+# kubectl apply -f certificate-dnspod.yaml
+
+# Ingress 中 secret 签发
+kubectl apply -f echoserver-cert-lensencrypt.yaml
+
+```
+
+
+
+[dns-self-check](https://cert-manager.io/docs/configuration/acme/dns01/#setting-nameservers-for-dns01-self-check)
+
+
 
 ## 六、Nginx
 

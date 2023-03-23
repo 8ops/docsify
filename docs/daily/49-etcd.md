@@ -32,6 +32,12 @@ etcdctl endpoint status -w table \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
   --key=/etc/kubernetes/pki/etcd/server.key
 
+etcdctl endpoint health -w table \
+  --cluster \
+  --endpoints=https://10.101.11.240:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key
 ```
 
 ## 操作

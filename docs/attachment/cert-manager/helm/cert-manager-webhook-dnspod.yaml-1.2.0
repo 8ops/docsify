@@ -1,0 +1,23 @@
+
+groupName: cert-manager.io
+
+image:
+  repository: hub.8ops.top/third/cert-manager-webhook-dnspod-imroc
+  tag: latest
+
+clusterIssuer:
+  enabled: true
+  name: cert-manager-webhook-dnspod-cluster-issuer
+  ttl: 600
+  staging: false
+  secretId: 'xx'
+  secretKey: 'xx'
+
+resources:
+  limits:
+   cpu: 100m
+   memory: 128Mi
+  requests:
+   cpu: 100m
+   memory: 128Mi
+

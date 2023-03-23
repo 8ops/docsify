@@ -951,9 +951,24 @@ argocd app create nfs-subdir-external-provisioner \
 
 
 
+### 3.9 cert-manager
+
+[Reference](kubernetes/05-helm.md)
+
+```bash
+helm repo add jetstack https://charts.jetstack.io
+helm repo update jetstack
+helm search repo cert-manager
+
+```
+
+
+
+
+
 ### 3.10 prometheus
 
-[Reference](kubernetes/43-argocd.md)
+[Reference](kubernetes/20-prometheus.md)
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts

@@ -2,16 +2,18 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
+    cert-manager.io/cluster-issuer: cert-manager-webhook-dnspod-cluster-issuer
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/limit-rps: "100"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
   labels:
-    app: demo-acme
-  name: demo-acme
+    app: echoserver-cert-letsencrypt
+  name: echoserver-cert-letsencrypt
   namespace: default
 spec:
   ingressClassName: external
   rules:
-  - host: demo.acme.8ops.top
+  - host: echoserver-x.8ops.top
     http:
       paths:
       - backend:
@@ -23,5 +25,6 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
-    - demo.acme.8ops.top
-    secretName: tls-acme.8ops.top
+    - echoserver-x.8pos.top
+    secretName: tls-x.8ops.top
+
