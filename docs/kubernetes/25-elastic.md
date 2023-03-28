@@ -207,7 +207,7 @@ kubectl -n elastic-system create secret generic kibana \
 
 ### 3.2 安装
 
-> elasticsearch
+#### 3.2.1 elasticsearch
 
 ```bash
 helm repo add elastic https://helm.elastic.co
@@ -244,7 +244,13 @@ helm upgrade --install elastic-cluster-client elastic/elasticsearch \
 #### 
 # 尝试禁用 xpack.security.enabled 
 # 
-kubectl -n elastic-system delete pvc elastic-cluster-data-elastic-cluster-data-0 elastic-cluster-data-elastic-cluster-data-1 elastic-cluster-data-elastic-cluster-data-2 elastic-cluster-master-elastic-cluster-master-0 elastic-cluster-master-elastic-cluster-master-1 elastic-cluster-master-elastic-cluster-master-2
+kubectl -n elastic-system delete pvc \
+    elastic-cluster-data-elastic-cluster-data-0 \
+    elastic-cluster-data-elastic-cluster-data-1 \
+    elastic-cluster-data-elastic-cluster-data-2 \
+    elastic-cluster-master-elastic-cluster-master-0 \
+    elastic-cluster-master-elastic-cluster-master-1 \
+    elastic-cluster-master-elastic-cluster-master-2
 
 ```
 
@@ -254,7 +260,7 @@ kubectl -n elastic-system delete pvc elastic-cluster-data-elastic-cluster-data-0
 
 ![elastic 索引](../images/elastic/elastic-2.png)
 
-> kibana
+#### 3.2.2 kibana
 
 ```bash
 helm search repo kibana
@@ -276,7 +282,7 @@ helm upgrade --install kibana elastic/kibana \
 
 
 
-> kafka
+#### 3..2.3 kafka
 
 [Reference](https://kafka.apache.org/)
 
@@ -307,6 +313,7 @@ kubectl run kafka-client --restart='Never' \
 
 kubectl exec --tty -i kafka-client --namespace elastic-system -- bash
 
+# 新版本不需要连接 ZK
 ## PRODUCER:
 kafka-console-producer.sh \
     --broker-list kafka-0.kafka-headless.elastic-system.svc.cluster.local:9092 \
@@ -315,7 +322,7 @@ kafka-console-producer.sh \
 ## CONSUMER:
 kafka-console-consumer.sh \
     --bootstrap-server kafka.elastic-system.svc.cluster.local:9092 \
-    --topic test \
+    --topic www-online-ui \
     --from-beginning
 
 # 查看消费情况
@@ -324,24 +331,24 @@ kafka-consumer-groups.sh \
     --describe 
     
 # 查看topic
-./kafka-topics.sh \
-    --zookeeper kafka-zookeeper-headless.elastic-system.svc.cluster.local:2181 \
+kafka-topics.sh \
+    --bootstrap-server kafka-headless.elastic-system.svc.cluster.local:9092 \
     --list
 
 # 查看同步单个topic
-./bin/kafka-topics.sh \
-    --zookeeper kafka-zookeeper-headless.elastic-system.svc.cluster.local:2181 \
-    --topic demo-json --describe
-
-# 消费数据
- ./kafka-console-consumer.sh \
+kafka-topics.sh \
     --bootstrap-server kafka-headless.elastic-system.svc.cluster.local:9092 \
-    --topic demo-josn
- 
- # 修改副本数/ 存储过期时间
- ./kafka-topics.sh \
-    --zookeeper kafka-zookeeper-headless.elastic-system.svc.cluster.local:2181 \
-    --alert --topic demo-json --partitions 6
+    --topic test --describe
+
+# 删除topic - TODO
+kafka-run-class.sh kafka.admin.TopicCommand \
+    --bootstrap-server kafka-headless.elastic-system.svc.cluster.local:9092 \
+    --delete --topic test 
+
+# 修改副本数/ 存储过期时间 - TODO
+kafka-topics.sh \
+    --bootstrap-server kafka-headless.elastic-system.svc.cluster.local:9092 \
+    --topic demo-json --partitions 6
 ```
 
 
