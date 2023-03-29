@@ -479,7 +479,7 @@ spec:
 EOF
 
 # 3. Ingress
-# https://books.8ops.top/attachment/cert-manager/echoserver-cert-private.yaml
+# https://books.8ops.top/attachment/cert-manager/ingress-private.yaml
 #
 kubectl apply -f - << EOF
 apiVersion: networking.k8s.io/v1
@@ -561,12 +561,15 @@ helm show values imroc/cert-manager-webhook-dnspod --version=1.2.0 > cert-manage
 
 # Example 
 #   https://books.8ops.top/attachment/cert-manager/helm/cert-manager-webhook-dnspod.yaml-1.2.0
+#   https://books.8ops.top/attachment/cert-manager/certificate-dnspod-imroc.yaml
+#   https://books.8ops.top/attachment/cert-manager/ingress-dnspod-imroc.yaml
 #   
 
 helm upgrade --install cert-manager-webhook-dnspod imroc/cert-manager-webhook-dnspod \
     -f cert-manager-webhook-dnspod.yaml-1.2.0 \
     -n cert-manager \
     --create-namespace \
+--set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=119.29.29.29:53\,223.6.6.6:53}' \
     --version 1.2.0 --debug
 
 # uninstall
@@ -575,7 +578,11 @@ kubectl -n cert-manager delete \
     secret/cert-manager-webhook-dnspod-ca \
     secret/cert-manager-webhook-dnspod-letsencrypt \
     secret/cert-manager-webhook-dnspod-webhook-tls
+    
 kubectl -n cert-manager get \
+    all,cm,secret,issuer,clusterissuer,certificate,CertificateRequest,cert-manager
+
+kubectl -n default get \
     all,cm,secret,issuer,clusterissuer,certificate,CertificateRequest,cert-manager
 
 ```
@@ -590,8 +597,8 @@ mv abc/deploy/cert-manager-webhook-dnspod  cert-manager-webhook-dnspod
 
 # Example 
 #   https://books.8ops.top/attachment/cert-manager/helm/cert-manager-webhook-dnspod.yaml
-#   https://books.8ops.top/attachment/cert-manager/certificate-dnspod.yaml # 用于单独测试生成签名证书
-#   https://books.8ops.top/attachment/cert-manager/echoserver-cert-lensencrypt.yaml
+#   https://books.8ops.top/attachment/cert-manager/certificate-dnspod-qqshfox.yaml # 用于单独测试生成签名证书
+#   https://books.8ops.top/attachment/cert-manager/ingress-dnspod-qqshfox.yaml
 #
 
 helm upgrade --install cert-manager-webhook-dnspod ./cert-manager-webhook-dnspod \
@@ -599,13 +606,11 @@ helm upgrade --install cert-manager-webhook-dnspod ./cert-manager-webhook-dnspod
     -f cert-manager-webhook-dnspod.yaml \
     --debug
 
---set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=119.29.29.29:53\,223.6.6.6:53}'
-
 # 自动生成
-# kubectl apply -f certificate-dnspod.yaml
+# kubectl apply -f certificate-dnspod-qqshfox.yaml
 
 # Ingress 中 secret 签发
-kubectl apply -f echoserver-cert-lensencrypt.yaml
+kubectl apply -f ingress-lensencrypt.yaml
 
 ```
 
@@ -618,11 +623,6 @@ kubectl apply -f echoserver-cert-lensencrypt.yaml
 #### 5.2.3 smallstep
 
 [Reference](https://github.com/smallstep/certificates)
-
-```bash
-```
-
-
 
 
 

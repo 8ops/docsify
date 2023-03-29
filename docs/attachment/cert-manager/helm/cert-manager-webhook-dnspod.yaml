@@ -11,7 +11,7 @@ clusterIssuer:
 
 image:
   repository: hub.8ops.top/third/cert-manager-webhook-dnspod
-  tag: latest
+  tag: qqshfox
 
 resources: 
   limits:

@@ -7,13 +7,13 @@ metadata:
     nginx.ingress.kubernetes.io/limit-rps: "100"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
   labels:
-    app: echoserver-cert-letsencrypt
-  name: echoserver-cert-letsencrypt
+    app: ingress-dnspod-qqshfox
+  name: ingress-dnspod-qqshfox
   namespace: default
 spec:
   ingressClassName: external
   rules:
-  - host: echoserver-x.8ops.top
+  - host: echoserver.abc.8ops.top
     http:
       paths:
       - backend:
@@ -25,6 +25,6 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
-    - echoserver-x.8pos.top
-    secretName: tls-x.8ops.top
+    - "*.abc.8pos.top"
+    secretName: tls-abc.8ops.top
 

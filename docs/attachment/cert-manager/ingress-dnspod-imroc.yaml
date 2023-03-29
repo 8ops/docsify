@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: dnspod
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  labels:
+    app: ingress-dnspod-imroc
+  name: ingress-dnspod-imroc
+  namespace: default
+spec:
+  ingressClassName: external
+  rules:
+  - host: echoserver.xyz.8ops.top
+    http:
+      paths:
+      - backend:
+          service:
+            name: echoserver
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - "*.xyz.8pos.top"
+    secretName: tls-xyz.8ops.top
+

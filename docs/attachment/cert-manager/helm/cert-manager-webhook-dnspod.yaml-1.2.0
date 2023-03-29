@@ -2,16 +2,17 @@
 groupName: cert-manager.io
 
 image:
-  repository: hub.8ops.top/third/cert-manager-webhook-dnspod-imroc
-  tag: latest
+  repository: hub.8ops.top/third/cert-manager-webhook-dnspod
+  tag: imroc
 
 clusterIssuer:
   enabled: true
-  name: cert-manager-webhook-dnspod-cluster-issuer
+  name: dnspod
   ttl: 600
   staging: false
   secretId: 'xx'
   secretKey: 'xx'
+  email: 'm@8ops.top'
 
 resources:
   limits:
