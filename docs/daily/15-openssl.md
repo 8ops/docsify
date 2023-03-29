@@ -43,6 +43,41 @@ openssl x509 -noout -enddate -startdate -in root.crt
 
 
 
+## 验收
+
+```bash
+通过命令行获取网站SSL证书
+SNI Server Name Indication
+当一台服务器（相同的IP地址和TCP端口号）同时托管多个域名时，可通过servername参数明文发送主机名称。
+
+echo | openssl s_client -showcerts -connect books.8ops.top:443 | openssl x509 -noout -dates
+echo | openssl s_client -showcerts -connect books.8ops.top:443 -servername books.8ops.top | openssl x509 -noout -dates
+# 基本信息
+echo | openssl s_client -showcerts -connect books.8ops.top:443 -servername books.8ops.top | openssl x509 -noout
+
+# 签发时间 startdate
+# 过期时间 enddate
+echo | openssl s_client -showcerts -connect books.8ops.top:443 -servername books.8ops.top | openssl x509 -noout -dates
+
+# 详情
+echo | openssl s_client -showcerts -connect books.8ops.top:443 -servername books.8ops.top
+echo | openssl s_client -showcerts -connect books.8ops.top:443 -servername books.8ops.top | openssl x509 -noout -text
+检测OCSP状态
+echo "" | openssl s_client -connect books.8ops.top:443 -status 2>/dev/null | grep -i OCSP
+
+# 已启用
+OCSP Response Status: successful (0x0)
+
+# 未启用
+OCSP response: no response sent
+openssl版本
+openssl version -a
+```
+
+
+
+
+
 ## 签发
 
 ### 个人签发

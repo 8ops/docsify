@@ -282,7 +282,7 @@ helm upgrade --install kibana elastic/kibana \
 
 
 
-#### 3..2.3 kafka
+#### 3.2.3 kafka
 
 [Reference](https://kafka.apache.org/)
 
@@ -357,7 +357,7 @@ kafka-topics.sh \
 
 
 
-> logstash
+#### 3.2.4 logstash
 
 ```bash
 # Example
@@ -376,7 +376,7 @@ helm upgrade --install logstash elastic/logstash \
 
 
 
-> filebeat
+#### 3.2.5 filebeat
 
 [Reference](https://www.elastic.co/guide/en/beats/filebeat/current/configuring-howto-filebeat.html)
 
@@ -394,8 +394,6 @@ helm search repo filebeat
 helm show values elastic/filebeat --version 7.17.3 > filebeat.yaml-7.17.3.default
 
 ```
-
-
 
 
 

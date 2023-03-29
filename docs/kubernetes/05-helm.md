@@ -441,6 +441,7 @@ helm search repo cert-manager
 helm show values jetstack/cert-manager --version=v1.11.0 > cert-manager.yaml-v1.11.0-default
 
 # Example 
+#   https://books.8ops.top/attachment/cert-manager/helm/cert-manager.yaml-v1.9.1
 #   https://books.8ops.top/attachment/cert-manager/helm/cert-manager.yaml-v1.11.0
 #   
 
@@ -569,7 +570,7 @@ helm upgrade --install cert-manager-webhook-dnspod imroc/cert-manager-webhook-dn
     -f cert-manager-webhook-dnspod.yaml-1.2.0 \
     -n cert-manager \
     --create-namespace \
---set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=119.29.29.29:53\,223.6.6.6:53}' \
+    --set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=119.29.29.29:53\,223.6.6.6:53}' \
     --version 1.2.0 --debug
 
 # uninstall
