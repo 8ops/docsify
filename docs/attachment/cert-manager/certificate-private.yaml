@@ -1,13 +1,15 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: tls-xyz.8ops.top
+  name: tls-abc.org
   namespace: default
 spec:
-  secretName: tls-xyz.8ops.top
+  secretName: tls-abc.org
   issuerRef:
-    name: cert-manager-webhook-dnspod-qqshfox-cluster-issuer
+    name: ca-cluster-issuer
     kind: ClusterIssuer
     group: cert-manager.io
   dnsNames:
-  - "*.xyz.8ops.top"
+  - "abc.org"
+  - "www.abc.org"
+  - "*.abc.org"

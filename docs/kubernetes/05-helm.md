@@ -446,12 +446,19 @@ helm show values jetstack/cert-manager --version=v1.11.0 > cert-manager.yaml-v1.
 #   
 
 helm upgrade --install cert-manager jetstack/cert-manager \
+    -f cert-manager.yaml-v1.9.1 \
+    -n cert-manager \
+    --create-namespace \
+    --version v1.9.1 --debug
+    
+helm upgrade --install cert-manager jetstack/cert-manager \
     -f cert-manager.yaml-v1.11.0 \
     -n cert-manager \
     --create-namespace \
-    --set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=119.29.29.29:53\,114.114.114.114:53}' \
     --version v1.11.0 --debug
 
+    --set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=119.29.29.29:53\,114.114.114.114:53}' \
+    
 helm -n cert-manager uninstall cert-manager
 ```
 
@@ -460,6 +467,12 @@ helm -n cert-manager uninstall cert-manager
 ### 5.1 私有CA签发
 
 ```bash
+# Example
+# https://books.8ops.top/attachment/cert-manager/clusterissuer-private.yaml
+# https://books.8ops.top/attachment/cert-manager/certificate-private.yaml
+# https://books.8ops.top/attachment/cert-manager/ingress-private.yaml
+#
+
 # 1. ROOT CA
 kubectl -n cert-manager create secret generic ca-key-pair \
   --from-file=tls.crt=xx.crt \
@@ -480,8 +493,6 @@ spec:
 EOF
 
 # 3. Ingress
-# https://books.8ops.top/attachment/cert-manager/ingress-private.yaml
-#
 kubectl apply -f - << EOF
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -489,8 +500,8 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: ca-cluster-issuer # 自动签发注解
   labels:
-    app: echoserver-cert
-  name: echoserver-cert
+    app: ingress-private
+  name: ingress-private
   namespace: default
 spec:
   ingressClassName: external
@@ -507,14 +518,16 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
+    - www.abc.org
     - echoserver.abc.org
+    - "*.abc.org"
     secretName: tls-abc.org # 自动生成 secret 名称
 EOF    
 
 # 4. view
 ~$ kubectl get ing,secret
 NAME                                        CLASS      HOSTS                 ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/echoserver-cert   external   echoserver.abc.org    10.101.11.216   80, 443   8m13s
+ingress.networking.k8s.io/ingress-private   external   echoserver.abc.org    10.101.11.216   80, 443   8m13s
 
 NAME                  TYPE                DATA   AGE
 secret/tls-abc.org    kubernetes.io/tls   3      7m10s
@@ -523,6 +536,14 @@ secret/tls-abc.org    kubernetes.io/tls   3      7m10s
 
 
 ### 5.2 LetsEncrypt
+
+> 实测效果
+
+| 顶级域名 | 成功与否 |
+| -------- | -------- |
+| *.top    | x        |
+| *.cn     | √        |
+| *.tech   | .        |
 
 [Reference](https://cert-manager.io/docs/configuration/acme/dns01/#webhook)
 
@@ -558,35 +579,43 @@ helm repo add imroc https://charts.imroc.cc
 helm repo update imroc
 helm search repo cert-manager-webhook-dnspod
 
-helm show values imroc/cert-manager-webhook-dnspod --version=1.2.0 > cert-manager-webhook-dnspod.yaml-1.2.0-default
+helm show values imroc/cert-manager-webhook-dnspod --version=1.2.0 > cert-manager-webhook-dnspod-imroc.yaml-1.2.0-default
 
 # Example 
-#   https://books.8ops.top/attachment/cert-manager/helm/cert-manager-webhook-dnspod.yaml-1.2.0
+#   https://books.8ops.top/attachment/cert-manager/helm/cert-manager-webhook-dnspod-imroc.yaml-1.2.0
 #   https://books.8ops.top/attachment/cert-manager/certificate-dnspod-imroc.yaml
 #   https://books.8ops.top/attachment/cert-manager/ingress-dnspod-imroc.yaml
 #   
 
-helm upgrade --install cert-manager-webhook-dnspod imroc/cert-manager-webhook-dnspod \
-    -f cert-manager-webhook-dnspod.yaml-1.2.0 \
+helm upgrade --install cert-manager-webhook-dnspod-imroc imroc/cert-manager-webhook-dnspod \
+    -f cert-manager-webhook-dnspod-imroc.yaml-1.2.0 \
     -n cert-manager \
     --create-namespace \
-    --set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=119.29.29.29:53\,223.6.6.6:53}' \
     --version 1.2.0 --debug
 
 # uninstall
-helm -n cert-manager uninstall cert-manager-webhook-dnspod
+helm -n cert-manager uninstall cert-manager-webhook-dnspod-imroc
+
 kubectl -n cert-manager delete \
     secret/cert-manager-webhook-dnspod-ca \
     secret/cert-manager-webhook-dnspod-letsencrypt \
     secret/cert-manager-webhook-dnspod-webhook-tls
-    
+
+# view
 kubectl -n cert-manager get \
-    all,cm,secret,issuer,clusterissuer,certificate,CertificateRequest,cert-manager
+    all,ing,cm,secret,issuer,clusterissuer,certificate,CertificateRequest,cert-manager
 
 kubectl -n default get \
-    all,cm,secret,issuer,clusterissuer,certificate,CertificateRequest,cert-manager
+    ingress,secret,issuer,clusterissuer,certificate,CertificateRequest,cert-manager
 
+# 自动生成
+# kubectl apply -f certificate-dnspod-imroc.yaml
+
+# Ingress 中 secret 签发
+kubectl apply -f ingress-dnspod-imroc.yaml
 ```
+
+
 
 #### 5.2.2 qqshfox
 
@@ -597,21 +626,25 @@ git clone https://github.com/qqshfox/cert-manager-webhook-dnspod.git abc
 mv abc/deploy/cert-manager-webhook-dnspod  cert-manager-webhook-dnspod
 
 # Example 
-#   https://books.8ops.top/attachment/cert-manager/helm/cert-manager-webhook-dnspod.yaml
-#   https://books.8ops.top/attachment/cert-manager/certificate-dnspod-qqshfox.yaml # 用于单独测试生成签名证书
+#   https://books.8ops.top/attachment/cert-manager/helm/cert-manager-webhook-dnspod-qqshfox.yaml
+#   # 用于单独测试生成签名证书
+#   https://books.8ops.top/attachment/cert-manager/certificate-dnspod-qqshfox.yaml 
 #   https://books.8ops.top/attachment/cert-manager/ingress-dnspod-qqshfox.yaml
 #
 
-helm upgrade --install cert-manager-webhook-dnspod ./cert-manager-webhook-dnspod \
+helm upgrade --install cert-manager-webhook-dnspod-qqshfox ./cert-manager-webhook-dnspod-qqshfox \
     --namespace cert-manager \
-    -f cert-manager-webhook-dnspod.yaml \
+    -f cert-manager-webhook-dnspod-qqshfox.yaml \
     --debug
 
 # 自动生成
 # kubectl apply -f certificate-dnspod-qqshfox.yaml
 
 # Ingress 中 secret 签发
-kubectl apply -f ingress-lensencrypt.yaml
+kubectl apply -f ingress-dnspod-qqshfox.yaml
+
+# uninstall
+helm -n cert-manager uninstall cert-manager-webhook-dnspod-qqshfox
 
 ```
 

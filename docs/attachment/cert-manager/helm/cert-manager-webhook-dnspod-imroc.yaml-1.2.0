@@ -7,7 +7,7 @@ image:
 
 clusterIssuer:
   enabled: true
-  name: dnspod
+  name: dnspod-imroc
   ttl: 600
   staging: false
   secretId: 'xx'

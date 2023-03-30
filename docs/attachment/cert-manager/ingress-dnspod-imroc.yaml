@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    cert-manager.io/cluster-issuer: dnspod
+    cert-manager.io/cluster-issuer: dnspod-imroc
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     nginx.ingress.kubernetes.io/limit-rps: "100"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
@@ -13,7 +13,7 @@ metadata:
 spec:
   ingressClassName: external
   rules:
-  - host: echoserver.xyz.8ops.top
+  - host: echoserver.xyz.nextn.cn
     http:
       paths:
       - backend:
@@ -25,6 +25,7 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
-    - "*.xyz.8pos.top"
-    secretName: tls-xyz.8ops.top
+    - "xyz.nextn.cn"
+    - "*.xyz.nextn.cn"
+    secretName: tls-xyz.nextn.cn
 

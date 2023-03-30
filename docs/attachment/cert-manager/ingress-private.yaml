@@ -7,13 +7,23 @@ metadata:
     nginx.ingress.kubernetes.io/limit-rps: "100"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
   labels:
-    app: echoserver-cert-private
-  name: echoserver-cert-private
+    app: ingress-private
+  name: ingress-private
   namespace: default
 spec:
   ingressClassName: external
   rules:
   - host: "*.abc.org"
+    http:
+      paths:
+      - backend:
+          service:
+            name: echoserver
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+  - host: www.example.com
     http:
       paths:
       - backend:
@@ -35,10 +45,12 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
+    - "abc.org"
+    - "www.abc.org"
     - "*.abc.org"
     secretName: tls-abc.org
   - hosts:
-    - echoserver.example.com
+    - "www.example.com"
+    - "echoserver.example.com"
+    - "*.example.com"
     secretName: tls-example.com
-
-
