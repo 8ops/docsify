@@ -14,6 +14,14 @@
   - [firewall](daily-19-firewall.md)
   
 - 常用组件
+  - [ppp](daily/33-ppp.md)
+  - [kickstart](daily/34-kickstart.md)
+  - [mogilefs](daily/35-mogilefs.md)
+  - [postgresql](daily/36-postgresql.md)
+  - [rabbitmq](daily/37-rabbitmq.md)
+  - [saltstack](daily/38-saltstack.md)
+  - [neo4j](daily/39-neo4j.md)
+  - [haproxy](daily/40-haproxy.md)
   - [dnsmasq](daily/41-dnsmasq.md)
   - [kvm](daily/42-kvm.md)
   - [jumpserver](daily/43-jumpserver.md)
@@ -23,6 +31,7 @@
   - [elastic](daily/47-elastic.md)
   - [mysql](daily/48-mysql.md)
   - [etcd](daily/49-etcd.md)
+  - [denyhosts](daily/50-denyhosts.md)
   
 - 开发能力
   - [vue](daily/51-vue.md)

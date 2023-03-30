@@ -1,2 +1,0 @@
-- name: test copy
-  copy: src=/tmp/test.txt dest=/tmp/test.txt

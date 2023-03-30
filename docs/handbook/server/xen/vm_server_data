@@ -1,2 +1,0 @@
-name			cpu		memory     device name	  hardquota        ip		     os type
-xen_vm_219		1		512	/dev/vg_xen217		20g       192.168.1.219		centos-6.4

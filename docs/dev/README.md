@@ -9,3 +9,4 @@
 > 文章清单
 
 - [golang](./dev/01-golang.md)
+- [python](dev/02-python.md)

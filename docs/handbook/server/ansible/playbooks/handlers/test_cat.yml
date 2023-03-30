@@ -1,2 +1,0 @@
-- name: test cat
-  shell: 'cat /tmp/test.txt'

@@ -1,4 +1,0 @@
-- name: test date
-  shell: 'date > /tmp/test.txt;date'
-  ignore_errors: True
-  notify: test cat

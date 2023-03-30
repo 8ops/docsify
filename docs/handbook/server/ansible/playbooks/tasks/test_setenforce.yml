@@ -1,3 +1,0 @@
-- name: test sentenforce
-  shell: '/usr/sbin/setenforce 0 || /bin/true'
-  become: true
