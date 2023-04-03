@@ -381,7 +381,7 @@ spec:
       securityContext:
         runAsNonRoot: true
       containers:
-      - image: "hub.8ops.top/third/eck-operator:2.4.0"
+      - image: "hub.8ops.top/elastic/eck-operator:2.4.0"
         imagePullPolicy: IfNotPresent
         name: manager
         args:

@@ -12,7 +12,7 @@ items:
       - /bin/sh
       - -c
       - while true;do i=$((i+1));echo "{\"id\":\"$i\", \"msg\":\"$(date)\"}" >> /var/log/demo.json;echo "$i - $(date)" >> /var/log/demo.out;sleep 2;done
-      image: hub.8ops.top/third/busybox:1.28.0
+      image: hub.8ops.top/elastic/busybox:1.28.0
       resources:
         limits:
           cpu: 200m
@@ -27,7 +27,7 @@ items:
       args:
       - -c
       - /etc/filebeat/filebeat.yml
-      image: hub.8ops.top/third/filebeat:7.17.3
+      image: hub.8ops.top/elastic/filebeat:7.17.3
       resources:
         limits:
           cpu: 200m
