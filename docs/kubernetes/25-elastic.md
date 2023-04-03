@@ -167,7 +167,7 @@ ElasticSearch 7.x 版本默认安装了 X-Pack 插件，并且部分功能免费
 ```bash
 # 运行容器生成证书
 docker run --name elastic-charts-certs \
-  -i -w /app hub.8ops.top/third/elasticsearch:7.17.3 \
+  -i -w /app hub.8ops.top/elastic/elasticsearch:7.17.3 \
   /bin/sh -c "elasticsearch-certutil ca --out /app/elastic-stack-ca.p12 --pass '' && elasticsearch-certutil cert --name security-master --dns security-master --ca /app/elastic-stack-ca.p12 --pass '' --ca-pass '' --out /app/elastic-certificates.p12"
 
 # 从容器中将生成的证书拷贝出来
