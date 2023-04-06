@@ -3,7 +3,7 @@
 [ `dirname $0` == "./bin" ] || exit 1
 set -e
 
-CTX_NAME=jesse-8ops-books
+CTX_NAME=jesse-8ops-docsify
 upx switch ${CTX_NAME}
 [ "X${CTX_NAME}Y" == "X`upx sessions | awk '/^>/{printf $2}'`Y" ] || exit 1
 upx sync --delete docs/ /
